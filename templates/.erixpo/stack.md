@@ -14,5 +14,17 @@ unknown
 - Test:
 
 ## Check command
-The one-line `check:` field is what `bin/erixpo` runs.
-`install:` is what a new worktree runs after isolate (npm ci, cargo fetch, … or none).
+The one-line `check:` field at the top of this file is what `bin/erixpo` runs.
+Replace it with the real project command, for example:
+
+```
+check: npm test
+check: cargo test
+check: xcodebuild test -scheme App -destination 'platform=iOS Simulator,name=iPhone 16'
+```
+
+## Approved skills
+none yet
+
+## Approved MCP
+none yet

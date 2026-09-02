@@ -3,11 +3,13 @@
 status: draft
 
 ## Product
+
 One paragraph. Who, outcome, surface.
 
 ## Non-goals
 
 ## Job type and stack
+
 - Job:
 - Language / runtime:
 - UI kit / platform guide:
@@ -17,16 +19,22 @@ One paragraph. Who, outcome, surface.
 - Install (worktree):
 
 ## UI
+
 - Surface? yes / no
-- Spec: documents/ui/LANGUAGE.md (none | draft | approved)
+- Spec: `documents/ui/LANGUAGE.md` (none | draft | approved)
 - Direction:
 - Mockups required for slices:
 
 ## Research
-Pointer to .erixpo/research.md. Why this stack. What you rejected.
+
+Pointer to `.erixpo/research.md`. Why this stack. What you rejected.
 
 ## Slices
+
+Each slice is small enough to review. Do not hide a second feature inside one.
+
 ### 1. —
+
 - Goal:
 - Files likely touched:
 - Acceptance (observable):
@@ -39,4 +47,5 @@ Pointer to .erixpo/research.md. Why this stack. What you rejected.
 ## Risks and unknowns
 
 ## Optional extras (not approved)
+
 Do not implement these unless the user says so.
