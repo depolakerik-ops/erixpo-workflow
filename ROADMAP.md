@@ -4,17 +4,20 @@
 Portable skills, installer, wiki templates, outer-loop CLI, adapters.
 
 ## 0.2
-Self-improvement (`erixpo-learn`), general work (`erixpo-work`), PROFILE / MEMORY / USER, typed learnings.jsonl.
+Self-improvement, general work, PROFILE / MEMORY / USER, learnings.jsonl.
 
 ## 0.3
 Two-stage review, worktree isolation, session search, failure catalog.
 
+## 0.4
+Host-aware install, conversational uninstall, UI + tool research, in-slice tests.
+Harder stage-1 gate, worktree install: bootstrap, pack smoke test, fix-track regression tests.
+
 ## Next
-- Parse check command from AGENTS.md automatically (partially done)
-- Budget flags (`--max-usd`) once the worker exposes usage
+- Budget flags (--max-usd)
 - GitHub issue → plan
 - Optional Docker sandbox
-- Worktree provisioner that runs the project install command per stack without guessing Node only
+- Visual / surface-specific review checklists
 
 ## Not now
-Web console, mobile fleet UI, credit marketplace, auto-merge to main.
+Web console, credit marketplace, auto-merge to main.

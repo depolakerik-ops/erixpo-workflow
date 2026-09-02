@@ -1,20 +1,18 @@
 ---
 name: erixpo-fix
-description: Fix a bug in an erixpo-managed project. Use when the user says erixpo fix or reports something broken, crashing, failing tests, or a regression. Reproduce, fix, add a guard if cheap, run the check, update wiki only if behaviour or known issues changed.
+description: Fix a bug. Reproduce, fix, add a regression test that fails without the fix, run check. Do not sneak a feature into a fix.
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.1.0"
+  version: "0.4.1"
 ---
 
 # erixpo fix
 
-## Steps
-
-1. Reproduce or quote the failing check. If you cannot reproduce, say so and stop guessing after one honest attempt.
-2. Find the smallest cause.
-3. Fix it. Add or adjust a test when the project already has a test harness.
-4. Run the project check command.
-5. Update `.erixpo/progress.md`. Update the wiki only if the public behaviour or a known issue list changed.
-
-Do not refactor the neighbourhood. Do not sneak a feature into a fix.
+1. Reproduce or quote the failing check. Cannot reproduce → stop guessing after one attempt.
+2. Smallest cause.
+3. Fix it.
+4. Regression test that fails without the fix. No harness → research one and ask, or write `untested:` in test-plan.md and do not claim done.
+5. Run check. Read output.
+6. Self-review. Do not delete or weaken the test that caught this.
+7. Update progress. Wiki only if public behaviour changed.
