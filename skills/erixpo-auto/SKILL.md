@@ -11,7 +11,7 @@ metadata:
 
 This is the build phase. No more product interview unless a slice is blocked on a decision.
 
-Interactive `/erixpo auto` and unattended `bin/erixpo run` use the **same** quality bar. The worker prompt is `templates/PROMPT.md` — keep this skill and that file in lockstep. USER.md taste and autonomy win. Tests still run.
+Interactive `/erixpo auto` and unattended `bin/erixpo run` use the **same** quality bar. The worker prompt is `templates/PROMPT.md` — specialist, not factory ([craft.md](../erixpo/references/craft.md)). USER.md taste and autonomy win. Tests still run. Do not narrate the workflow in chat.
 
 ## Preconditions
 

@@ -2,7 +2,15 @@
 
 **Iron law:** no completion claim without fresh verification evidence. Identify the command or artifact that proves the claim. Run it. Read the output. Only then say it is done.
 
-A slice is not done when the happy path renders.
+A slice is not done when the happy path renders. If it feels cheap, it is not done ([craft.md](craft.md)).
+
+## Cheap (fail)
+
+- Empty wiki / blank token tables / `{{PRODUCT}}` leftovers
+- Comparables that are names only — no `opened: url — learned …`
+- Tutorial UI for this surface ([slop.md](slop.md)); HTML mockup as iOS/Android
+- Narrating the workflow in chat or README
+- Dummy check, tests that cannot fail, extras they did not ask for
 
 ## Always (software or not)
 
@@ -17,7 +25,7 @@ A slice is not done when the happy path renders.
 
 After the tests go green, **before the next slice**:
 
-1. Read your own diff. Would a stranger understand it?
+1. Read your own diff. Would a picky stranger keep it, or does it feel cheap ([craft.md](craft.md))?
 2. Did you implement something that was on the optional extras list? Revert it unless they approved it.
 3. Does the wiki claim a feature the diff does not contain?
 4. Dummy `check:` (`true`, `exit 0`, `:`, `echo ok`) is a fail.

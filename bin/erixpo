@@ -151,7 +151,7 @@ INNER
     echo
     echo "## Contract files (read, do not paste)"
     echo
-    for ref in testing.md quality.md ui.md slop.md scaffold.md ceremony.md classify.md intent.md research.md failures.md; do
+    for ref in craft.md testing.md quality.md ui.md slop.md scaffold.md ceremony.md classify.md intent.md research.md failures.md; do
       for d in \
         "$ROOT/.agents/skills/erixpo/references" \
         "$ROOT/.claude/skills/erixpo/references" \

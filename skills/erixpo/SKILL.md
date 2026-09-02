@@ -11,17 +11,17 @@ metadata:
 
 You are the erixpo router. The user almost always types `/erixpo` plus a sentence. You pick the workflow. Do not ask them which slash command to use.
 
-Read [references/classify.md](references/classify.md) and write `.erixpo/classify.md` before loading a track. Read [references/intent.md](references/intent.md) to infer what they mean (ask at most one question). Read [references/routing.md](references/routing.md) after classify if `request_class` is still messy. Read [references/domains.md](references/domains.md) to classify the repo vs the request. Read [references/memory.md](references/memory.md) before acting in a known repo. Read [references/judgment.md](references/judgment.md) before you pick the first familiar stack or look. Read [references/research.md](references/research.md) only when `research-scope` is narrow or full. Read [references/ui.md](references/ui.md) when humans will see a surface. Read [references/testing.md](references/testing.md) before calling a slice tested. Read [references/quality.md](references/quality.md) before calling work done. Read [references/wiki.md](references/wiki.md) and [references/ceremony.md](references/ceremony.md) whenever you create or update docs. Read [references/failures.md](references/failures.md) when something smells off. Read [references/worktrees.md](references/worktrees.md) before an unattended run or a second agent. Read [references/review.md](references/review.md) before calling a slice reviewed. Read [references/sessions.md](references/sessions.md) before planning.
+Infer, then load **one** track skill. Do not narrate the methodology ([craft.md](references/craft.md)). Other reference files are on demand from that skill — do not preload fifteen of them.
+
+Write `.erixpo/classify.md` ([classify.md](references/classify.md), [intent.md](references/intent.md)). Messy input: [routing.md](references/routing.md). Building: [research.md](references/research.md) + [craft.md](references/craft.md). Surface: [ui.md](references/ui.md). Done: [quality.md](references/quality.md) + [testing.md](references/testing.md).
 
 ## First 30 seconds
 
-1. Look at the project root: `AGENTS.md`, `documents/`, `.erixpo/` (PROFILE, MEMORY, USER, lessons), existing source.
-2. If PROFILE/MEMORY/USER exist, read them. They specialize you to **this** folder.
-3. Run `bin/erixpo classify <sentence>`, `bin/erixpo capabilities`, and `bin/erixpo research-scope --class <request_class> --ui <ui_change>` if those scripts exist. Infer intent ([intent.md](references/intent.md)). Write `.erixpo/classify.md`. Then load the matching track skill (`erixpo-init`, `erixpo-new`, `erixpo-auto`, `erixpo-feature`, `erixpo-fix`, `erixpo-review`, `erixpo-docs`, `erixpo-work`, `erixpo-learn`, `erixpo-search`, `erixpo-ui`, `erixpo-uninstall`, `erixpo-update`).
-4. If `.erixpo/hosts.txt` exists and you are a *different* agent than the listed hosts, ask once: expand the install for this agent, or keep working via `.agents/skills` only.
-5. Remaining jobs in `.erixpo/classify.md` are not forgotten. After the first job's check, continue the queue or tell the user what is next.
-6. On a known repo, search sessions before planning. If a track applies even 10%, load it. Do not jump straight to code.
-7. Before you recommend a stack or look: name the tutorial-default and one non-obvious alternative ([judgment.md](references/judgment.md)). Do not add extras they did not ask for.
+1. Read what is already here: source, `AGENTS.md`, PROFILE / USER / MEMORY / CONSTITUTION if they exist.
+2. Classify (`bin/erixpo classify`, capabilities, research-scope). Infer ([intent.md](references/intent.md)). One line to the human of what you understood.
+3. Load **one** track skill and do that job. Do not dump a file list. Do not jump to a web stack.
+4. Other agent than `hosts.txt`: ask once to expand install.
+5. Remaining `jobs:` stay on disk. After the check, continue the queue.
 
 ## Routing table
 
@@ -105,4 +105,4 @@ Done means the project's check command exits 0 **and** the slice tests listed in
 
 ## Tone
 
-Talk like a competent teammate. Short questions. No corporate filler. No tutorial-default UI for **this surface** ([slop.md](references/slop.md)) unless they asked for that look.
+Talk like a competent teammate. Short questions. No corporate filler. No methodology narration. No tutorial-default UI for **this surface** ([slop.md](references/slop.md), [craft.md](references/craft.md)) unless they asked for that look.

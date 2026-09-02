@@ -34,7 +34,7 @@ Read [domains.md](../erixpo/references/domains.md), [ceremony.md](../erixpo/refe
    - `.erixpo/CONSTITUTION.md` — if code exists, describe the real layout; do not invent. If the folder is empty, leave the keyed template for slice 0 of new work ([scaffold.md](../erixpo/references/scaffold.md))
    - `.erixpo/stack.md` with a `check:` line: a real command, or explicitly `n/a — human accepts artifact` for light writing jobs only. Dummy `echo` / `exit 0` / `true` are fails
 
-   Then seed wiki per [ceremony.md](../erixpo/references/ceremony.md). Seed `documents/ui/` only if ceremony is **full** or a surface is visible.
+   Then seed wiki per [ceremony.md](../erixpo/references/ceremony.md). Visible surface: seed **`documents/ui/LANGUAGE.md` only** (voice + anti-slop). Do not copy blank token/layout tables — that looks like a fake design system. Fill the rest in the first UI slice with real numbers.
 
 6. **Do not overwrite** a non-trivial existing README or AGENTS.md. Propose a diff. Merge facts.
 
@@ -57,7 +57,7 @@ Stack section is optional if class is writing / assistant / research with no run
 ## Anti-patterns
 
 - Generic Next.js AGENTS.md on a Swift repo, notes vault, or personal-ops folder
-- Twenty empty wiki pages
+- Twenty empty wiki pages, blank token tables, leftover `{{PRODUCT}}`
 - Coding features during init unless they said keep going
 - Assuming the folder is a software product or that the surface is web
 - `echo ok` / `exit 0` / `true` as check

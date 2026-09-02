@@ -34,7 +34,7 @@ Branch below. **"Redesign" ≠ `retoken`.** If they said redesign and you only c
 
 1. Infer look from USER + `like X` ([intent.md](../erixpo/references/intent.md)). Ask at most one question (reference or density) if still empty. Propose 2–3 directions + default for **this surface**. One must not be the tutorial look ([slop.md](../erixpo/references/slop.md)). Wait unless they said you pick / unattended.
 2. Live-search **this year**: platform guide + **comparables** (2–3 similar apps on this surface, plus user-stated references). Intensity `full` ([research.md](../erixpo/references/research.md)). Write `.erixpo/research.md` Intent, Comparables, `## UI`.
-3. Copy templates from the pack `templates/documents/ui/` into the project's `documents/ui/` (includes `layout.md` and `mapping.md`).
+3. Copy templates from the pack `templates/documents/ui/` into the project's `documents/ui/` **and fill them in this same step**. Blank token tables must not land as the design language.
 4. Fill real numbers. No "TBD purple". Include the breakpoint / size-class scale in `tokens.md`.
 5. Write `layout.md` (nav, skeleton, compact vs regular) and `mapping.md` (`theme_file` path for this repo + token map).
 6. Previews appropriate to surface:

@@ -10,7 +10,7 @@
       "name": "erixpo-workflow",
       "source": "./",
       "description": "Adaptive autonomous workflow: classify, scaffold, quality-gated loop, repo memory. One /erixpo.",
-      "version": "0.6.1",
+      "version": "0.6.2",
       "author": {
         "name": "Erixpo"
       },

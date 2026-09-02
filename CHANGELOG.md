@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.2
+
+- Craft bar: specialist prompt (not factory worker), no methodology narration.
+- Research comparables must be **opened** URLs with one learned sentence — names-only is a fail.
+- Init does not seed blank token tables. LANGUAGE.md only until the first real UI slice.
+- Router loads one skill; does not preload fifteen reference files.
+
 ## 0.6.1
 
 - `VERSION` file so agents can see there is a new pack (no more 404 on `/VERSION`).

@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 DEST="$PWD"
 GLOBAL=0; DRY=0; UNINSTALL=0; PURGE=0; PURGE_WORKTREES=0; PURGE_DOCS=0; EXPAND=0; DETECT_ONLY=0
-VERSION="0.6.1"
+VERSION="0.6.2"
 if [[ -f "$ROOT/VERSION" ]]; then VERSION="$(tr -d ' \t\n' < "$ROOT/VERSION")"; fi
 HOST_ARG="auto"
 SKILL_NAMES=(erixpo erixpo-auto erixpo-docs erixpo-feature erixpo-fix erixpo-init erixpo-learn erixpo-new erixpo-review erixpo-search erixpo-ui erixpo-uninstall erixpo-update erixpo-work)

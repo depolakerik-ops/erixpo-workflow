@@ -18,7 +18,7 @@ What is primary. What must never compete.
 Live docs for this surface (HIG / Material / Fluent / …). Not a web kit on a native app.
 
 ## Anti-slop
-Banned defaults for **this** surface. Pack list while editing the pack: `skills/erixpo/references/slop.md`. In a target repo, copy a short list here — do not leave a pointer to a pack path that will not exist.
+Banned defaults for **this** surface (copy from research / platform guide, not a pack path).
 
 -
 

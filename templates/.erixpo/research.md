@@ -30,7 +30,8 @@ why:
 
 ## Comparables
 - (user-stated)
-- (found) name — url — steal / do not copy:
+- opened: https:// — one sentence learned:
+- could not open:
 
 ## Tools
 - Scaffold (official init):

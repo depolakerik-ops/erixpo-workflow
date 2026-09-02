@@ -25,10 +25,15 @@ If intensity is `skip`, stop reading this file.
    - **full:** language, official scaffold ([scaffold.md](scaffold.md)), framework or none, data store or none, platform UI guide ([ui.md](ui.md), [slop.md](slop.md)), test runner ([testing.md](testing.md)), lint, deploy only if they asked to ship
    - **narrow:** official docs + similar work **in this field** (not a random web stack). Cap: a handful of searches.
 5. **Comparables** (always on **full**; on **narrow** at least 1–2 similar things for this field + any `like X`):
-   - 2–3 similar products, apps, or repos **for this surface and job**, current year
    - User-stated `like X` always in the list
    - Steal structure/density/nav. Do not steal brand, copy, or a web kit onto native
-   - Cite URLs
+   - **Opened, not named.** Cheap fail: a list of app names. Each hit:
+
+```
+- opened: https://… — one sentence actually learned
+```
+
+If you could not fetch: `could not open: …`. Do not invent. ([craft.md](craft.md))
 6. Skill hunt (candidates only) on **full**. MCP hunt only if the worker lacks a surface (browser, simulator). List, do not install.
 7. Recommend. Always: boring **official default** when it exists. Always: “do nothing extra” when a database/UI kit is optional. Always: one **non-obvious** option for *this user* ([judgment.md](judgment.md)). If it loses, write why.
 

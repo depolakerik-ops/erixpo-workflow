@@ -52,10 +52,11 @@ MEMORY / USER are required even for light.
 
 Software/site with a human-visible surface (especially multi-breakpoint or native).
 
-- `documents/INDEX.md`, `PRODUCT.md`, `STACK.md`, `DECISIONS.md`, `ARCHITECTURE.md` (short), module pages **as they appear**, `progress.html`
-- `documents/ui/`: `LANGUAGE.md`, `tokens.md`, `layout.md`, `mapping.md`, `motion.md`, `components.md`, `screens.md`, `mockups/`, `CHANGELOG.md` (copy the pack templates; fill numbers in the first UI slice)
-  - Web: breakpoint grammar in `documents/ui/layout.md`; HTML mockups at compact **and** regular.
-  - Native: `documents/ui/mapping.md` is the contract. Do not treat HTML as iOS/Android/Windows/macOS source of truth.
+- `documents/INDEX.md`, `PRODUCT.md`, `STACK.md`, `DECISIONS.md` **when a choice exists**, module pages **as they appear**, `progress.html` only after the first real slice
+- **No empty `ARCHITECTURE.md`.** Write it when there are modules in the code, not at init.
+- `documents/ui/LANGUAGE.md` only at init (voice + surface + anti-slop). Copy tokens/layout/mapping/mockups **in the first UI slice when numbers are real**. Blank token tables are not a design system ([craft.md](craft.md)).
+  - Web: two-width HTML mockups using those numbers.
+  - Native: `mapping.md` + theme_file. Not HTML as source of truth.
 - `.erixpo/research.md`, rich `plan.md`, `test-plan.md`, `CONSTITUTION.md`
 - Test harness + per-slice tests (harness in slice 0 if missing)
 - Stage-2 review on ship ([review.md](review.md))
