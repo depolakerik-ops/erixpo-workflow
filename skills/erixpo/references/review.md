@@ -26,6 +26,7 @@ It **fails** if any of these hold:
   - `True (` literal true/True `)` with a non-alnum prefix (covers `t.True`)
   - Kotlin `shouldBe` of literal true/True
 - **product files in the slice range with no test/spec file in the same range**, unless pairing is skipped
+- **hard-coded hex** in slice product files that is not in `documents/ui/mapping.md` `theme_file` / `Path:` (skipped if no mapping path, docs-only, or `ERIXPO_SKIP_HEX=1`)
 
 ### Slice range
 

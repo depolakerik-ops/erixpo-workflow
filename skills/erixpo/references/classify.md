@@ -92,9 +92,27 @@ After the first job's check: remove or mark that job done, set `request_class` t
 
 ## 5. Capabilities
 
-Detect from the **machine and repo**, not wishes. `which` / path / lockfiles / SDKs that are actually present.
+Detect from the **machine and repo**, not wishes.
 
-If they want iOS and there is no Xcode, say so here and do not pick Playwright as the iOS test story.
+Run, then paste the line into `capabilities:`:
+
+```bash
+bin/erixpo capabilities
+# or
+bash scripts/detect-capabilities.sh
+```
+
+For `request_class` / `ui_change` / the LOOK collision, run first (do not invent a first-match):
+
+```bash
+bin/erixpo classify look at the checkout
+# or
+python3 scripts/classify-signals.py "sidebar to tabs"
+```
+
+Paste `request_class`, `ui_change`, and `jobs:` from that output, then fill repo/ceremony/isolation from evidence.
+
+If they want iOS and capabilities has no `xcodebuild`, say so here and do not pick Playwright as the iOS test story.
 
 ## 6. Ceremony
 

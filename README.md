@@ -62,6 +62,8 @@ bin/erixpo review --stage 1
 # then a new agent session: /erixpo review
 bin/erixpo close --id s-…    # merge + remove worktree + delete branch
 bin/erixpo sweep             # report leftover trees (sweep --apply to clean)
+bin/erixpo classify "look at checkout"   # mechanical request_class (review, not ui)
+bin/erixpo capabilities                  # xcodebuild / android-sdk / … actually on PATH
 ```
 
 Unattended runs isolate into a sibling git worktree. No auto-merge to the branch you are sitting on. After stage-2 `ship` and you say close/merge, `close` removes the tree so it does not stay on disk. Done means `check:` in `.erixpo/stack.md` exits 0 **and** the slice tests ran.

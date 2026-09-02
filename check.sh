@@ -76,6 +76,12 @@ grep -q 'relanguage | retoken | recompose | reflow' templates/erixpo/plan.md || 
 grep -q 'create | relanguage | retoken' skills/erixpo/references/classify.md || { echo "classify.md missing create ui_change"; fail=1; }
 grep -q 'look at' skills/erixpo/references/classify.md || { echo "classify.md missing look-at → review"; fail=1; }
 
+echo "== classify fixtures =="
+python3 scripts/classify-signals.py --selftest || fail=1
+[[ -f scripts/detect-capabilities.sh ]] || { echo "missing detect-capabilities.sh"; fail=1; }
+bash scripts/detect-capabilities.sh >/dev/null || fail=1
+grep -q 'classify-signals.py' install.sh || { echo "install.sh missing classify-signals.py"; fail=1; }
+
 echo "== smoke =="
 bash tests/smoke.sh || fail=1
 

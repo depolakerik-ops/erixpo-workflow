@@ -180,6 +180,82 @@ fi
 scan_secrets_text "$ROOT/.erixpo/sessions.jsonl"
 scan_secrets_text "$ROOT/.erixpo/learnings.jsonl"
 
+# Freelance hex outside theme_file (only when mapping names a real file).
+if [[ "${ERIXPO_SKIP_HEX:-0}" != "1" && -f "$ROOT/documents/ui/mapping.md" ]]; then
+  hex_out="$(python3 - "$ROOT" "$BASE" <<'PY' || true
+import os, re, subprocess, sys
+root = sys.argv[1]
+base = sys.argv[2] if len(sys.argv) > 2 else ""
+mapping = os.path.join(root, "documents", "ui", "mapping.md")
+text = open(mapping, encoding="utf-8").read()
+path = ""
+for line in text.splitlines():
+    m = re.match(r"(?i)^(?:path|theme_file)\s*:\s*(\S+)", line.strip())
+    if m:
+        cand = m.group(1).strip().strip("`")
+        if cand.lower() not in ("", "none", "n/a", "|"):
+            path = cand
+            break
+if not path:
+    sys.exit(0)
+theme = path if os.path.isabs(path) else os.path.join(root, path)
+if not os.path.isfile(theme):
+    print(f"mapping theme_file missing: {path}")
+    sys.exit(0)
+hex_re = re.compile(r"#[0-9A-Fa-f]{3,8}\b")
+allowed = set(x.lower() for x in hex_re.findall(open(theme, encoding="utf-8", errors="replace").read()))
+names = []
+def add(out):
+    for f in (out or "").splitlines():
+        f = f.strip()
+        if f:
+            names.append(f)
+try:
+    add(subprocess.check_output(["git", "-C", root, "diff", "--name-only", "HEAD"], text=True, stderr=subprocess.DEVNULL))
+    add(subprocess.check_output(["git", "-C", root, "diff", "--name-only", "--cached"], text=True, stderr=subprocess.DEVNULL))
+    if base:
+        add(subprocess.check_output(["git", "-C", root, "diff", "--name-only", f"{base}..HEAD"], text=True, stderr=subprocess.DEVNULL))
+except subprocess.CalledProcessError:
+    pass
+skip_prefix = ("documents/", ".erixpo/")
+skip_names = {"AGENTS.md", "CLAUDE.md", "README.md"}
+skip_ext = {".md", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".pdf"}
+theme_rel = os.path.relpath(theme, root)
+hits = []
+for f in sorted(set(names)):
+    if f.startswith(skip_prefix) or f in skip_names:
+        continue
+    ext = os.path.splitext(f)[1].lower()
+    if ext in skip_ext:
+        continue
+    if f == theme_rel or os.path.abspath(os.path.join(root, f)) == os.path.abspath(theme):
+        continue
+    fp = os.path.join(root, f)
+    if not os.path.isfile(fp):
+        continue
+    try:
+        body = open(fp, encoding="utf-8", errors="replace").read()
+    except OSError:
+        continue
+    for h in hex_re.findall(body):
+        if h.lower() not in allowed:
+            hits.append(f"{f}: {h}")
+if hits:
+    print("hex outside theme_file:\n" + "\n".join(hits[:20]))
+PY
+)"
+  if [[ -n "$hex_out" ]]; then
+    if [[ "$hex_out" == mapping\ theme_file\ missing:* ]]; then
+      note "$hex_out"
+    else
+      bad "hard-coded hex outside theme_file (set ERIXPO_SKIP_HEX=1 if this slice is not visual)"
+      note "$hex_out"
+    fi
+  else
+    note "theme_file hex check: ok or skipped (no path)"
+  fi
+fi
+
 mkdir -p "$ROOT/.erixpo"
 {
   echo "## Stage 1"

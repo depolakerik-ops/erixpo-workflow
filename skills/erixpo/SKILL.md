@@ -17,7 +17,7 @@ Read [references/classify.md](references/classify.md) and write `.erixpo/classif
 
 1. Look at the project root: `AGENTS.md`, `documents/`, `.erixpo/` (PROFILE, MEMORY, USER, lessons), existing source.
 2. If PROFILE/MEMORY/USER exist, read them. They specialize you to **this** folder.
-3. Write `.erixpo/classify.md` ([classify.md](references/classify.md)) — repo, request, surface, jobs queue, ceremony. Then load the matching track skill (`erixpo-init`, `erixpo-new`, `erixpo-auto`, `erixpo-feature`, `erixpo-fix`, `erixpo-review`, `erixpo-docs`, `erixpo-work`, `erixpo-learn`, `erixpo-search`, `erixpo-ui`, `erixpo-uninstall`).
+3. Run `bin/erixpo classify <sentence>` and `bin/erixpo capabilities` if those scripts exist. Write `.erixpo/classify.md` ([classify.md](references/classify.md)) — repo, request, surface, jobs queue, ceremony, machine capabilities. Then load the matching track skill (`erixpo-init`, `erixpo-new`, `erixpo-auto`, `erixpo-feature`, `erixpo-fix`, `erixpo-review`, `erixpo-docs`, `erixpo-work`, `erixpo-learn`, `erixpo-search`, `erixpo-ui`, `erixpo-uninstall`).
 4. If `.erixpo/hosts.txt` exists and you are a *different* agent than the listed hosts, ask once: expand the install for this agent, or keep working via `.agents/skills` only.
 5. Remaining jobs in `.erixpo/classify.md` are not forgotten. After the first job's check, continue the queue or tell the user what is next.
 6. On a known repo, search sessions before planning. If a track applies even 10%, load it. Do not jump straight to code.

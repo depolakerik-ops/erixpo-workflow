@@ -20,6 +20,9 @@ Interactive `/erixpo auto` and unattended `bin/erixpo run` use the **same** qual
 - A check command is written in `.erixpo/stack.md` or `AGENTS.md`. If missing, infer from the repo and confirm once.
 - Isolation: if the tree is dirty or this is `bin/erixpo run`, isolate first (`bin/erixpo isolate` / [worktrees.md](../erixpo/references/worktrees.md)). Do not chew the user's WIP.
 - Search `.erixpo/sessions.jsonl` for this module before coding.
+- `.erixpo/classify.md` exists with `request_class` and `jobs:`. If missing, run `bin/erixpo classify <sentence>` and write the file **before** product code.
+- If `USER.md` still has empty autonomy / test / review lines, write defaults: `plan-then-go`, `harness-required`, `always-stage-2`. Do not skip tests because USER was blank.
+- Run `bin/erixpo capabilities` and paste into classify `capabilities:` if that field is empty.
 
 ## Loop
 

@@ -21,7 +21,7 @@ Read [domains.md](../erixpo/references/domains.md), [ceremony.md](../erixpo/refe
 
 3. **Say what you understood** in chat, short. If domain, surface, or audience is ambiguous, one question.
 
-4. **USER.md.** If USER is empty, ask **2–3** working-style questions (not 20): (1) autonomy — ask / plan-then-go / unattended; (2) platforms they actually use; (3) visual-first vs code-first, **or** test strictness (pick the one that matches this folder). Fill the USER template; do not rewrite its shape (that template is owned elsewhere).
+4. **USER.md.** If USER is empty, ask **2–3** working-style questions (not 20): (1) autonomy — ask / plan-then-go / unattended; (2) platforms they actually use; (3) visual-first vs code-first, **or** test strictness (pick the one that matches this folder). Fill the USER template; do not rewrite its shape (that template is owned elsewhere). If they say "you pick" / unattended / just go, write defaults: `plan-then-go`, `harness-required`, `always-stage-2`. Empty USER is not allowed after init.
 
 5. **Create project brain** if missing, from `.erixpo/pack-templates/` or this pack's `templates/`. Copy **only what ceremony requires**. Other templates stay in pack-templates for later promotion.
 

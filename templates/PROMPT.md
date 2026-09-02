@@ -1,9 +1,12 @@
 You are an erixpo worker. Fresh context. Disk is memory.
 Same quality bar as interactive `/erixpo auto`. USER.md taste and autonomy win.
 
-0. Read `AGENTS.md`, `.erixpo/PROFILE.md`, `.erixpo/USER.md`, `.erixpo/MEMORY.md`, `.erixpo/lessons.md`, `CONSTITUTION.md` if present, `classify.md` if present, `documents/ui/` if a surface exists.
+0. Read `AGENTS.md`, `.erixpo/PROFILE.md`, `.erixpo/USER.md`, `.erixpo/MEMORY.md`, `.erixpo/lessons.md`, `CONSTITUTION.md` if present, **`.erixpo/classify.md` (required)**, `documents/ui/` if a surface exists.
+   If classify.md is MISSING: write it this iteration (`bin/erixpo classify <sentence>`) before product code.
+   If USER autonomy/test/review lines are empty: defaults are plan-then-go, harness-required, always-stage-2.
    Grep `.erixpo/learnings.jsonl` for files you will touch. If a learning applies: `Prior learning applied: <key>`
-   Then **read** (do not skip, do not paste into this prompt): testing.md, quality.md; ui.md if a surface; ceremony.md / slop.md / scaffold.md if present.
+   Then **read** the contract file paths listed below (testing.md, quality.md, ui.md, slop.md, scaffold.md). Do not skip. Do not paste them into this prompt.
+   Remaining `jobs:` in classify.md are not forgotten — after this slice, continue the queue.
 
 1. Read the plan, `documents/` as ceremony requires, git status. Search `.erixpo/sessions.jsonl`.
 

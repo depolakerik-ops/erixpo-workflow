@@ -143,8 +143,38 @@ else
   say "ok sweep dry"
 fi
 
+say "== classify-signals look-at vs ui =="
+out="$(python3 "$ROOT/scripts/classify-signals.py" "look at the checkout")"
+printf '%s\n' "$out" | grep -q 'request_class: review' || bad "look at checkout != review"
+out="$(python3 "$ROOT/scripts/classify-signals.py" "calmer blue")"
+printf '%s\n' "$out" | grep -q 'request_class: ui' || bad "calmer blue != ui"
+out="$(python3 "$ROOT/scripts/classify-signals.py" "sidebar to tabs")"
+printf '%s\n' "$out" | grep -q 'recompose' || bad "sidebar to tabs != recompose"
+python3 "$ROOT/scripts/classify-signals.py" --selftest >/dev/null || bad "classify --selftest"
+
+say "== stage1 rejects freelance hex outside theme_file =="
+HEX="$(mktemp -d)"; CLEANUP+=("$HEX")
+init_git "$HEX"
+mkdir -p "$HEX/.erixpo" "$HEX/documents/ui" "$HEX/src"
+printf 'check: test -f README.md\n' > "$HEX/.erixpo/stack.md"
+printf 'Path: src/theme.css\n' > "$HEX/documents/ui/mapping.md"
+printf ':root { --accent: #111111; }\n' > "$HEX/src/theme.css"
+echo x > "$HEX/README.md"
+git -C "$HEX" add README.md .erixpo/stack.md documents src/theme.css
+git -C "$HEX" commit -qm init
+printf '.x { color: #ff00aa; }\n' > "$HEX/src/widget.css"
+printf '/* pair */\n' > "$HEX/src/widget.test.css"
+git -C "$HEX" add src/widget.css src/widget.test.css
+git -C "$HEX" commit -qm 'freelance hex'
+if (cd "$HEX" && bash "$ROOT/scripts/review-stage1.sh") >/dev/null 2>&1; then
+  bad "stage1 passed freelance hex outside theme_file"
+else
+  say "ok freelance hex rejected"
+fi
+
 say "== bin/erixpo close is wired =="
 grep -q 'close' "$ROOT/bin/erixpo" || bad "bin/erixpo missing close"
+grep -q 'classify' "$ROOT/bin/erixpo" || bad "bin/erixpo missing classify"
 
 say "== uninstall pack-only keeps AGENTS.md =="
 echo 'keep-agents' > "$TMP/AGENTS.md"

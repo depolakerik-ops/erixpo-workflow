@@ -8,6 +8,7 @@ _Fill during `/erixpo init` with 2–3 questions (how to address them, autonomy,
 - Name / how to address them:
 - Language:
 - Autonomy: ask-every-slice | plan-then-go | unattended
+  # default if empty after init: plan-then-go
 - Platforms they actually use:
 - Visual: visual-first | code-first
 - Mockups: required | skip-if-said | never

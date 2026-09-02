@@ -45,8 +45,10 @@ Commands:
   prune     remove an isolated worktree
   close     merge if needed, then remove worktree + branch
   sweep     report leftover trees/branches; --apply cleans safe ones
-  search    search sessions / learnings / worktrees
-  review    run mechanical stage-1 review (stage 2 is a different agent session)
+  search         search sessions / learnings / worktrees
+  review         run mechanical stage-1 review (stage 2 is a different agent session)
+  classify       mechanical request_class / ui_change hints for a sentence
+  capabilities   print what this machine can actually run
 
 Options for run:
   --worker NAME    claude | codex | cursor | opencode | hermes | gemini | generic
@@ -121,6 +123,46 @@ INNER
     echo "## Plan"
     echo
     cat "$src"
+    echo
+    echo "## Classify"
+    echo
+    if [[ -f "$ROOT/.erixpo/classify.md" ]]; then
+      cat "$ROOT/.erixpo/classify.md"
+    else
+      echo "MISSING .erixpo/classify.md — write it this iteration before product code. Run: bin/erixpo classify <sentence>"
+    fi
+    echo
+    echo "## USER"
+    echo
+    if [[ -f "$ROOT/.erixpo/USER.md" ]]; then
+      cat "$ROOT/.erixpo/USER.md"
+    else
+      echo "MISSING USER.md — apply defaults: autonomy plan-then-go, test harness-required, review always-stage-2."
+    fi
+    echo
+    echo "## Capabilities (machine facts)"
+    echo
+    if [[ -n "$SCRIPTS" && -f "$SCRIPTS/detect-capabilities.sh" ]]; then
+      bash "$SCRIPTS/detect-capabilities.sh" || true
+    else
+      echo "(detect-capabilities.sh not installed)"
+    fi
+    echo
+    echo "## Contract files (read, do not paste)"
+    echo
+    for ref in testing.md quality.md ui.md slop.md scaffold.md ceremony.md classify.md failures.md; do
+      for d in \
+        "$ROOT/.agents/skills/erixpo/references" \
+        "$ROOT/.claude/skills/erixpo/references" \
+        "$ROOT/.cursor/skills/erixpo/references" \
+        "$PACK/skills/erixpo/references"
+      do
+        if [[ -f "$d/$ref" ]]; then
+          echo "- $d/$ref"
+          break
+        fi
+      done
+    done
     if [[ -f "$ROOT/.erixpo/lessons.md" ]]; then
       echo
       echo "## Lessons"
@@ -181,7 +223,40 @@ case "$cmd" in
       echo
       echo "## worktrees"
       cat "$ROOT/.erixpo/worktrees.jsonl"
+      python3 - "$ROOT/.erixpo/worktrees.jsonl" <<'PY' || true
+import json, os, sys
+path = sys.argv[1]
+warn = 0
+for raw in open(path, encoding="utf-8"):
+    raw = raw.strip()
+    if not raw:
+        continue
+    try:
+        row = json.loads(raw)
+    except json.JSONDecodeError:
+        continue
+    st = row.get("status") or ""
+    p = row.get("path") or ""
+    ident = row.get("id") or "?"
+    if st in ("live", "merged") and p and os.path.isdir(p):
+        print(f"WARN: worktree {ident} status={st} still on disk: {p}", file=sys.stderr)
+        print(f"      bin/erixpo close --id {ident}", file=sys.stderr)
+        warn += 1
+    elif st == "merged":
+        print(f"WARN: {ident} is merged but not closed. bin/erixpo close --id {ident}", file=sys.stderr)
+        warn += 1
+if warn:
+    print(f"WARN: {warn} worktree(s) need close — leftover checkouts clutter the machine.", file=sys.stderr)
+PY
     fi
+    ;;
+  classify)
+    CS="$(resolve_script classify-signals.py)"
+    python3 "$CS" "${SEARCH_Q[@]+"${SEARCH_Q[@]}"}"
+    ;;
+  capabilities)
+    DC="$(resolve_script detect-capabilities.sh)"
+    bash "$DC"
     ;;
   check)
     CHECK="$(read_check)"
