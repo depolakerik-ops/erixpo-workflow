@@ -1,15 +1,31 @@
 {
   "name": "erixpo-workflow",
+  "description": "Adaptive autonomous software factory. One command: /erixpo.",
   "owner": {
-    "name": "Erixpo"
+    "name": "Erixpo",
+    "url": "https://github.com/depolakerik-ops"
   },
   "plugins": [
     {
       "name": "erixpo-workflow",
       "source": "./",
-      "description": "Adaptive autonomous factory: one /erixpo entry, research, plan, quality-gated build loop.",
-      "version": "0.1.0",
-      "author": { "name": "Erixpo" }
+      "description": "Adaptive autonomous workflow: one /erixpo entry, research, plan, quality-gated loop, repo memory.",
+      "version": "0.3.0",
+      "author": {
+        "name": "Erixpo"
+      },
+      "category": "development",
+      "keywords": [
+        "erixpo",
+        "workflow",
+        "autonomous",
+        "factory",
+        "skills",
+        "agent-skills"
+      ],
+      "skills": "./skills",
+      "commands": "./commands",
+      "agents": "./agents"
     }
   ]
 }
