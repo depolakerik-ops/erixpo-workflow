@@ -1,6 +1,6 @@
 # Motion
 
-Nothing moves unless it is on this list.
+Nothing moves unless it is on this list. `remotion` changes start here, then grep durations / easings in `theme_file` and product code.
 
 ## Scale
 | Token | Duration | Use |
@@ -17,4 +17,4 @@ Fade, short translate (≤16px), height expand, accent color.
 Bounce-everywhere, infinite pulse, large parallax, autoplay loops, different easing per screen.
 
 ## Reduced motion
-instant or short fade only.
+instant or short fade only. No large parallax. Honor the platform flag (`prefers-reduced-motion`, iOS Reduce Motion, etc.).

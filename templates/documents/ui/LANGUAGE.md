@@ -1,7 +1,7 @@
 # Design language
 
 Status: draft
-Surface:
+Surface: web | ios | android | macos | windows | tui | slides | print
 Direction:
 References the user liked:
 
@@ -14,13 +14,18 @@ sparse marketing | comfortable product | dense tool | native platform
 ## Hierarchy
 What is primary. What must never compete.
 
-## Anti-slop
-What this product will not use.
-
 ## Platform guide
+Live docs for this surface (HIG / Material / Fluent / …). Not a web kit on a native app.
+
+## Anti-slop
+Banned defaults for **this** surface. Pack list while editing the pack: `skills/erixpo/references/slop.md`. In a target repo, copy a short list here — do not leave a pointer to a pack path that will not exist.
+
+-
 
 ## Source of truth
 - [tokens.md](tokens.md)
+- [layout.md](layout.md)
+- [mapping.md](mapping.md)
 - [motion.md](motion.md)
 - [components.md](components.md)
 - [screens.md](screens.md)

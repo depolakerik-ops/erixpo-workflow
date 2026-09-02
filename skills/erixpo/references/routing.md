@@ -1,21 +1,41 @@
 # Routing rules
 
-Use this when `/erixpo` input is messy.
+Use this after classify, when `/erixpo` input is messy. Do **not** first-match a synonym.
 
-## Priority (first match wins)
+Protocol and schema: [classify.md](classify.md). Write `.erixpo/classify.md` before loading a track.
 
-1. Missing project brain (`AGENTS.md` absent and `.erixpo/` absent) → init, keep the original user sentence for after init.
-2. Explicit alias in the message: init, auto, feature, fix, review, docs, work, learn, search, ui, uninstall.
-2b. Look / theme / mockup / design language / spacing / font / color / animation / radius / "make it consistent" → **ui** (`erixpo-ui`). Write or change `documents/ui/` first.
-3. Memory language: remember, don't do that again, save this as a skill, what did we learn → learn.
-3b. History language: what did we do, find the session, prior run, search history → search.
-4. Defect language: broken, crash, error, fail, typo, regression, "doesn't work" → fix.
-5. Audit language: review, audit, inspect, look at, quality, slop, dead code → review.
-6. Additive language on a known *software* stack: add, implement, extra screen, extra endpoint → feature.
-7. Continue language: go, continue, keep going, resume, you have the plan → auto.
-8. Remove / uninstall / get rid of erixpo / "I don't want erixpo anymore" → **uninstall** (`erixpo-uninstall`). Ask pack-only vs memory vs everything. Never delete product source.
-9. Non-product work: automate, assistant, research this, draft, inbox, ops, "help me with" when it is not a product slice → work.
-10. Otherwise → if PROFILE domain is software, new work. If PROFILE is assistant/knowledge/automation, work. If unknown, one question.
+## Order
+
+1. Run classify ([classify.md](classify.md)). If `AGENTS.md` and `.erixpo/` are absent → **init** first, keep the original sentence as the next `jobs:` entry.
+2. If `jobs:` has multiple entries, announce the queue in one line, start the first. Example: `Queue: ui (checkout redesign) → fix (login) → auto. Starting ui.` Do not drop the rest.
+3. Route by **`request_class`** from classify, not by the first synonym in the sentence.
+4. Explicit alias in the message (`init`, `auto`, `feature`, `fix`, `review`, `docs`, `work`, `learn`, `search`, `ui`, `uninstall`) still forces that `request_class` **after** classify of repo / surface / ceremony.
+5. **Look** is decided while filling `request_class` ([classify.md](classify.md)), not by the word "look" winning first:
+   - "look at" / "look over" / "take a look" / "inspect" / "audit" → **review** (unless they also named theme / color / layout / mockup)
+   - "look" + theme / spacing / font / color / animation / radius / mockup / design language / "make it consistent" → **ui**
+   - Bare "look" with no object → one clarifying question, never a command menu
+   - Both review-look and ui-look → **ui**
+6. Defect language → **fix**. Additive on a *known software* stack → **feature**. Continue language → **auto** only if the plan is `approved`. Remove erixpo → **uninstall**. Non-product → **work**. New product / new platform / "I want to build" → **new**.
+7. After the first job's check, continue the remaining `jobs:` in `.erixpo/classify.md` or tell the user what is next.
+
+## request_class → skill
+
+| request_class | skill |
+|---|---|
+| init | `erixpo-init` |
+| new | `erixpo-new` |
+| feature | `erixpo-feature` |
+| fix | `erixpo-fix` |
+| review | `erixpo-review` |
+| ui | `erixpo-ui` |
+| work | `erixpo-work` |
+| learn | `erixpo-learn` |
+| search | `erixpo-search` |
+| auto | `erixpo-auto` |
+| docs | `erixpo-docs` |
+| uninstall | `erixpo-uninstall` |
+
+On a known repo, search sessions before planning. If classify is still torn between two classes and the user asked for only one job, pick the narrower one (fix beats feature beats work beats new).
 
 ## Do not
 
@@ -26,3 +46,4 @@ Use this when `/erixpo` input is messy.
 - Do not start auto on a dirty human checkout without isolate or an explicit "do it here".
 - Do not uninstall by deleting the whole project. Load `erixpo-uninstall` and ask.
 - Do not install skills into every vendor folder. Detect the current agent. Expand later if they switch CLI.
+- Do not drop remaining jobs in `.erixpo/classify.md`.

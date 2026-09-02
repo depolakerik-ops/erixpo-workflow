@@ -9,12 +9,18 @@ Init writes `.erixpo/PROFILE.md` from inventory + one question if needed:
 ```
 # Profile
 class: software | site | automation | research | writing | ops | assistant | mixed
-surfaces: [web, ios, cli, notes, inbox, wiki, …]
+ceremony: full | standard | light
+surfaces:
+  - web | ios | android | windows | macos | desktop | cli | script | tui | notes | inbox | wiki | embedded | assistant | other
 one_liner: …
 check: <command or "n/a — human accepts artifact">
 ```
 
-`class` decides default research and default check. It does not lock the router — a writing repo can still ask for a small script.
+`class` decides default research and default check. `ceremony` decides which files to write — see [ceremony.md](ceremony.md). Neither locks the router: a writing folder can still ask for a small script (light harness, not a SaaS).
+
+`surfaces` is a real list, not a slogan. Do not assume this folder is software. Do not assume web.
+
+Greenfield boilerplate: [scaffold.md](scaffold.md). Wiki set: [ceremony.md](ceremony.md).
 
 ## Scale (BMAD)
 
@@ -30,10 +36,10 @@ Do not run the full product interview for "file these PDFs into documents/".
 
 ## Check per class
 
-Software: test / lint / build command that exits 0.
+Software: a command that **runs tests** (not typecheck-only) and exits 0.
 Site: build + optional browser smoke if the user approved a browser tool.
 Automation: script on a fixture exits 0.
-Research / writing: the file exists and the claims that can be checked are checked.
+Research / writing: the file exists and the claims that can be checked are checked. Light writing may set `check: n/a — human accepts artifact`.
 Assistant / ops: the specified file or folder change is visible.
 
 Never claim done without that evidence.

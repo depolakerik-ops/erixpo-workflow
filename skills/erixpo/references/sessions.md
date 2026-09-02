@@ -10,7 +10,8 @@ No SQLite. No daemon. `grep` / the bundled script is enough.
 |---|---|---|
 | `.erixpo/sessions.jsonl` | What we did |
 | `.erixpo/learnings.jsonl` | What to do differently next time |
-| `.erixpo/worktrees.jsonl` | Isolated checkouts still alive |
+| `.erixpo/worktrees.jsonl` | Isolated checkouts (`live` / `merged` / `closed` / `pruned` / `stale`) |
+| `.erixpo/classify.md` | Current job queue (not a session; do not search it as history) |
 | `.erixpo/refine-log.md` | Memory edits, so a bad one can be reverted |
 
 ## Session line
@@ -68,4 +69,5 @@ Do not dump the whole JSONL into the prompt.
 - Broken JSON line → skip that line, do not abort
 - Query empty → last 8 sessions
 - Two sessions with the same goal and `check: fail` then `pass` → show both, latest first
-- Search is not a substitute for reading PROFILE / MEMORY / USER
+- Search is not a substitute for reading PROFILE / MEMORY / USER / CONSTITUTION
+- `live` worktrees in hits should mention `bin/erixpo close --id` if the job already shipped

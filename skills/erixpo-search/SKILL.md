@@ -4,7 +4,7 @@ description: Search prior erixpo sessions, learnings, and worktrees in this repo
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.3.0"
+  version: "0.6.0"
 ---
 
 # erixpo search
@@ -31,7 +31,7 @@ Prior learning applied: <key> — <insight>
 Live worktree: <id> — <branch> @ <path>
 ```
 
-3. If a hit changes what you will do, say so in one line. Then route back to the original job (fix / feature / auto / review). Search is not a destination.
+3. If a hit changes what you will do, say so in one line. Then route back to the original job (fix / feature / auto / review). Search is not a destination. Live worktrees are status, not a merge cue — the human runs `bin/erixpo close --id` after stage-2 ship.
 
 ## Empty query
 
@@ -43,3 +43,5 @@ User said `/erixpo search` or "what did we do last". Print the last 8 sessions a
 - Do not invent sessions that are not on disk
 - Do not write secrets that someone accidentally logged — redact and offer prune via `erixpo-learn`
 - Do not treat search as a substitute for reading PROFILE / MEMORY / USER
+- Do not treat `classify.md` as session history
+- Do not close or prune a worktree from search; the human runs `bin/erixpo close --id` after review

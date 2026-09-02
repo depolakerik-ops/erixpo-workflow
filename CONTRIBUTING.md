@@ -2,8 +2,12 @@
 
 This pack stays small on purpose.
 
-- New platform? Do not add `erixpo-ios`. Improve research + quality references.
-- New user verb? Add a row to the router table, not a new slash command, unless the flow is truly different.
+- New platform? Do not add `erixpo-ios`. Improve `scaffold.md`, `ui.md` mapping, `slop.md`, and `testing.md`.
+- New user verb? Classify then route. Do not add a second slash command unless the flow is truly different.
+- Protocols live in `skills/erixpo/references/`. Skills point; do not duplicate tables.
 - Keep each SKILL.md under 500 lines.
 - Folder name == `name:` frontmatter.
-- Run `bash tests/validate-skills.sh`.
+- One plan template: `templates/.erixpo/plan.md` and `templates/erixpo/plan.md` must stay the same richness.
+- Canonical machine state file is `state.md`, not a second `state.yaml` writer.
+- Version: README, `install.sh`, skill `metadata.version`, `.claude-plugin/*.json` stay in lockstep.
+- Run `bash check.sh`.

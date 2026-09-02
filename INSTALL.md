@@ -1,6 +1,6 @@
 # Install erixpo workflow
 
-Works with any agent that reads [Agent Skills](https://agentskills.io/specification) (`SKILL.md`).
+Works with any agent that reads [Agent Skills](https://agentskills.io/specification) (`SKILL.md`). Pack version **0.6**.
 
 ## Fast path — paste this to the agent you are in
 

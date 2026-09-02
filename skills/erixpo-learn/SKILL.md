@@ -1,10 +1,10 @@
 ---
 name: erixpo-learn
-description: Self-improvement for this repo. Use when the user says remember this, what did we learn, refine, skillify, search memory, prune learnings, or after a finished erixpo job. Writes typed learnings, updates MEMORY.md and USER.md, may promote a procedure into a project skill. Never silently changes the immutable pack skills.
+description: Self-improvement for this repo. Use when the user says remember this, what did we learn, refine, skillify, search memory, prune learnings, or after a finished erixpo job. Writes typed learnings, updates MEMORY.md and USER.md (taste/autonomy corrections), may promote a procedure into a project skill. Never silently changes the immutable pack skills.
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.2.0"
+  version: "0.6.0"
 ---
 
 # erixpo learn
@@ -18,7 +18,7 @@ Read [memory rules](../erixpo/references/memory.md) first.
 ```
 .erixpo/PROFILE.md         what THIS repo is for
 .erixpo/MEMORY.md          bounded project facts (keep under ~80 lines)
-.erixpo/USER.md            how THIS human wants to work here
+.erixpo/USER.md            adaptation engine — how THIS human wants to work here
 .erixpo/learnings.jsonl    append-only typed learnings
 .erixpo/sessions.jsonl     one line per finished job
 .erixpo/refine-log.md      evidence + rollback notes
@@ -71,7 +71,7 @@ Do this at the end of auto / feature / fix / work / review when something non-tr
 1. Append one `sessions.jsonl` line: date, track, goal, check result, lesson keys.
 2. If a new pitfall or pattern was **verified** (check ran, or user confirmed), append one learning.
 3. Same mistake twice → type `pitfall`, confidence +2, and add **one line** to `AGENTS.md` under Invariants if it is a hard rule.
-4. User correction ("no, we don't do it that way") → type `preference` or `pitfall`, source `user-stated`.
+4. User correction ("no, we don't do it that way") → type `preference` or `pitfall`, source `user-stated`. If they corrected **taste or autonomy**, patch `.erixpo/USER.md` (smallest edit) in the same pass — that is the adaptation engine.
 5. Smallest edit. Never rewrite MEMORY.md from scratch.
 
 If nothing new was learned, write that in refine-log and stop. Empty refine is allowed.
@@ -100,3 +100,4 @@ Only when a procedure would take more than three steps next time **and** it is s
 - No silent promotion of skills or MCP servers.
 - Do not grow MEMORY.md past ~80 lines. Prune first.
 - Show "Prior learning applied" when a learning actually changed what you did.
+- Do not invent memories about `CONSTITUTION.md` or `classify.md`. Follow those files; do not fictionalize them into USER/MEMORY.

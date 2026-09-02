@@ -11,3 +11,4 @@ so the next iteration does not repeat it. Keep entries short.
 
 ## Do not
 - Do not paste stack traces. Write the rule the next worker should follow.
+- Taste and autonomy live in USER.md, not here.

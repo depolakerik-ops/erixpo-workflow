@@ -3,45 +3,30 @@
 How to work on **erixpo-workflow itself**.
 
 ## What this is
-Portable skill pack + installer + outer-loop CLI for an adaptive software factory.
+Portable skill pack + installer + outer-loop CLI. Adaptive to the folder it is installed into — not only software, not only web.
 
 ## Check
-There is no product test suite yet. Before you ship a change:
 
 ```bash
-bash -n install.sh
-bash -n bin/erixpo
-bash -n adapters/*.sh
-# every skill folder name must match SKILL.md name:
-python3 - <<'PY'
-import os, re, sys
-root = "skills"
-ok = True
-for name in sorted(os.listdir(root)):
-    skill = os.path.join(root, name, "SKILL.md")
-    if not os.path.isfile(skill):
-        print("missing", skill); ok = False; continue
-    text = open(skill).read()
-    m = re.search(r"^name:\s*(\S+)", text, re.M)
-    if not m or m.group(1) != name:
-        print("name mismatch", name, m.group(1) if m else None); ok = False
-print("ok" if ok else "fail")
-sys.exit(0 if ok else 1)
-PY
+bash check.sh
 ```
+
+That runs bash syntax, skill frontmatter, adapter contract, template presence, and `tests/smoke.sh`.
 
 ## Layout
 - `skills/` — what gets installed into other repos
-- `templates/` — what `/erixpo init` copies into the *target* repo
-- `bin/` + `adapters/` — outer loop
-- `references/` — loaded on demand by skills
+- `templates/` — what `/erixpo init` copies into the *target* repo (ceremony decides which pages)
+- `bin/` + `adapters/` — outer loop (`run`, `review --stage 1`, `close`, `sweep`)
+- `skills/erixpo/references/` — protocols (classify, scaffold, ceremony, ui, slop, testing, worktrees)
 
 ## Isolation
-Unattended loops use `bin/erixpo isolate`. Review is two-stage. Session history lives in `.erixpo/sessions.jsonl`.
+Unattended loops use `bin/erixpo isolate`. After stage-2 `ship` and the user says close, `bin/erixpo close --id` merges and removes the tree. `sweep` finds leftovers. Session history lives in `.erixpo/sessions.jsonl`.
 
 ## Forbidden
 - Do not add a second user-facing slash command. Extend the router.
-- Do not hardcode a web/React stack. Research is live.
+- Do not add `erixpo-ios` / `erixpo-android`. Deepen research + scaffold + slop references.
+- Do not hardcode a web/React stack. Research is live. HTML mockups are for web surfaces.
 - Do not commit secrets.
 - Do not rewrite skills into vendor-specific formats.
 - Do not auto-merge a worktree onto main.
+- Do not leave merged worktrees on disk; close them.

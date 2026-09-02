@@ -43,6 +43,8 @@ Commands:
   worktrees list isolated trees
   merge     merge an isolated branch into the current branch (no push)
   prune     remove an isolated worktree
+  close     merge if needed, then remove worktree + branch
+  sweep     report leftover trees/branches; --apply cleans safe ones
   search    search sessions / learnings / worktrees
   review    run mechanical stage-1 review (stage 2 is a different agent session)
 
@@ -54,11 +56,15 @@ Options for run:
   --no-isolate     run in this checkout
   --slug NAME      worktree slug
 
-Options for isolate / merge / prune:
+Options for isolate / merge / prune / close / sweep:
   --slug NAME
   --id ID
   --delete-branch
   --with-env       copy .env.example only
+  --keep           merge/close: keep worktree and branch
+  --keep-branch    close: remove worktree, keep branch
+  --no-merge       close: only if already merged or contained
+  --apply          sweep: mark stale, prune, delete dead merged branches
 
 Options for search:
   --kind all|sessions|learnings|worktrees
@@ -100,24 +106,11 @@ write_loop_prompt() {
       cat "$ROOT/templates/PROMPT.md"
     elif [[ -f "$ROOT/.erixpo/pack-templates/PROMPT.md" ]]; then
       cat "$ROOT/.erixpo/pack-templates/PROMPT.md"
+    elif [[ -f "$PACK/templates/PROMPT.md" ]]; then
+      cat "$PACK/templates/PROMPT.md"
     else
       cat <<'INNER'
-You are a factory worker. Fresh context. Disk is memory.
-
-1. Read AGENTS.md, documents/, .erixpo/, git status.
-2. Search .erixpo/sessions.jsonl and learnings.jsonl for the files you will touch.
-3. If the check command already passes and the current slice is done, print ERIXPO_DONE and exit.
-4. Otherwise do THE SINGLE next incomplete slice.
-5. Handle the edge cases listed for that slice. Read failures.md if installed.
-6. Run the check command.
-7. If it fails, fix only that failure.
-8. Update documents and progress.html.
-9. If the same class of mistake repeats three times, stop and write a pitfall. Do not burn the budget.
-10. Commit real progress on this branch only.
-11. Exit. The outer loop will start you again.
-
-Never print ERIXPO_DONE unless the check passed in THIS iteration.
-Never merge onto the user's main branch.
+Follow erixpo-auto + quality.md + testing.md + ui.md; never ERIXPO_DONE without check in THIS iteration; never merge to main.
 INNER
     fi
     echo
@@ -143,6 +136,10 @@ shift || true
 ID=""
 DELETE_BRANCH=0
 WITH_ENV=0
+KEEP=0
+KEEP_BRANCH=0
+NO_MERGE=0
+APPLY=0
 SEARCH_Q=()
 
 while [[ $# -gt 0 ]]; do
@@ -156,6 +153,10 @@ while [[ $# -gt 0 ]]; do
     --id) ID="$2"; shift 2 ;;
     --delete-branch) DELETE_BRANCH=1; shift ;;
     --with-env) WITH_ENV=1; shift ;;
+    --keep) KEEP=1; shift ;;
+    --keep-branch) KEEP_BRANCH=1; shift ;;
+    --no-merge) NO_MERGE=1; shift ;;
+    --apply) APPLY=1; shift ;;
     --kind) KIND="$2"; shift 2 ;;
     --stage) STAGE="$2"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
@@ -187,13 +188,17 @@ case "$cmd" in
     echo "check: $CHECK"
     bash -lc "$CHECK"
     ;;
-  isolate|worktrees|merge|prune)
+  isolate|worktrees|merge|prune|close|sweep)
     WT="$(resolve_script worktree.sh)"
     extra=()
     [[ -n "$SLUG" && "$cmd" == isolate ]] && extra+=(--slug "$SLUG")
     [[ "$WITH_ENV" -eq 1 ]] && extra+=(--with-env)
     [[ -n "$ID" ]] && extra+=(--id "$ID")
     [[ "$DELETE_BRANCH" -eq 1 ]] && extra+=(--delete-branch)
+    [[ "$KEEP" -eq 1 ]] && extra+=(--keep)
+    [[ "$KEEP_BRANCH" -eq 1 ]] && extra+=(--keep-branch)
+    [[ "$NO_MERGE" -eq 1 ]] && extra+=(--no-merge)
+    [[ "$APPLY" -eq 1 ]] && extra+=(--apply)
     bash "$WT" "$cmd" "${extra[@]+"${extra[@]}"}"
     ;;
   search)
@@ -214,11 +219,13 @@ case "$cmd" in
       echo "missing adapter $ADAPTER" >&2
       exit 1
     fi
+    iso_id=""
     if [[ "$ISOLATE" -eq 1 ]]; then
       WT="$(resolve_script worktree.sh)"
       iso_out="$(bash "$WT" isolate --slug "$SLUG")"
       echo "$iso_out"
       new_root="$(printf '%s\n' "$iso_out" | awk -F': ' '/^path:/{print $2; exit}')"
+      iso_id="$(printf '%s\n' "$iso_out" | awk -F': ' '/^id:/{print $2; exit}')"
       if [[ -z "$new_root" || ! -d "$new_root" ]]; then
         echo "isolate did not return a usable path" >&2
         exit 1
@@ -244,7 +251,11 @@ case "$cmd" in
       if bash -lc "$CHECK"; then
         echo "check passed on iteration $i"
         echo "$(date -Iseconds) passed iteration=$i" >> "$ROOT/.erixpo/loop.log"
-        echo "next: two-stage review in this tree, then bin/erixpo merge --id <id> from the human checkout"
+        if [[ -n "$iso_id" ]]; then
+          echo "next: two-stage review in this tree, then bin/erixpo close --id $iso_id from the human checkout"
+        else
+          echo "next: two-stage review in this tree"
+        fi
         exit 0
       fi
       i=$((i + 1))

@@ -4,14 +4,14 @@ description: Two-stage review of an erixpo project or slice. Use when the user s
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.3.0"
+  version: "0.6.0"
 ---
 
 # erixpo review
 
 Two stages. The implementer does not mark their own work done.
 
-Read [review.md](../erixpo/references/review.md) and [failures.md](../erixpo/references/failures.md). If the slice ran in a worktree, read [worktrees.md](../erixpo/references/worktrees.md) and review **that** tree.
+Read [review.md](../erixpo/references/review.md) and [failures.md](../erixpo/references/failures.md). Testing protocol is [testing.md](../erixpo/references/testing.md). If the slice ran in a worktree, read [worktrees.md](../erixpo/references/worktrees.md) and review **that** tree.
 
 ## Scope
 
@@ -29,9 +29,11 @@ bin/erixpo review --stage 1
 bash scripts/review-stage1.sh
 ```
 
-If the script is not on disk yet, do the same checks by hand: run the real `check:` command, reject dummy gates, reject empty diffs on a "done" slice, reject secrets, reject `TODO: implement` / lorem / skipped tests in the diff, reject wiki pages that claim missing features.
+The script inspects the slice against the merge base, not only a dirty tree. Read `.erixpo/REVIEW-stage1.md` (BASE, pairing skip reason).
 
-Write the Stage 1 section. If stage 1 fails, stop. Do not start stage 2 on a lied gate.
+If the script is not on disk yet, do the same checks by hand: run the real `check:` command, reject dummy gates, reject product-without-tests since BASE, reject secrets, reject `TODO: implement` / lorem / tautology asserts, reject wiki pages that claim missing features.
+
+Write the Stage 1 section of `.erixpo/REVIEW.md` from the template. If stage 1 fails, stop. Do not start stage 2 on a lied gate.
 
 ## Stage 2 — adversarial
 
@@ -41,17 +43,19 @@ Look for:
 
 - Edge cases missing from the happy path (empty, error, permission, offline, first-run, huge input, small screen)
 - Dead code and unused deps you are sure about
-- Tests that cannot fail / tests that were gamed
-- UI slop and platform-guide violations
+- Tests that cannot fail / tests that were gamed / missing harness / typecheck posing as tests
+- UI slop against `documents/ui/LANGUAGE.md`, [slop.md](../erixpo/references/slop.md), `documents/ui/layout.md`
 - Accessibility and empty/error/loading states
 - Security: secrets, authz holes, injection, unsafe defaults
-- Docs drift
+- Wiki drift and ceremony mismatch
 - Merge risk against other live worktrees
 
 ## Output
 
-Write `.erixpo/REVIEW.md` and `documents/review-latest.md` using the template in [review.md](../erixpo/references/review.md).
+Write `.erixpo/REVIEW.md` and `documents/review-latest.md` using the template (stage-1 pointer, visual/UI notes).
 
 Verdict is one of: `ship` | `fix-blockers` | `keep-iterating`.
 
-Do not edit product code in this skill. Offer `/erixpo fix` for blockers after they say go. If the work lived in a worktree, offer `bin/erixpo merge --id <id>` only on `ship`.
+Do not edit product code in this skill. Offer `/erixpo fix` for blockers after they say go.
+
+On `ship` and a worktree: offer `bin/erixpo close --id <id>` (merge + prune). `bin/erixpo merge --id <id>` is still valid. Do not merge until they say merge.

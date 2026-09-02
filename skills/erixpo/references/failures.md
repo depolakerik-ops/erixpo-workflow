@@ -13,7 +13,7 @@ A failure is anything that lets the agent *say* it finished while the user still
 | Loop | Same error class 3 times, or iteration cap | Stop. Learn. Ask |
 | Memory | Sessions/learnings ignored or invented | Search first. Evidence or user said it |
 | Review | Implementer marks own work done | Stage-2 in a different session |
-| Merge | Worktree "success" never lands on the branch the user uses | Explicit merge after review. No auto-merge to main |
+| Merge | Worktree "success" never lands, or it lands but the sibling checkout/branch/jsonl row stay on disk | Explicit merge/close after review. No auto-merge to main. sweep --apply for leftovers |
 | Scope | Fix becomes a rewrite; optional extras sneak in | One slice. Optional list stays optional |
 | Secrets | Key in git, chat, REVIEW.md, sessions.jsonl | Stop. Purge. Rotate if it was real |
 | Docs | Wiki claims a feature the code does not have | Wiki follows code, not the plan |
@@ -28,7 +28,7 @@ A failure is anything that lets the agent *say* it finished while the user still
 - Git refuses two worktrees on the same branch. Each run gets `erixpo/<date>-<slug>`.
 - Not a git repo → isolation is impossible. Say so. Do not invent a fake worktree.
 - Nested worktree inside another worktree → refuse.
-- Crash mid-run leaves a worktree and a branch. `bin/erixpo prune` is how they die, not `rm -rf` of `.git`.
+- Crash mid-run leaves a worktree and a branch. `bin/erixpo sweep` finds it. `bin/erixpo close --id` or `bin/erixpo sweep --apply` is how leftovers die, not `rm -rf` of `.git`.
 
 See [worktrees.md](worktrees.md).
 
@@ -73,9 +73,10 @@ See [review.md](review.md).
 
 ## Merge and shipping
 
-- Do not merge an isolated branch onto the user's current branch without them saying merge / ship / land it.
+- Do not merge an isolated branch onto the user's current branch without them saying merge / ship / land / close it.
 - Conflict ≠ "take ours". Stop and show the files.
 - Passing check in the worktree does not prove the main checkout still builds (ignored files differ).
+- Success that never lands, and success that lands but leaves the sibling checkout, `erixpo/*` branch, and jsonl row, are both merge failures. `bin/erixpo close --id` is how they die. `bin/erixpo sweep` reports leftovers; `sweep --apply` marks stale and deletes fully merged `erixpo/*` branches with no worktree. Never `rm -rf` `.git`. Never auto-merge to main. Never auto-close.
 
 ## Scope and product
 
@@ -84,7 +85,7 @@ See [review.md](review.md).
 - Optional extras (auth, analytics, share-sheet) added without asking.
 - Init overwrites a real README.
 - Sub-agents on overlapping files.
-- Platform UI slop (purple gradient, Inter-everywhere, generic hero cards) on a product that has a design language.
+- Platform UI slop — the tutorial default for **this surface** ([slop.md](slop.md)), or HTML treated as iOS/Android source of truth.
 
 ## Secrets and safety
 
@@ -97,6 +98,6 @@ See [review.md](review.md).
 1. Stop the loop.
 2. Write what failed in `.erixpo/progress.md` and one sessions.jsonl line with `check: fail`.
 3. If the working tree is the user's: do not reset --hard. Isolate or stash only with permission.
-4. If a worktree is rotten: prune it, keep the branch until they say delete.
+4. If a worktree is rotten: `bin/erixpo close --id` (lands if needed, then drops tree + branch) or `prune` (keeps the branch unless `--delete-branch`). `bin/erixpo sweep --apply` for stale rows and dead merged `erixpo/*` branches. Do not `rm -rf` `.git`.
 5. If a learning was wrong: `status: retracted`, do not delete the line.
 6. Then `/erixpo fix` or a new plan slice. Not a rewrite of the pack skills.

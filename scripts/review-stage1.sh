@@ -5,6 +5,8 @@ set -euo pipefail
 ROOT="$(pwd)"
 fail=0
 notes=()
+BASE=""
+BASE_SRC=""
 
 note() { notes+=("$1"); }
 bad() { notes+=("FAIL: $1"); fail=1; }
@@ -12,7 +14,7 @@ bad() { notes+=("FAIL: $1"); fail=1; }
 read_field() {
   local file="$1" key="$2"
   [[ -f "$file" ]] || return 0
-  grep -E "^${key}:" "$file" 2>/dev/null | head -1 | sed "s/^${key}:[[:space:]]*//" || true
+  grep -E "^${key}:" "$file" 2>/dev/null | head -1 | sed "s/^${key}:[[:space:]]*//" | sed 's/[[:space:]]*$//' || true
 }
 
 CHECK="$(read_field "$ROOT/.erixpo/stack.md" check)"
@@ -22,7 +24,7 @@ fi
 
 CLASS=""
 if [[ -f "$ROOT/.erixpo/PROFILE.md" ]]; then
-  CLASS="$(grep -E '^class:' "$ROOT/.erixpo/PROFILE.md" 2>/dev/null | head -1 | sed 's/^class:[[:space:]]*//' | tr -d ' ' || true)"
+  CLASS="$(grep -E '^class:' "$ROOT/.erixpo/PROFILE.md" 2>/dev/null | head -1 | sed 's/^class:[[:space:]]*//' | awk '{print $1}' | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]' || true)"
 fi
 
 if [[ -z "$CHECK" ]]; then
@@ -68,39 +70,104 @@ if git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   fi
 
   docs_only=0
+  skip_pair=0
   case "$CLASS" in
     writing|research|ops|assistant) docs_only=1 ;;
   esac
   [[ "${ERIXPO_DOCS_ONLY:-0}" == "1" ]] && docs_only=1
+  [[ "${ERIXPO_SKIP_TEST_PAIRING:-0}" == "1" ]] && skip_pair=1
 
-  if [[ "$docs_only" -eq 0 ]]; then
+  if git -C "$ROOT" rev-parse --verify HEAD >/dev/null 2>&1; then
+    if [[ -n "${ERIXPO_REVIEW_BASE:-}" ]]; then
+      if b="$(git -C "$ROOT" rev-parse --verify "${ERIXPO_REVIEW_BASE}^{commit}" 2>/dev/null)"; then
+        BASE="$b"
+        BASE_SRC="ERIXPO_REVIEW_BASE"
+      else
+        note "ERIXPO_REVIEW_BASE is set but is not a commit"
+      fi
+    fi
+    if [[ -z "$BASE" ]]; then
+      for ref in origin/HEAD origin/main origin/master main master; do
+        if git -C "$ROOT" rev-parse --verify "$ref" >/dev/null 2>&1; then
+          if b="$(git -C "$ROOT" merge-base HEAD "$ref" 2>/dev/null)"; then
+            headsha="$(git -C "$ROOT" rev-parse HEAD)"
+            # Local main/master == HEAD is this branch; range would be empty. Fall through.
+            if [[ "$b" == "$headsha" && ( "$ref" == "main" || "$ref" == "master" ) ]]; then
+              continue
+            fi
+            BASE="$b"
+            BASE_SRC="merge-base HEAD $ref"
+            break
+          fi
+        fi
+      done
+    fi
+    if [[ -z "$BASE" ]] && git -C "$ROOT" rev-parse --verify HEAD~1 >/dev/null 2>&1; then
+      BASE="$(git -C "$ROOT" rev-parse HEAD~1)"
+      BASE_SRC="HEAD~1"
+    fi
+  fi
+  if [[ -n "$BASE" ]]; then
+    note "review BASE: $BASE ($BASE_SRC)"
+  else
+    note "review BASE: none — pairing uses dirty/staged only"
+  fi
+
+  if [[ "$docs_only" -eq 1 ]]; then
+    if [[ -n "$CLASS" ]]; then
+      note "docs/non-software class ($CLASS) — skipped test-file pairing"
+    else
+      note "ERIXPO_DOCS_ONLY=1 — skipped test-file pairing"
+    fi
+  fi
+  if [[ "$skip_pair" -eq 1 ]]; then
+    note "ERIXPO_SKIP_TEST_PAIRING=1 — skipped test-file pairing"
+  fi
+
+  if [[ "$docs_only" -eq 0 && "$skip_pair" -eq 0 ]]; then
     changed="$(git -C "$ROOT" diff --name-only HEAD 2>/dev/null || true)"
-    changed="${changed}"$'
-'"$(git -C "$ROOT" diff --name-only --cached 2>/dev/null || true)"
+    changed="${changed}"$'\n'"$(git -C "$ROOT" diff --name-only --cached 2>/dev/null || true)"
+    if [[ -n "$BASE" ]]; then
+      changed="${changed}"$'\n'"$(git -C "$ROOT" diff --name-only "${BASE}..HEAD" 2>/dev/null || true)"
+    fi
     product=0
     tests=0
     while IFS= read -r f; do
       [[ -z "$f" ]] && continue
       case "$f" in
         documents/*|*.md|.erixpo/*|AGENTS.md|CLAUDE.md|README.md) continue ;;
-        *test*|*spec*|*Test*|*Spec*|tests/*|__tests__/*|*_test.*|*.test.*|*.spec.*) tests=1 ;;
+        *test*|*spec*|*Test*|*Spec*|*Tests*|*UITests*|tests/*|__tests__/*|*/androidTest/*|*androidTest*|*_test.*|*.test.*|*.spec.*|*_spec.*) tests=1 ;;
         *) product=1 ;;
       esac
     done <<< "$changed"
     if [[ "$product" -eq 1 && "$tests" -eq 0 ]]; then
-      bad "product files changed with no test/spec file in the diff (set ERIXPO_DOCS_ONLY=1 if this slice is not software)"
+      bad "product files changed with no test/spec file in the slice range (set ERIXPO_DOCS_ONLY=1 or ERIXPO_SKIP_TEST_PAIRING=1 if this slice is not software)"
     fi
-  else
-    note "docs/non-software class — skipped test-file pairing"
   fi
 else
   note "not a git repo; skipped diff/secret filename scan"
+  note "review BASE: none — not a git repo"
 fi
 
+# Built from pieces so this file does not contain the tautologies it greps for.
+_t=true
+_T=True
+dummy_re="expect[(]${_t}[)]"
+dummy_re="${dummy_re}|assert ${_T}|assert ${_t}"
+dummy_re="${dummy_re}|assertTrue[(]${_t}[)]|assertTrue[(]${_T}[)]"
+dummy_re="${dummy_re}|assert[(]${_t}[)]|assert[(]${_T}[)]"
+dummy_re="${dummy_re}|XCTAssertTrue[(]${_t}[)]|XCTAssertTrue[(]${_T}[)]"
+dummy_re="${dummy_re}|XCTAssert[(]${_t}[)]|XCTAssert[(]${_T}[)]"
+dummy_re="${dummy_re}|Assert[.]True[(]${_t}[)]|Assert[.]True[(]${_T}[)]"
+dummy_re="${dummy_re}|Assert[.]IsTrue[(]${_t}[)]|Assert[.]IsTrue[(]${_T}[)]"
+dummy_re="${dummy_re}|assert![(]${_t}[)]|assert![(]${_T}[)]"
+dummy_re="${dummy_re}|(^|[^[:alnum:]_])True[(]${_t}[)]|(^|[^[:alnum:]_])True[(]${_T}[)]"
+dummy_re="${dummy_re}|shouldBe[(]${_t}[)]|shouldBe[(]${_T}[)]"
+
 dummy_assert="$(grep -R -I -n --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.erixpo \
-  -E 'expect\(true\)|assert True|assert\(true\)|XCTAssertTrue\(true\)' "$ROOT" 2>/dev/null | head -10 || true)"
+  -E "$dummy_re" "$ROOT" 2>/dev/null | head -10 || true)"
 if [[ -n "$dummy_assert" ]]; then
-  bad "dummy assertion (expect(true) / assert True) found"
+  bad "dummy tautology assertion found"
   note "$dummy_assert"
 fi
 
@@ -117,6 +184,7 @@ mkdir -p "$ROOT/.erixpo"
 {
   echo "## Stage 1"
   echo "Result: $([[ $fail -eq 0 ]] && echo pass || echo fail)"
+  echo "BASE: ${BASE:-none}${BASE_SRC:+ ($BASE_SRC)}"
   echo "Notes:"
   for n in "${notes[@]}"; do
     echo "- $n"

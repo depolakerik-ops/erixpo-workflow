@@ -4,7 +4,7 @@ description: Remove the erixpo workflow from this project after asking what to k
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.4.0"
+  version: "0.6.0"
 ---
 
 # erixpo uninstall
@@ -31,6 +31,8 @@ bash /tmp/erixpo-workflow/install.sh --uninstall --purge --target "$PWD"
 bash /tmp/erixpo-workflow/install.sh --uninstall --purge --purge-worktrees --target "$PWD"
 bash /tmp/erixpo-workflow/install.sh --uninstall --purge --purge-worktrees --purge-docs --target "$PWD"
 ```
+
+`--purge-worktrees` is the bulk path when leaving erixpo. While still using the pack, leftover trees are `bin/erixpo sweep` (report), `bin/erixpo sweep --apply` (stale + dead merged branches), or `bin/erixpo close --id`.
 
 ## 4. Hard rules
 

@@ -5,5 +5,7 @@ language:
 framework:
 ui:
 data:
-check: [exact command, one line]
+test:
+check: [exact command that runs tests, one line]
+install: [how a fresh worktree becomes runnable]
 notes:

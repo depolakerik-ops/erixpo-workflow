@@ -1,31 +1,84 @@
+<!-- WEB ONLY. Native surfaces use mapping.md as the contract.
+     Do not treat this file as iOS / Android / macOS / Windows source of truth.
+     HTML wire on native only if they asked or the host cannot preview — label "wire, not production." -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mockup</title>
+  <title>Mockup — compact + regular</title>
   <style>
+    /* Values copy tokens.md. Compact = default. Regular = min-width matching the `regular` web token. */
     :root {
-      --bg: #f6f4ef; --surface: #fff; --text: #1a1a1a; --text-muted: #5c5c5c;
-      --border: #e2ddd4; --accent: #1f4b3f; --space-3: 16px; --space-4: 24px;
-      --radius-sm: 8px; --radius-md: 12px; --font-ui: ui-sans-serif, system-ui, sans-serif;
+      --bg: #f6f4ef;
+      --surface: #fff;
+      --text: #1a1a1a;
+      --text-muted: #5c5c5c;
+      --border: #e2ddd4;
+      --accent: #1f4b3f;
+      --space-2: 8px;
+      --space-3: 16px;
+      --space-4: 24px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --font-ui: ui-sans-serif, system-ui, sans-serif;
       --duration-fast: 120ms;
+      --bp-regular: 720px; /* tokens.md `regular` web column — change there first */
     }
+    * { box-sizing: border-box; }
     body { margin: 0; font: 16px/1.45 var(--font-ui); background: var(--bg); color: var(--text); }
-    main { max-width: 720px; margin: 0 auto; padding: var(--space-4); }
+    .shell { display: flex; flex-direction: column; min-height: 100vh; }
+    .nav {
+      display: flex; gap: var(--space-3); align-items: center;
+      padding: var(--space-3); border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .nav a { color: var(--text); text-decoration: none; }
+    .nav .brand { font-weight: 600; }
+    .content { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-4); flex: 1; }
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); }
     button { font: inherit; border: 0; border-radius: var(--radius-sm); padding: 10px 16px; background: var(--accent); color: #fff; min-height: 44px; }
     button.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .inspector { display: none; }
+    .compact-only { display: block; color: var(--text-muted); }
+    .regular-only { display: none; color: var(--text-muted); }
+
+    /* Regular: sidebar + main + inspector. Media query length must equal --bp-regular / tokens.md. */
+    @media (min-width: 720px) {
+      .shell { flex-direction: row; align-items: stretch; }
+      .nav {
+        flex-direction: column; align-items: flex-start; width: 220px; flex-shrink: 0;
+        border-bottom: 0; border-right: 1px solid var(--border);
+      }
+      .content { display: grid; grid-template-columns: 1fr 280px; gap: var(--space-4); align-items: start; }
+      .inspector { display: block; }
+      .compact-only { display: none; }
+      .regular-only { display: block; }
+    }
   </style>
 </head>
 <body>
-  <main>
-    <section class="card">
-      <h1>Replace this title</h1>
-      <p>Use the same tokens as tokens.md. Real product words. Empty/error in sibling files.</p>
-      <button type="button">Primary</button>
-      <button type="button" class="secondary">Secondary</button>
-    </section>
-  </main>
+  <div class="shell">
+    <nav class="nav" aria-label="Primary">
+      <span class="brand">Product</span>
+      <a href="#">Home</a>
+      <a href="#">Inbox</a>
+      <a href="#">Settings</a>
+    </nav>
+    <main class="content">
+      <section class="card">
+        <p class="compact-only">Compact — stacked, full width. Nav is a top bar.</p>
+        <p class="regular-only">Regular — sidebar + inspector. Not a 720px card.</p>
+        <h1>Replace this title</h1>
+        <p>Use the same tokens as tokens.md. Real product words. Empty/error in sibling files.</p>
+        <button type="button">Primary</button>
+        <button type="button" class="secondary">Secondary</button>
+      </section>
+      <aside class="card inspector">
+        <h2>Inspector</h2>
+        <p>Regular only. Compact hides this; details live on a stacked screen.</p>
+      </aside>
+    </main>
+  </div>
 </body>
 </html>

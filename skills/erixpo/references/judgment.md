@@ -34,9 +34,9 @@ If the non-obvious option is worse for *this* repo, say so and pick the boring o
 
 ## UI
 
-The box is: Inter, purple gradient, three feature cards, bounce on every button, shadcn defaults unchanged.
+The box is the tutorial default **for this surface** — see [slop.md](slop.md). Inter / purple / three cards is the web box, not the only box. iOS has system-blue + stock List; Android has baseline purple + a column of cards; Mac has an iPhone layout in a desktop window.
 
-Outside the box is: a direction that matches the audience (type-led editorial, brutal tool, native chrome, one accent + paper, data-first). Still write tokens. Still stay consistent. Weird and sloppy are different.
+Outside the box is a direction that matches the audience (type-led editorial, brutal tool, native chrome, one accent + paper, data-first, HIG/Fluent/Material done on purpose). Still write tokens **and** layout. Still stay consistent. Weird and sloppy are different.
 
 ## Autonomy
 

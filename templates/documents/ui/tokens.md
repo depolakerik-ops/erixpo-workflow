@@ -1,6 +1,6 @@
 # Tokens
 
-Change a value here first, then grep the old value out of code and mockups.
+Change a value here first, then grep the old value out of code and mockups. Compile into one `theme_file` per platform ([mapping.md](mapping.md)).
 
 ## Color
 | Token | Value | Use |
@@ -42,3 +42,14 @@ Allowed steps: 4 / 8 / 12 / 16 / 24 / 32 / 48
 | 0 | none | flat |
 | 1 | | resting card |
 | 2 | | popover |
+
+## Breakpoints / size classes
+
+Named tokens. Fill per project. Native uses size classes, not a 720px HTML page.
+
+| Token | Web | iOS | Android | Desktop |
+|---|---|---|---|---|
+| compact | | compact | compact | |
+| regular | | regular | medium / expanded | |
+
+Web column is a CSS length used in `layout.md` and mockups. iOS / Android columns are size-class names. Do not invent a one-off `@media` in a random file.

@@ -1,9 +1,11 @@
 # UI changelog
 
-Newest first. A token change without a row here is incomplete.
+Newest first. A token, layout, motion, or mapping change without a row here is incomplete.
 
-## YYYY-MM-DD — change
+Kind: `token` | `layout` | `motion` | `mapping` | `language`
+
+## YYYY-MM-DD — kind — change
 Why:
 Screens to update:
-Mockups updated:
+Mockups / previews updated:
 Code grep for old value:

@@ -7,12 +7,13 @@ Agnostic: the job might be a site, an app, a script, firmware, a wiki, an inbox 
 ## Order
 
 1. Read what already exists: `AGENTS.md`, `documents/`, README, lockfiles, Xcode/Android/sln, `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, Makefiles. Prefer the repo over a blog post.
-2. Classify **repo domain** and **request** separately. Read PROFILE.md.
+2. Classify **repo domain**, **request**, **surface**, and **ui_change** separately ([classify.md](classify.md)). Read PROFILE.md, USER.md, CONSTITUTION.md.
 3. Live-search this year for each decision that would be expensive to undo:
    - language / runtime
    - app framework or "none"
    - data store or "none"
-   - UI kit / platform guide (see [ui.md](ui.md))
+   - UI kit / platform guide (see [ui.md](ui.md), [slop.md](slop.md))
+   - official **scaffold** command for this surface (see [scaffold.md](scaffold.md))
    - test runner and how this surface is actually tested (see [testing.md](testing.md))
    - lint/format/typecheck
    - build / package / deploy if they asked to ship
@@ -25,10 +26,11 @@ Agnostic: the job might be a site, an app, a script, firmware, a wiki, an inbox 
 
 ```
 ## Tools
+- Scaffold (official init):
 - Build:
 - Test:
 - Lint:
-- UI:
+- UI (theme_file / mapping):
 - Deploy:
 - Why these and not the fashionable alternative:
 ```
@@ -39,9 +41,11 @@ Cite current-year sources. If research is thin, say so.
 
 - Landing page does not get a database "just in case".
 - Robot / embedded does not get Tailwind.
+- SwiftUI / Android / Windows / macOS do not get a web scaffold unless the surface is web.
 - SwiftUI app does not get Playwright as the primary test story.
-- Writing / ops repos do not get a SaaS stack.
+- Writing / ops / assistant repos do not get a SaaS stack.
 - Do not lock a stack because it was fashionable last year.
 - Search MEMORY.md / learnings.jsonl first. `Prior learning applied` if a pitfall exists.
+- Greenfield product: research the official init, then slice 0 **runs** it ([scaffold.md](scaffold.md)).
 
 If you looked for a skill or MCP and found nothing, one line in `.erixpo/refine-log.md`: what you searched, why nothing fit.
