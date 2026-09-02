@@ -10,13 +10,12 @@ from __future__ import annotations
 import argparse
 import sys
 
-FULL_CLASS = {"new", "init"}
-NARROW_CLASS = {"feature", "work"}
-SKIP_CLASS = {"fix", "learn", "search", "docs", "uninstall", "review", "auto"}
-
-FULL_UI = {"create", "relanguage", "recompose"}
-NARROW_UI = {"reflow", "remotion", "new-screen"}
-SKIP_UI = {"retoken", "consistency", "none", ""}
+# Building (any field) always live-searches. Only non-build work skips.
+BUILD_FULL = {"new", "init"}
+BUILD_NARROW = {"feature", "work", "auto"}
+NONBUILD = {"fix", "learn", "search", "docs", "uninstall", "review"}
+UI_FULL = {"create", "relanguage", "recompose"}
+UI_NARROW = {"reflow", "remotion", "new-screen", "retoken", "consistency"}
 
 
 def scope(
@@ -31,43 +30,40 @@ def scope(
     rc = (request_class or "").strip().lower()
     ui = (ui_change or "none").strip().lower()
 
-    if memory_hit and rc in SKIP_CLASS and ui in SKIP_UI and not new_infra and not unknown_api:
-        return "skip"
-    if rc in FULL_CLASS:
+    if rc in BUILD_FULL:
         return "full"
-    if ui in FULL_UI:
+    if ui in UI_FULL:
         return "full"
-    if user_named_ref and rc in {"ui", "new", "feature"}:
-        return "narrow" if rc != "new" else "full"
-    if new_infra or unknown_api:
+    if rc == "ui" and ui in UI_NARROW:
         return "narrow"
-    if rc == "ui" and ui in NARROW_UI:
+    if rc in BUILD_NARROW:
         return "narrow"
-    if rc in NARROW_CLASS:
-        return "narrow" if (new_infra or unknown_api or ui in FULL_UI | NARROW_UI) else "skip"
-    if rc in SKIP_CLASS:
-        return "skip"
-    if rc == "ui" and ui in SKIP_UI:
+    if rc in NONBUILD:
         return "skip"
     if rc == "unknown":
         return "narrow"
-    return "skip"
+    if new_infra or unknown_api or user_named_ref:
+        return "narrow"
+    # memory_hit never skips a build; only non-build can skip
+    if memory_hit and rc in NONBUILD:
+        return "skip"
+    return "narrow"
 
 
 FIXTURES = [
     ({"request_class": "new"}, "full"),
+    ({"request_class": "init"}, "full"),
     ({"request_class": "fix"}, "skip"),
-    ({"request_class": "auto"}, "skip"),
-    ({"request_class": "feature"}, "skip"),
+    ({"request_class": "auto"}, "narrow"),
+    ({"request_class": "feature"}, "narrow"),
     ({"request_class": "feature", "new_infra": True}, "narrow"),
-    ({"request_class": "feature", "unknown_api": True}, "narrow"),
-    ({"request_class": "ui", "ui_change": "retoken"}, "skip"),
+    ({"request_class": "ui", "ui_change": "retoken"}, "narrow"),
     ({"request_class": "ui", "ui_change": "relanguage"}, "full"),
     ({"request_class": "ui", "ui_change": "recompose"}, "full"),
     ({"request_class": "ui", "ui_change": "reflow"}, "narrow"),
     ({"request_class": "learn"}, "skip"),
-    ({"request_class": "work"}, "skip"),
-    ({"request_class": "work", "unknown_api": True}, "narrow"),
+    ({"request_class": "review"}, "skip"),
+    ({"request_class": "work"}, "narrow"),
     ({"request_class": "unknown"}, "narrow"),
 ]
 

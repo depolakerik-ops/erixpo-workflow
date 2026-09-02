@@ -13,7 +13,7 @@ Same quality bar as interactive `/erixpo auto`. USER.md taste and autonomy win.
 2. If the check command already passes AND the current slice is done (plan status), print `ERIXPO_DONE` and exit.
 
 3. Otherwise do THE SINGLE next incomplete slice. If slice 0 scaffold is open, do that before product chrome (read `scaffold.md` if present in pack-templates or skills).
-   Unknown API / new infra this slice: live-search **this year** (official docs + comparables only if UI relanguage/recompose). Intensity from `bin/erixpo research-scope`. Skip search for typos and known CONSTITUTION patterns. If USER is not ask-every-slice, pick the official default and continue.
+   Building this slice (any field): live-search **this year** for *this* job (`research-scope` is narrow on feature/auto/work, full on new/relanguage). Official docs + similar work in this field. Skip search only for typo/fix/review. If USER is not ask-every-slice, pick the official default and continue.
 
 4. Missing test harness → create it this slice. Do not ask permission to have tests.
 

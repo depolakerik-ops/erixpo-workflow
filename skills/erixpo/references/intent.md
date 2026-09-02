@@ -58,6 +58,7 @@ The job might not be an app. Infer *that*:
 - “file these PDFs” → work, light, no stack
 - “a script that renames invoices” → automation, tiny harness
 - “SwiftUI app like Things” → new, surface ios, comparables include Things, not a website
-- “make checkout calmer” → ui retoken, **skip** stack research
+- “make checkout calmer” → ui retoken, **narrow** research (color/type for this surface this year), not a new stack
+- Any **build** (app, script, automation, screen) → research **this field**. Field never licenses skipping.
 
 Wrong surface is the failure mode. Prefer one clarifying question over a web scaffold on a native job.

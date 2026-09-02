@@ -36,7 +36,7 @@ If they need a script in a notes repo, scaffold a tiny Python/shell harness ([sc
 ## Loop
 
 1. **Orient.** What is this folder for (PROFILE)? What does this human prefer (USER)? What is already true (MEMORY, wiki)?
-2. **Clarify once.** Infer first ([intent.md](../erixpo/references/intent.md)). Goal, artifact, "done looks like". Skip questions that do not change the work. Live-search only if `research-scope --class work` is narrow (unknown tool) — not for "summarize these notes".
+2. **Clarify once.** Infer first ([intent.md](../erixpo/references/intent.md)). Goal, artifact, "done looks like". If you are **building** an artifact (script, pipeline, generated file), `research-scope --class work` is **narrow**: current-year practice for *that* kind of work. Summarize-existing-notes can stay thin; creating something new always searches.
 3. **Plan short.** Write `.erixpo/plan.md` with slices (goal, slices, check). Each slice has a check. For non-code jobs the check may be:
    - a script that exits 0
    - "file exists at path P and contains X"

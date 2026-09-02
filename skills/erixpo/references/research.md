@@ -1,8 +1,6 @@
 # Research pass
 
-Live-search **this job, this year, this surface** — only when it is needed. Write `.erixpo/research.md`.
-
-Agnostic: site, app, script, firmware, wiki, inbox, slide, assistant. Do not start from a web template.
+If it is **building** something, live-search **this field, this year**. Field does not matter: SwiftUI, Kotlin, Windows, a Python script, an automation, a slide, an inbox pipeline. Do not start from a web template. Write `.erixpo/research.md`.
 
 Intensity: `bin/erixpo research-scope --class <request_class> --ui <ui_change>` → `skip` | `narrow` | `full` ([intent.md](intent.md) first).
 
@@ -10,9 +8,11 @@ Intensity: `bin/erixpo research-scope --class <request_class> --ui <ui_change>` 
 
 | Intensity | When | Do |
 |---|---|---|
-| **skip** | Typo, rename, known-stack feature with no new API, `retoken` / `consistency`, continue auto, MEMORY already answers | Do not search. One line in refine-log if you almost searched. |
-| **narrow** | One new library/API, `reflow` / `remotion` / `new-screen`, user said “like X”, work that needs a tool | Official docs for *that* thing + 1 comparable if they named a reference. Cap: a handful of searches. |
-| **full** | New product, new surface, scaffold, `relanguage` / `recompose` / `create` UI | Stack + official init + comparables + practices + tests + judgment four lines. |
+| **skip** | Not building: typo/fix, review, search history, learn, uninstall, docs-only | No web. |
+| **narrow** | **Any build that is not a new product:** feature, auto slice, work/script/automation, UI retoken/reflow/new-screen | Official current-year docs **for this field** + 1–2 similar things (apps, repos, pipelines, posts) for *this* job. Cite URLs. |
+| **full** | New product, new surface, scaffold, UI `create` / `relanguage` / `recompose` | Stack + official init + 2–3 comparables + practices + tests + judgment four lines. |
+
+Building always researches. A “known stack” feature still gets a **narrow** pass for *that feature* in *that field* (how share-sheet is done on iOS this year, how Compose navigation is done, how pytest fixtures look now). MEMORY can shorten the search; it cannot skip it.
 
 If intensity is `skip`, stop reading this file.
 
@@ -23,8 +23,8 @@ If intensity is `skip`, stop reading this file.
 3. **Memory.** `MEMORY.md` / learnings.jsonl. `Prior learning applied` if a pitfall exists — that can downgrade full → narrow or narrow → skip.
 4. **Live-search this calendar year** (not training memory, not 2019 Medium):
    - **full:** language, official scaffold ([scaffold.md](scaffold.md)), framework or none, data store or none, platform UI guide ([ui.md](ui.md), [slop.md](slop.md)), test runner ([testing.md](testing.md)), lint, deploy only if they asked to ship
-   - **narrow:** only the unknown API / the named reference / the one UI change-type
-5. **Comparables** (full, or narrow when they named a reference, or UI `relanguage` / `recompose`):
+   - **narrow:** official docs + similar work **in this field** (not a random web stack). Cap: a handful of searches.
+5. **Comparables** (always on **full**; on **narrow** at least 1–2 similar things for this field + any `like X`):
    - 2–3 similar products, apps, or repos **for this surface and job**, current year
    - User-stated `like X` always in the list
    - Steal structure/density/nav. Do not steal brand, copy, or a web kit onto native
