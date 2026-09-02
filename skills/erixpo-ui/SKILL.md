@@ -32,8 +32,8 @@ Branch below. **"Redesign" ≠ `retoken`.** If they said redesign and you only c
 
 `ui_change=create`
 
-1. Interview only what changes the look (audience, reference, density, surface, existing kit). Propose 2–3 directions + default. **Directions depend on surface** (HIG / Fluent / Material / editorial / tool), not only web aesthetics. One direction must not be the tutorial look for this surface ([slop.md](../erixpo/references/slop.md)). Wait unless they said you pick.
-2. Research the platform guide and kit ([ui.md](../erixpo/references/ui.md), [research.md](../erixpo/references/research.md)). Write `.erixpo/research.md` `## UI` including surface, `ui_change`, breakpoints / size classes, what you will not do.
+1. Infer look from USER + `like X` ([intent.md](../erixpo/references/intent.md)). Ask at most one question (reference or density) if still empty. Propose 2–3 directions + default for **this surface**. One must not be the tutorial look ([slop.md](../erixpo/references/slop.md)). Wait unless they said you pick / unattended.
+2. Live-search **this year**: platform guide + **comparables** (2–3 similar apps on this surface, plus user-stated references). Intensity `full` ([research.md](../erixpo/references/research.md)). Write `.erixpo/research.md` Intent, Comparables, `## UI`.
 3. Copy templates from the pack `templates/documents/ui/` into the project's `documents/ui/` (includes `layout.md` and `mapping.md`).
 4. Fill real numbers. No "TBD purple". Include the breakpoint / size-class scale in `tokens.md`.
 5. Write `layout.md` (nav, skeleton, compact vs regular) and `mapping.md` (`theme_file` path for this repo + token map).
@@ -52,7 +52,7 @@ Dispatch on `ui_change`. Full procedures live in [ui.md](../erixpo/references/ui
 
 ### `relanguage`
 
-New direction / voice / density / brand. Rewrite `LANGUAGE.md` (copy a short anti-slop list for this surface). Then tokens, layout, components, previews. Not a one-hex tweak.
+New direction / voice / density / brand. Live-search comparables first (`research-scope --class ui --ui relanguage` → full). Rewrite `LANGUAGE.md` (anti-slop for this surface). Then tokens, layout, components, previews. Not a one-hex tweak.
 
 ### `retoken`
 

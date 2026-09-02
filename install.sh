@@ -7,7 +7,7 @@ GLOBAL=0; DRY=0; UNINSTALL=0; PURGE=0; PURGE_WORKTREES=0; PURGE_DOCS=0; EXPAND=0
 VERSION="0.6.0"
 HOST_ARG="auto"
 SKILL_NAMES=(erixpo erixpo-auto erixpo-docs erixpo-feature erixpo-fix erixpo-init erixpo-learn erixpo-new erixpo-review erixpo-search erixpo-ui erixpo-uninstall erixpo-work)
-SCRIPT_NAMES=(worktree.sh session-search.sh review-stage1.sh detect-host.sh detect-capabilities.sh classify-signals.py)
+SCRIPT_NAMES=(worktree.sh session-search.sh review-stage1.sh detect-host.sh detect-capabilities.sh classify-signals.py research-scope.py)
 ADAPTER_NAMES=(claude.sh codex.sh cursor.sh gemini.sh generic.sh hermes.sh opencode.sh)
 usage() { cat <<EOF
 erixpo-workflow installer v${VERSION}

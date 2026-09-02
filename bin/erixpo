@@ -49,6 +49,7 @@ Commands:
   review         run mechanical stage-1 review (stage 2 is a different agent session)
   classify       mechanical request_class / ui_change hints for a sentence
   capabilities   print what this machine can actually run
+  research-scope skip | narrow | full (live-search intensity)
 
 Options for run:
   --worker NAME    claude | codex | cursor | opencode | hermes | gemini | generic
@@ -150,7 +151,7 @@ INNER
     echo
     echo "## Contract files (read, do not paste)"
     echo
-    for ref in testing.md quality.md ui.md slop.md scaffold.md ceremony.md classify.md failures.md; do
+    for ref in testing.md quality.md ui.md slop.md scaffold.md ceremony.md classify.md intent.md research.md failures.md; do
       for d in \
         "$ROOT/.agents/skills/erixpo/references" \
         "$ROOT/.claude/skills/erixpo/references" \
@@ -257,6 +258,10 @@ PY
   capabilities)
     DC="$(resolve_script detect-capabilities.sh)"
     bash "$DC"
+    ;;
+  research-scope)
+    RS="$(resolve_script research-scope.py)"
+    python3 "$RS" "${SEARCH_Q[@]+"${SEARCH_Q[@]}"}"
     ;;
   check)
     CHECK="$(read_check)"

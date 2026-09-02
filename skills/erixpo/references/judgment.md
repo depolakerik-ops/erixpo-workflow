@@ -40,6 +40,10 @@ Outside the box is a direction that matches the audience (type-led editorial, br
 
 ## Autonomy
 
-When the path is approved, do not wait for permission to handle empty states, naming, file layout, or the next obvious slice. Do wait for permission on new product surface, new dependencies, and anything on the optional list.
+When the path is approved, do not wait for permission to handle empty states, naming, file layout, or the next obvious slice. Infer intent ([intent.md](intent.md)); live-search only when [research.md](research.md) says narrow/full.
+
+Wait for permission on a **new product surface** and anything on the optional list. New dependencies: wait if USER is `ask-every-slice`; otherwise pick the official default, record why, continue.
+
+Comparables inform taste. They do not add features the user did not ask for.
 
 If you see a better cut mid-build, say one sentence + offer to amend the plan. Do not silently change the product.

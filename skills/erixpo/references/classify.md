@@ -2,6 +2,14 @@
 
 Every non-trivial `/erixpo` job writes `.erixpo/classify.md` **before** loading a track skill. This file is the protocol. Do not paste the schema into SKILL.md or routing.md.
 
+Then infer meaning ([intent.md](intent.md)) and set live-search intensity:
+
+```bash
+bin/erixpo research-scope --class "$request_class" --ui "$ui_change"
+```
+
+`skip` → do not search the web. `narrow` / `full` → [research.md](research.md).
+
 If `AGENTS.md` and `.erixpo/` are both absent, run **init** first and keep the original sentence. Create `.erixpo/classify.md` as soon as the directory exists.
 
 If the template exists (`templates/.erixpo/classify.md` or `.erixpo/classify.md` empty-keyed), fill it. Do not invent extra keys.

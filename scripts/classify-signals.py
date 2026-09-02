@@ -169,6 +169,11 @@ def request_class(text: str) -> str:
         return "docs"
     if WORK.search(low):
         return "work"
+    surf = surface_hint(t)
+    if surf in {"ios", "android", "macos", "windows", "web"} and re.search(
+        r"\b(app|application|site|game|client)\b", low
+    ):
+        return "new"
     return "unknown"
 
 
@@ -183,6 +188,20 @@ def split_jobs(text: str) -> list[str]:
     if len(set(c for c in classes if c not in ("unknown", "ask"))) >= 2:
         return parts
     return [t]
+
+
+LIKE = re.compile(r"\blike\s+([A-Za-z][\w.+-]{1,40})", re.I)
+URL = re.compile(r"https?://[^\s)]+")
+
+
+def references(text: str) -> list[str]:
+    found = []
+    for m in URL.findall(text):
+        found.append(m.rstrip(".,;"))
+    for m in LIKE.findall(text):
+        if m.lower() not in {"this", "that", "it", "the"}:
+            found.append(f"like {m}")
+    return found
 
 
 def classify(text: str) -> dict:
@@ -201,6 +220,7 @@ def classify(text: str) -> dict:
         "surface": first["surface"] or surface_hint(text),
         "jobs": jobs,
         "ask": first["request_class"] == "ask",
+        "references": references(text),
     }
 
 
@@ -213,6 +233,11 @@ def format_md(result: dict) -> str:
     ]
     for j in result["jobs"]:
         lines.append(f"  - {j['request_class']}: {j['intent']}")
+    refs = result.get("references") or []
+    if refs:
+        lines.append("references:")
+        for r in refs:
+            lines.append(f"  - {r}")
     if result["ask"]:
         lines.append("ask: one question — bare look, never a command menu")
     return "\n".join(lines) + "\n"
@@ -233,6 +258,7 @@ FIXTURES = [
     ("make it consistent", "ui", "consistency"),
     ("login is broken", "fix", "none"),
     ("I want to build a SwiftUI app", "new", "none"),
+    ("SwiftUI app like Things", "new", "none"),
     ("look", "ask", "none"),
     ("what did we do about checkout", "search", "none"),
     ("remember we never commit .env", "learn", "none"),

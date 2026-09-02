@@ -1,5 +1,15 @@
 # Research
 
+## Intent
+- Job (one sentence):
+- Surface:
+- like / references (user-stated):
+- Must-have vs later:
+
+## Scope
+intensity: skip | narrow | full
+why:
+
 ## Job class
 
 ## Ceremony
@@ -17,6 +27,10 @@
 - Reframe of the job:
 - Non-obvious option (and why it could win here):
 - What we will not do, even though a tutorial would:
+
+## Comparables
+- (user-stated)
+- (found) name — url — steal / do not copy:
 
 ## Tools
 - Scaffold (official init):

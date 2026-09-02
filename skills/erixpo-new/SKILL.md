@@ -11,44 +11,29 @@ metadata:
 
 Greenfield or "I want to build X". Do not jump to code.
 
-Read [domains.md](../erixpo/references/domains.md), [ceremony.md](../erixpo/references/ceremony.md), [scaffold.md](../erixpo/references/scaffold.md), [judgment.md](../erixpo/references/judgment.md).
+Read [intent.md](../erixpo/references/intent.md), [domains.md](../erixpo/references/domains.md), [ceremony.md](../erixpo/references/ceremony.md), [scaffold.md](../erixpo/references/scaffold.md), [judgment.md](../erixpo/references/judgment.md).
 
-## Phase A — Interview
+## Phase A — Infer, then at most one question
 
-Talk like a competent teammate. Collect only what changes the build:
+Follow [intent.md](../erixpo/references/intent.md). Infer job, surface, `like X`, must-have from the sentence and this folder. **Do not default to web.** Do not open with a form.
 
-- Job to be done (who, what outcome)
-- **Surface (mandatory):** desktop, mobile (iOS / Android), Windows, macOS, web, landing, e-shop, SaaS, script, embedded, wiki, assistant, other. **Do not default to web.** Ask if missing.
-- Constraints: platform, language they already know, budget, offline, compliance, deadline
-- Must-have vs later
-- If there is a **visible** surface: one question about taste / a reference they like, then propose directions after research ([ui.md](../erixpo/references/ui.md)). Load `erixpo-ui` **only if there is a surface**. Write `documents/ui/` before product chrome. HTML mockups only when surface is web (or last-resort wire). Native uses `documents/ui/mapping.md` (another agent — do not fake it).
+If surface is still unknown **and** files do not decide it, ask **one** question. If they already named a surface or a reference, skip the interview.
 
-Stop interviewing when you can research. Do not ask 20 questions.
+Visible surface: load `erixpo-ui` only if there is one. Write `documents/ui/` before product chrome. HTML mockups only when surface is web (or last-resort wire). Native uses `documents/ui/mapping.md`.
 
 If the folder has **no project** (empty or nearly empty): the plan's **slice 0 is scaffold** ([scaffold.md](../erixpo/references/scaffold.md)). Acceptance: official project opens/builds and `check:` runs. Before UI chrome and before feature slices.
 
 ## Phase B — Research
 
-Follow [research.md](../erixpo/references/research.md), [ui.md](../erixpo/references/ui.md) if a surface, [testing.md](../erixpo/references/testing.md). Write `.erixpo/research.md` with:
+Follow [research.md](../erixpo/references/research.md) (**full** for new). Live-search this year: official init, platform guide, **comparables** (2–3 similar products for this surface, plus any `like X`), test runner. Write `.erixpo/research.md` (Intent, Comparables, Tools, Outside the box, Recommendation).
 
-- Job classification + proposed ceremony (`full` | `standard` | `light`)
-- 2–4 viable stacks **and tools** for *this year* (build, test, lint, UI, deploy or "none")
-- Official current-year init command for THIS surface (slice 0)
-- UI directions to show the user (if there is a surface)
-- What should be tested in v1 vs later
-- Candidate skills / MCP — list, do not install
-- Recommendation + why + what you rejected
-- Judgment four lines ([judgment.md](../erixpo/references/judgment.md)): default everyone would pick, reframe of the job, non-obvious option, what we will not do even though a tutorial would
-
-Search the live web. Do not use memorized defaults. Novelty is optional. The reframe is not.
+Do not use memorized defaults. Novelty is optional. The reframe is not.
 
 ## Phase C — Choices
 
-For each decision that changes architecture, give 2–4 options + "write your own".
+USER `ask-every-slice`: 2–4 options + "write your own" for expensive decisions; wait.
 
-Use a compact question UI when the host supports it. If the list is long, use a numbered list in chat.
-
-Never decide silently between stacks, UI directions, or "add a database / component kit" when that choice is expensive to undo. Show the UI options. Wait.
+Otherwise: pick the **official default**, write why + the rejected non-obvious option, put it in the plan. Still wait for **go** unless they already said go / you pick / unattended.
 
 ## Phase D — Plan
 

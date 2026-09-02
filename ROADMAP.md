@@ -11,6 +11,8 @@ Classify-then-route (multi-intent queue, `look` ≠ UI). Constitution + native s
 
 Enforcement (same 0.6): `classify-signals.py` fixtures, `detect-capabilities.sh`, loop prompt injects classify/USER/capabilities/contract paths, `status` warns leftover trees, stage-1 hex-outside-theme_file.
 
+Intent + research intensity: infer first (`intent.md`), live-search only `skip|narrow|full` (`research-scope.py`), comparables + current-year practices when needed, official default when USER is not ask-every-slice.
+
 ## Next
 - Budget flags
 - GitHub issue → plan

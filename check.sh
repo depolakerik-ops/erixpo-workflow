@@ -51,6 +51,7 @@ grep -q '^install:' templates/.erixpo/stack.md || { echo "stack.md missing insta
 echo "== v0.6 protocol files =="
 for f in \
   skills/erixpo/references/classify.md \
+  skills/erixpo/references/intent.md \
   skills/erixpo/references/scaffold.md \
   skills/erixpo/references/ceremony.md \
   skills/erixpo/references/slop.md \
@@ -78,6 +79,8 @@ grep -q 'look at' skills/erixpo/references/classify.md || { echo "classify.md mi
 
 echo "== classify fixtures =="
 python3 scripts/classify-signals.py --selftest || fail=1
+python3 scripts/research-scope.py --selftest || fail=1
+grep -q '## Comparables' templates/.erixpo/research.md || { echo "research template missing Comparables"; fail=1; }
 [[ -f scripts/detect-capabilities.sh ]] || { echo "missing detect-capabilities.sh"; fail=1; }
 bash scripts/detect-capabilities.sh >/dev/null || fail=1
 grep -q 'classify-signals.py' install.sh || { echo "install.sh missing classify-signals.py"; fail=1; }

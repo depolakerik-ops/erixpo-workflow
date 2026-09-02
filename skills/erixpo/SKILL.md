@@ -11,13 +11,13 @@ metadata:
 
 You are the erixpo router. The user almost always types `/erixpo` plus a sentence. You pick the workflow. Do not ask them which slash command to use.
 
-Read [references/classify.md](references/classify.md) and write `.erixpo/classify.md` before loading a track. Read [references/routing.md](references/routing.md) after classify if `request_class` is still messy. Read [references/domains.md](references/domains.md) to classify the repo vs the request. Read [references/memory.md](references/memory.md) before acting in a known repo. Read [references/judgment.md](references/judgment.md) before you pick the first familiar stack or look. Read [references/research.md](references/research.md) before recommending a stack or tool. Read [references/ui.md](references/ui.md) when humans will see a surface. Read [references/testing.md](references/testing.md) before calling a slice tested. Read [references/quality.md](references/quality.md) before calling work done. Read [references/wiki.md](references/wiki.md) and [references/ceremony.md](references/ceremony.md) whenever you create or update docs. Read [references/failures.md](references/failures.md) when something smells off. Read [references/worktrees.md](references/worktrees.md) before an unattended run or a second agent. Read [references/review.md](references/review.md) before calling a slice reviewed. Read [references/sessions.md](references/sessions.md) before planning.
+Read [references/classify.md](references/classify.md) and write `.erixpo/classify.md` before loading a track. Read [references/intent.md](references/intent.md) to infer what they mean (ask at most one question). Read [references/routing.md](references/routing.md) after classify if `request_class` is still messy. Read [references/domains.md](references/domains.md) to classify the repo vs the request. Read [references/memory.md](references/memory.md) before acting in a known repo. Read [references/judgment.md](references/judgment.md) before you pick the first familiar stack or look. Read [references/research.md](references/research.md) only when `research-scope` is narrow or full. Read [references/ui.md](references/ui.md) when humans will see a surface. Read [references/testing.md](references/testing.md) before calling a slice tested. Read [references/quality.md](references/quality.md) before calling work done. Read [references/wiki.md](references/wiki.md) and [references/ceremony.md](references/ceremony.md) whenever you create or update docs. Read [references/failures.md](references/failures.md) when something smells off. Read [references/worktrees.md](references/worktrees.md) before an unattended run or a second agent. Read [references/review.md](references/review.md) before calling a slice reviewed. Read [references/sessions.md](references/sessions.md) before planning.
 
 ## First 30 seconds
 
 1. Look at the project root: `AGENTS.md`, `documents/`, `.erixpo/` (PROFILE, MEMORY, USER, lessons), existing source.
 2. If PROFILE/MEMORY/USER exist, read them. They specialize you to **this** folder.
-3. Run `bin/erixpo classify <sentence>` and `bin/erixpo capabilities` if those scripts exist. Write `.erixpo/classify.md` ([classify.md](references/classify.md)) — repo, request, surface, jobs queue, ceremony, machine capabilities. Then load the matching track skill (`erixpo-init`, `erixpo-new`, `erixpo-auto`, `erixpo-feature`, `erixpo-fix`, `erixpo-review`, `erixpo-docs`, `erixpo-work`, `erixpo-learn`, `erixpo-search`, `erixpo-ui`, `erixpo-uninstall`).
+3. Run `bin/erixpo classify <sentence>`, `bin/erixpo capabilities`, and `bin/erixpo research-scope --class <request_class> --ui <ui_change>` if those scripts exist. Infer intent ([intent.md](references/intent.md)). Write `.erixpo/classify.md`. Then load the matching track skill (`erixpo-init`, `erixpo-new`, `erixpo-auto`, `erixpo-feature`, `erixpo-fix`, `erixpo-review`, `erixpo-docs`, `erixpo-work`, `erixpo-learn`, `erixpo-search`, `erixpo-ui`, `erixpo-uninstall`).
 4. If `.erixpo/hosts.txt` exists and you are a *different* agent than the listed hosts, ask once: expand the install for this agent, or keep working via `.agents/skills` only.
 5. Remaining jobs in `.erixpo/classify.md` are not forgotten. After the first job's check, continue the queue or tell the user what is next.
 6. On a known repo, search sessions before planning. If a track applies even 10%, load it. Do not jump straight to code.
@@ -44,32 +44,16 @@ This is the long path. Keep it human, not a form. After classify, if `ceremony` 
 
 ### 1. Talk
 
-Ask only what changes the build:
-
-- What are we making, in one sentence?
-- Who uses it?
-- Target surface if not obvious (web, iOS, Android, macOS, Windows, CLI, firmware, other).
-- Must-have vs later.
-
-Stop when you can classify the **job type**. Job types include but are not limited to: landing page, marketing site, e-shop, SaaS, internal tool, desktop app, mobile app, CLI/script, library, robot/embedded, data pipeline, game, other.
-
-Do not assume a web app. Collect surface; do not default it to web.
+Infer first ([intent.md](references/intent.md)). Ask at most one question if surface or job is still ambiguous. Do not assume a web app.
 
 ### 2. Research
 
-Follow [references/research.md](references/research.md).
-
-Write findings to `.erixpo/research.md` before you recommend. Cite sources (docs, current-year defaults). Search public skill registries (skills.sh, anthropics/skills, GitHub `agent-skills`) and MCP catalogs only as *candidates*.
-
-Never install a third-party skill or MCP without asking.
+Only if `research-scope` is narrow or full ([research.md](references/research.md)). Live-search this year: official docs, comparables, practices. Cite URLs. Never install a third-party skill or MCP without asking.
 
 ### 3. Choose
 
-When there are 2–4 real options (stack, database, UI kit, test runner, "none"), ask with a compact choice list plus "or write your own".
-
-If the list is long, write it in chat as a short list, not a fake form.
-
-Skip questions that do not change the architecture.
+`ask-every-slice`: 2–4 options + write your own, wait.
+Otherwise: official default + why, then plan. Wait for **go** unless they already said go.
 
 ### 4. Plan
 
