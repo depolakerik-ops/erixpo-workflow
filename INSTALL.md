@@ -28,39 +28,41 @@ Flags:
 | `--global` | Install into `~/.agents/skills` and sibling home dirs |
 | `--target DIR` | Install into DIR instead of the current directory |
 | `--dry-run` | Print destinations only |
+| `--uninstall` | Remove the pack this script installed |
+| `--purge` | Also delete `.erixpo` memory / plan / sessions |
+| `--purge-worktrees` | Also prune sibling `../.erixpo-worktrees/*` |
 
 ## What install.sh does
 
 1. Resolves the erixpo-workflow source directory.
-2. Copies each `skills/*` folder into:
-   - `.agents/skills/<name>/` (canonical)
-   - `.claude/skills/<name>/`
-   - `.cursor/skills/<name>/`
-   - `.codex/skills/<name>/`
-   - `.github/skills/<name>/`
-3. Prints next steps. It does **not** write `AGENTS.md` or `documents/` into the target. That is `/erixpo init`.
-
-`--global` uses the same names under `$HOME`.
-
-## Claude Code plugin (optional extra)
-
-```
-/plugin marketplace add depolakerik-ops/erixpo-workflow
-/plugin install erixpo-workflow@erixpo
-```
-
-Skills still work if you only ran `install.sh`. The plugin is convenience for Claude Code users.
-
-## After install
-
-In the target project:
-
-```
-/erixpo
-```
-
-If the repo has no `AGENTS.md` yet, the router runs init first.
+2. Copies each `skills/*` folder into project skill dirs.
+3. Writes `.erixpo/install-manifest.txt` listing every path it copied.
+4. It does **not** write `AGENTS.md` or `documents/` into the target. That is `/erixpo init`.
 
 ## Uninstall
 
-Delete the copied skill folders under `.agents/skills`, `.claude/skills`, `.cursor/skills`, `.codex/skills`, and `.github/skills`.
+Tell the agent:
+
+```
+Uninstall erixpo from this project. Run bash /tmp/erixpo-workflow/uninstall.sh
+(or bash /tmp/erixpo-workflow/install.sh --uninstall). Do not delete AGENTS.md,
+documents/, README, or source.
+```
+
+Or from the project root:
+
+```bash
+bash /tmp/erixpo-workflow/uninstall.sh
+bin/erixpo uninstall
+```
+
+Default uninstall removes only what install copied. It keeps product files and `.erixpo` memory.
+
+```bash
+bash /tmp/erixpo-workflow/install.sh --uninstall --purge
+bash /tmp/erixpo-workflow/install.sh --uninstall --purge --purge-worktrees
+```
+
+`--global` on uninstall removes the same skill names from home-dir skill folders.
+
+Claude Code plugin users also run `/plugin uninstall erixpo-workflow@erixpo` if they installed the plugin.
