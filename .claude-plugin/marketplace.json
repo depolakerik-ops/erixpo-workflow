@@ -1,0 +1,15 @@
+{
+  "name": "erixpo-workflow",
+  "owner": {
+    "name": "Erixpo"
+  },
+  "plugins": [
+    {
+      "name": "erixpo-workflow",
+      "source": "./",
+      "description": "Adaptive autonomous factory: one /erixpo entry, research, plan, quality-gated build loop.",
+      "version": "0.1.0",
+      "author": { "name": "Erixpo" }
+    }
+  ]
+}
