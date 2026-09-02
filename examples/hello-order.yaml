@@ -1,0 +1,3 @@
+# Example order file some agents like to feed a loop.
+goal: initialize erixpo in this repo and write a short inventory
+max_iterations: 5
