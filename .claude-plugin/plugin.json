@@ -1,7 +1,7 @@
 {
   "name": "erixpo-workflow",
   "description": "Adaptive autonomous workflow: classify, scaffold, quality-gated loop, repo memory. One /erixpo.",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "author": {
     "name": "Erixpo",
     "url": "https://github.com/depolakerik-ops"

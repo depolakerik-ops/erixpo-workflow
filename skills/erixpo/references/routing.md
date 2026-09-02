@@ -9,13 +9,13 @@ Protocol and schema: [classify.md](classify.md). Write `.erixpo/classify.md` bef
 1. Run classify ([classify.md](classify.md)). If `AGENTS.md` and `.erixpo/` are absent → **init** first, keep the original sentence as the next `jobs:` entry.
 2. If `jobs:` has multiple entries, announce the queue in one line, start the first. Example: `Queue: ui (checkout redesign) → fix (login) → auto. Starting ui.` Do not drop the rest.
 3. Route by **`request_class`** from classify, not by the first synonym in the sentence.
-4. Explicit alias in the message (`init`, `auto`, `feature`, `fix`, `review`, `docs`, `work`, `learn`, `search`, `ui`, `uninstall`) still forces that `request_class` **after** classify of repo / surface / ceremony.
+4. Explicit alias in the message (`init`, `auto`, `feature`, `fix`, `review`, `docs`, `work`, `learn`, `search`, `ui`, `uninstall`, `update`) still forces that `request_class` **after** classify of repo / surface / ceremony.
 5. **Look** is decided while filling `request_class` ([classify.md](classify.md)), not by the word "look" winning first:
    - "look at" / "look over" / "take a look" / "inspect" / "audit" → **review** (unless they also named theme / color / layout / mockup)
    - "look" + theme / spacing / font / color / animation / radius / mockup / design language / "make it consistent" → **ui**
    - Bare "look" with no object → one clarifying question, never a command menu
    - Both review-look and ui-look → **ui**
-6. Defect language → **fix**. Additive on a *known software* stack → **feature**. Continue language → **auto** only if the plan is `approved`. Remove erixpo → **uninstall**. Non-product → **work**. New product / new platform / "I want to build" → **new**.
+6. Defect language → **fix**. Additive on a *known software* stack → **feature**. Continue language → **auto** only if the plan is `approved`. Remove erixpo → **uninstall**. Update/upgrade/reinstall **erixpo** → **update** (not work). Non-product → **work**. New product / new platform / "I want to build" → **new**.
 7. After the first job's check, continue the remaining `jobs:` in `.erixpo/classify.md` or tell the user what is next.
 
 ## request_class → skill
@@ -34,6 +34,7 @@ Protocol and schema: [classify.md](classify.md). Write `.erixpo/classify.md` bef
 | auto | `erixpo-auto` |
 | docs | `erixpo-docs` |
 | uninstall | `erixpo-uninstall` |
+| update | `erixpo-update` |
 
 On a known repo, search sessions before planning. If classify is still torn between two classes and the user asked for only one job, pick the narrower one (fix beats feature beats work beats new).
 
@@ -47,3 +48,4 @@ On a known repo, search sessions before planning. If classify is still torn betw
 - Do not uninstall by deleting the whole project. Load `erixpo-uninstall` and ask.
 - Do not install skills into every vendor folder. Detect the current agent. Expand later if they switch CLI.
 - Do not drop remaining jobs in `.erixpo/classify.md`.
+- Do not treat "update erixpo" as product `work`. Do not rewrite the product classify.md.

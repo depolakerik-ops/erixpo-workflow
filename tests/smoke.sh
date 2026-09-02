@@ -40,7 +40,13 @@ bash "$ROOT/install.sh" --target "$TMP" --host generic >/dev/null
 [[ -f "$TMP/.erixpo/hosts.txt" ]] || bad "missing hosts.txt"
 [[ -f "$TMP/.erixpo/pack-templates/PROMPT.md" ]] || bad "missing pack-templates/PROMPT.md"
 [[ -f "$TMP/.erixpo/pack-templates/documents/ui/layout.md" ]] || bad "missing layout.md template"
-grep -q '0.6.0' "$TMP/.erixpo/install-manifest.txt" || bad "install manifest not 0.6.0"
+VER="$(tr -d ' \t\n' < "$ROOT/VERSION")"
+grep -q "$VER" "$TMP/.erixpo/install-manifest.txt" || bad "install manifest not $VER"
+[[ -f "$TMP/.erixpo/VERSION" ]] || bad "missing .erixpo/VERSION after install"
+[[ -f "$TMP/scripts/research-scope.py" ]] || bad "missing scripts/research-scope.py after install"
+[[ -d "$TMP/.agents/skills/erixpo-update" ]] || bad "missing erixpo-update skill after install"
+out="$(python3 "$ROOT/scripts/classify-signals.py" "please update erixpo there is new update")"
+printf '%s\n' "$out" | grep -q 'request_class: update' || bad "update erixpo != update"
 
 say "== review-stage1 rejects dummy check =="
 FIX="$(mktemp -d)"; CLEANUP+=("$FIX")

@@ -13,7 +13,7 @@ import sys
 # Building (any field) always live-searches. Only non-build work skips.
 BUILD_FULL = {"new", "init"}
 BUILD_NARROW = {"feature", "work", "auto"}
-NONBUILD = {"fix", "learn", "search", "docs", "uninstall", "review"}
+NONBUILD = {"fix", "learn", "search", "docs", "uninstall", "review", "update"}
 UI_FULL = {"create", "relanguage", "recompose"}
 UI_NARROW = {"reflow", "remotion", "new-screen", "retoken", "consistency"}
 
@@ -63,6 +63,7 @@ FIXTURES = [
     ({"request_class": "ui", "ui_change": "reflow"}, "narrow"),
     ({"request_class": "learn"}, "skip"),
     ({"request_class": "review"}, "skip"),
+    ({"request_class": "update"}, "skip"),
     ({"request_class": "work"}, "narrow"),
     ({"request_class": "unknown"}, "narrow"),
 ]

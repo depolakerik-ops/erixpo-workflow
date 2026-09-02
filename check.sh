@@ -48,6 +48,14 @@ grep -q '^install:' templates/.erixpo/stack.md || { echo "stack.md missing insta
 [[ -f templates/documents/ui/mapping.md ]] || { echo "missing UI mapping template"; fail=1; }
 [[ -f skills/erixpo-ui/SKILL.md ]] || { echo "missing erixpo-ui skill"; fail=1; }
 
+echo "== VERSION lockstep =="
+[[ -f VERSION ]] || { echo "missing VERSION"; fail=1; }
+VER="$(tr -d ' \t\n' < VERSION 2>/dev/null || true)"
+[[ -n "$VER" ]] || { echo "VERSION empty"; fail=1; }
+grep -q "\"version\": \"$VER\"" .claude-plugin/plugin.json || { echo "plugin.json version != VERSION ($VER)"; fail=1; }
+grep -q "\"version\": \"$VER\"" .claude-plugin/marketplace.json || { echo "marketplace.json version != VERSION ($VER)"; fail=1; }
+[[ -f skills/erixpo-update/SKILL.md ]] || { echo "missing erixpo-update skill"; fail=1; }
+
 echo "== v0.6 protocol files =="
 for f in \
   skills/erixpo/references/classify.md \

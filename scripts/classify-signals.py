@@ -21,6 +21,7 @@ ALIASES = (
     "search",
     "ui",
     "uninstall",
+    "update",
 )
 
 UI_WORDS = (
@@ -56,6 +57,10 @@ DEFECT = re.compile(
 UNINSTALL = re.compile(
     r"\b(uninstall|remove erixpo|get rid of erixpo|don't want erixpo|do not want erixpo)\b",
     re.I,
+)
+UPDATE = re.compile(
+    r"\b(update erixpo|upgrade erixpo|refresh erixpo|reinstall erixpo|erixpo.{0,60}new update|new update.{0,40}erixpo)\b",
+    re.I | re.S,
 )
 LEARN = re.compile(r"\b(remember|don't forget|what did we learn|refine|skillify)\b", re.I)
 SEARCH = re.compile(
@@ -134,6 +139,8 @@ def request_class(text: str) -> str:
 
     if UNINSTALL.search(low):
         return "uninstall"
+    if UPDATE.search(low):
+        return "update"
     if LEARN.search(low) and not SEARCH.search(low):
         return "learn"
     if SEARCH.search(low):
@@ -263,6 +270,8 @@ FIXTURES = [
     ("what did we do about checkout", "search", "none"),
     ("remember we never commit .env", "learn", "none"),
     ("I don't want erixpo anymore", "uninstall", "none"),
+    ("update erixpo", "update", "none"),
+    ("please update erixpo there is new update", "update", "none"),
     ("redesign checkout and login is broken", "ui", "relanguage"),
 ]
 

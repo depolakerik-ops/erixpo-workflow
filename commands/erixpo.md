@@ -1,5 +1,5 @@
 ---
-description: Start or continue erixpo. Routes init, auto, feature, fix, review, docs, work, learn, search, ui, uninstall from one command.
+description: Start or continue erixpo. Routes init, auto, feature, fix, review, docs, work, learn, search, ui, uninstall, update from one command.
 argument-hint: "[request]"
 ---
 

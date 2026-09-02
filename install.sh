@@ -4,9 +4,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 DEST="$PWD"
 GLOBAL=0; DRY=0; UNINSTALL=0; PURGE=0; PURGE_WORKTREES=0; PURGE_DOCS=0; EXPAND=0; DETECT_ONLY=0
-VERSION="0.6.0"
+VERSION="0.6.1"
+if [[ -f "$ROOT/VERSION" ]]; then VERSION="$(tr -d ' \t\n' < "$ROOT/VERSION")"; fi
 HOST_ARG="auto"
-SKILL_NAMES=(erixpo erixpo-auto erixpo-docs erixpo-feature erixpo-fix erixpo-init erixpo-learn erixpo-new erixpo-review erixpo-search erixpo-ui erixpo-uninstall erixpo-work)
+SKILL_NAMES=(erixpo erixpo-auto erixpo-docs erixpo-feature erixpo-fix erixpo-init erixpo-learn erixpo-new erixpo-review erixpo-search erixpo-ui erixpo-uninstall erixpo-update erixpo-work)
 SCRIPT_NAMES=(worktree.sh session-search.sh review-stage1.sh detect-host.sh detect-capabilities.sh classify-signals.py research-scope.py)
 ADAPTER_NAMES=(claude.sh codex.sh cursor.sh gemini.sh generic.sh hermes.sh opencode.sh)
 usage() { cat <<EOF
@@ -86,10 +87,12 @@ do_install() {
   if [[ -d "$ROOT/templates" ]]; then mkdir -p "$DEST/.erixpo/pack-templates"; cp -R "$ROOT/templates/." "$DEST/.erixpo/pack-templates/"; manifest_add ".erixpo/pack-templates"; fi
   install_cli "$DEST/.erixpo/bin" "$DEST/.erixpo/adapters" .erixpo/bin .erixpo/adapters
   install_cli "$DEST/bin" "$DEST/adapters" bin adapters
-  if [[ -d "$ROOT/scripts" ]]; then mkdir -p "$DEST/.erixpo/scripts" "$DEST/scripts"; cp -R "$ROOT/scripts/." "$DEST/.erixpo/scripts/"; cp -R "$ROOT/scripts/." "$DEST/scripts/"; chmod +x "$DEST/scripts/"*.sh 2>/dev/null || true; local s; for s in "${SCRIPT_NAMES[@]}"; do manifest_add ".erixpo/scripts/$s"; manifest_add "scripts/$s"; done; fi
+  if [[ -d "$ROOT/scripts" ]]; then mkdir -p "$DEST/.erixpo/scripts" "$DEST/scripts"; cp -R "$ROOT/scripts/." "$DEST/.erixpo/scripts/"; cp -R "$ROOT/scripts/." "$DEST/scripts/"; chmod +x "$DEST/scripts/"*.sh "$DEST/scripts/"*.py "$DEST/.erixpo/scripts/"*.sh "$DEST/.erixpo/scripts/"*.py 2>/dev/null || true; local s; for s in "${SCRIPT_NAMES[@]}"; do manifest_add ".erixpo/scripts/$s"; manifest_add "scripts/$s"; done; fi
+  if [[ -f "$ROOT/VERSION" ]]; then cp "$ROOT/VERSION" "$DEST/.erixpo/VERSION"; manifest_add ".erixpo/VERSION"; fi
   if [[ "$GLOBAL" -eq 1 ]]; then local h; for h in "${HOSTS[@]}"; do install_skills "$(host_home_skill "$h")" ""; done; fi
   save_hosts
   echo "erixpo-workflow ${VERSION} installed into $DEST (hosts: ${HOSTS[*]})"
+  echo "installed VERSION: ${VERSION}  (see .erixpo/VERSION)"
 }
 do_uninstall() {
   echo "uninstalling erixpo-workflow from $DEST"

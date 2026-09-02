@@ -20,7 +20,7 @@ If the template exists (`templates/.erixpo/classify.md` or `.erixpo/classify.md`
 # Classify
 ts:
 repo_class: software | site | automation | research | writing | ops | assistant | mixed | unknown
-request_class: init | new | feature | fix | review | ui | work | learn | search | auto | docs | uninstall
+request_class: init | new | feature | fix | review | ui | work | learn | search | auto | docs | uninstall | update
 surface: none | web | ios | android | macos | windows | tui | print | slides | mixed
 ui_change: none | create | relanguage | retoken | recompose | reflow | remotion | new-screen | consistency
 capabilities: (short: what this host/machine can actually run — Xcode, Android SDK, browser, shell-only, …)
@@ -44,7 +44,7 @@ Do not guess a stack the files do not support. PROFILE `class` is the starting `
 
 Classify **request** from the user sentence. Repo class does not lock the request (a writing repo can still ask for a script).
 
-Explicit alias in the message (`init`, `auto`, `feature`, `fix`, `review`, `docs`, `work`, `learn`, `search`, `ui`, `uninstall`) forces that `request_class` **after** you have classified repo, surface, capabilities, isolation, and ceremony.
+Explicit alias in the message (`init`, `auto`, `feature`, `fix`, `review`, `docs`, `work`, `learn`, `search`, `ui`, `uninstall`, `update`) forces that `request_class` **after** you have classified repo, surface, capabilities, isolation, and ceremony.
 
 Otherwise:
 
@@ -52,6 +52,7 @@ Otherwise:
 - Additive on a *known software* stack (add, implement, extra screen, extra endpoint) → `feature`
 - Continue language (go, continue, keep going, resume, you have the plan) → `auto` **only** if `.erixpo/plan.md` status is `approved`
 - Remove / uninstall / get rid of erixpo / "I don't want erixpo anymore" → `uninstall`
+- Update / upgrade / refresh / reinstall **erixpo** / "there is a new erixpo update" → `update` (pack only; do not touch the product)
 - Only docs / wiki / progress html / README → `docs`
 - Remember / refine / save a skill / what did we learn → `learn`
 - What did we do / find the session / search history → `search`
@@ -143,6 +144,7 @@ Skip a **full** classify write only for:
 
 - empty `/erixpo` that is clearly "continue auto on an approved plan"
 - a one-line typo fix where PROFILE already exists
+- **update erixpo** — do not overwrite a product classify.md. Load `erixpo-update` only.
 
 Still write at least `ts`, `request_class`, and `jobs:` (one entry). Do not skip the file entirely on a non-trivial job.
 

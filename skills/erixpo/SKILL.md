@@ -17,7 +17,7 @@ Read [references/classify.md](references/classify.md) and write `.erixpo/classif
 
 1. Look at the project root: `AGENTS.md`, `documents/`, `.erixpo/` (PROFILE, MEMORY, USER, lessons), existing source.
 2. If PROFILE/MEMORY/USER exist, read them. They specialize you to **this** folder.
-3. Run `bin/erixpo classify <sentence>`, `bin/erixpo capabilities`, and `bin/erixpo research-scope --class <request_class> --ui <ui_change>` if those scripts exist. Infer intent ([intent.md](references/intent.md)). Write `.erixpo/classify.md`. Then load the matching track skill (`erixpo-init`, `erixpo-new`, `erixpo-auto`, `erixpo-feature`, `erixpo-fix`, `erixpo-review`, `erixpo-docs`, `erixpo-work`, `erixpo-learn`, `erixpo-search`, `erixpo-ui`, `erixpo-uninstall`).
+3. Run `bin/erixpo classify <sentence>`, `bin/erixpo capabilities`, and `bin/erixpo research-scope --class <request_class> --ui <ui_change>` if those scripts exist. Infer intent ([intent.md](references/intent.md)). Write `.erixpo/classify.md`. Then load the matching track skill (`erixpo-init`, `erixpo-new`, `erixpo-auto`, `erixpo-feature`, `erixpo-fix`, `erixpo-review`, `erixpo-docs`, `erixpo-work`, `erixpo-learn`, `erixpo-search`, `erixpo-ui`, `erixpo-uninstall`, `erixpo-update`).
 4. If `.erixpo/hosts.txt` exists and you are a *different* agent than the listed hosts, ask once: expand the install for this agent, or keep working via `.agents/skills` only.
 5. Remaining jobs in `.erixpo/classify.md` are not forgotten. After the first job's check, continue the queue or tell the user what is next.
 6. On a known repo, search sessions before planning. If a track applies even 10%, load it. Do not jump straight to code.
@@ -27,7 +27,7 @@ Read [references/classify.md](references/classify.md) and write `.erixpo/classif
 
 Classify, then route by `request_class` ([classify.md](references/classify.md), [routing.md](references/routing.md)). Do not first-match a synonym.
 
-Aliases `/erixpo init|auto|feature|fix|review|docs|work|learn|search|ui|uninstall` force that `request_class` after classify of repo / surface / ceremony.
+Aliases `/erixpo init|auto|feature|fix|review|docs|work|learn|search|ui|uninstall|update` force that `request_class` after classify of repo / surface / ceremony.
 
 | Signal | Flow |
 |---|---|
@@ -35,6 +35,7 @@ Aliases `/erixpo init|auto|feature|fix|review|docs|work|learn|search|ui|uninstal
 | look at this / look at / look over / take a look / inspect / audit (no theme/color/layout/mockup) | **review** |
 | redesign / theme / color / layout / recompose / breakpoints / animation / spacing / font / radius / mockup / design language / "make it consistent" | **ui** — load `erixpo-ui`. Create or change `documents/ui/` before freelancing pixels. |
 | Bare "look" with no object | One clarifying question. Never a command menu. |
+| update / upgrade / refresh / reinstall **erixpo** / "new erixpo update" | **update** — pack only. Do not touch the product. |
 | Approved plan in `.erixpo/plan.md` (`approved`) and they did not ask for a new idea | **auto** |
 | Cannot tell | One short clarifying question, then route. Never a menu of commands. |
 

@@ -53,6 +53,7 @@ Almost always just `/erixpo` plus a sentence.
 | `/erixpo remember we never commit .env.local` | learn |
 | `/erixpo draft a weekly status from documents/` | work |
 | `/erixpo I don't want erixpo anymore` | uninstall interview |
+| `/erixpo update` / `there is a new erixpo update` | **update** the pack only (not the product) |
 
 Leave-the-room loop:
 
@@ -71,7 +72,7 @@ Unattended runs isolate into a sibling git worktree. No auto-merge to the branch
 
 ## Status
 
-v0.6 — classify-then-route, native scaffold, UI change-types, tests as gate, unattended = interactive bar, worktree close.
+See `VERSION` (now **0.6.1**). Pack version is that file, not a guess. Compare `.erixpo/VERSION` in a project to GitHub `VERSION` on `main` to know if an update is needed.
 
 ## License
 

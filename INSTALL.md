@@ -1,6 +1,6 @@
 # Install erixpo workflow
 
-Works with any agent that reads [Agent Skills](https://agentskills.io/specification) (`SKILL.md`). Pack version **0.6**.
+Works with any agent that reads [Agent Skills](https://agentskills.io/specification) (`SKILL.md`). Pack version is the `VERSION` file on `main`.
 
 ## Fast path — paste this to the agent you are in
 
@@ -35,6 +35,16 @@ bash install.sh --detect
 bash install.sh --host cursor
 bash install.sh --expand --host claude
 bash install.sh --host all
+```
+
+## Update through the agent
+
+Say `update erixpo` or `there is a new erixpo update.` The agent loads `erixpo-update`: clone latest pack, `install.sh --host auto --target` this project. It must not edit product code or rewrite `classify.md`.
+
+```bash
+git clone https://github.com/depolakerik-ops/erixpo-workflow /tmp/erixpo-workflow
+bash /tmp/erixpo-workflow/install.sh --host auto --target "$PWD"
+cat .erixpo/VERSION
 ```
 
 ## Uninstall through the agent

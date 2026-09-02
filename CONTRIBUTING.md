@@ -9,5 +9,5 @@ This pack stays small on purpose.
 - Folder name == `name:` frontmatter.
 - One plan template: `templates/.erixpo/plan.md` and `templates/erixpo/plan.md` must stay the same richness.
 - Canonical machine state file is `state.md`, not a second `state.yaml` writer.
-- Version: README, `install.sh`, skill `metadata.version`, `.claude-plugin/*.json` stay in lockstep.
+- Version: `VERSION` is source of truth. `install.sh` reads it. `.claude-plugin/*.json` must match. Copy lands in `.erixpo/VERSION`.
 - Run `bash check.sh`.
