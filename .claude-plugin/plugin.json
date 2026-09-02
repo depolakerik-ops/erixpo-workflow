@@ -1,12 +1,23 @@
 {
   "name": "erixpo-workflow",
-  "description": "Adaptive autonomous factory: one /erixpo entry, research, plan, quality-gated build loop.",
-  "version": "0.1.0",
-  "author": { "name": "Erixpo" },
+  "description": "Adaptive autonomous workflow: one /erixpo entry, research, plan, quality-gated loop, repo memory.",
+  "version": "0.3.0",
+  "author": {
+    "name": "Erixpo",
+    "url": "https://github.com/depolakerik-ops"
+  },
   "homepage": "https://github.com/depolakerik-ops/erixpo-workflow",
   "repository": "https://github.com/depolakerik-ops/erixpo-workflow",
   "license": "MIT",
-  "keywords": ["erixpo", "workflow", "autonomous", "factory", "skills"],
+  "keywords": [
+    "erixpo",
+    "workflow",
+    "autonomous",
+    "factory",
+    "skills",
+    "agent-skills"
+  ],
   "skills": "./skills",
-  "commands": "./commands"
+  "commands": "./commands",
+  "agents": "./agents"
 }
