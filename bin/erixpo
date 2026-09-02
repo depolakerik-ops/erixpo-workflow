@@ -1,0 +1,263 @@
+#!/usr/bin/env bash
+# Thin erixpo runner. Skills do the thinking; this process repeats a worker + check.
+set -euo pipefail
+
+ROOT="$(pwd)"
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PACK="$(cd "$HERE/.." && pwd)"
+if [[ -d "$HERE/../adapters" ]]; then
+  ADAPTERS="$HERE/../adapters"
+elif [[ -d "$ROOT/.erixpo/adapters" ]]; then
+  ADAPTERS="$ROOT/.erixpo/adapters"
+elif [[ -d "$ROOT/adapters" ]]; then
+  ADAPTERS="$ROOT/adapters"
+else
+  ADAPTERS="$HERE/../adapters"
+fi
+
+SCRIPTS=""
+for cand in "$PACK/scripts" "$ROOT/.erixpo/scripts" "$ROOT/scripts" "$HERE/../scripts"; do
+  if [[ -d "$cand" ]]; then
+    SCRIPTS="$cand"
+    break
+  fi
+done
+
+MAX=20
+WORKER="${ERIXPO_WORKER:-claude}"
+ORDER=""
+ISOLATE=1
+SLUG="run"
+STAGE=""
+KIND="all"
+
+usage() {
+  cat <<'EOF'
+Usage: bin/erixpo <command> [options]
+
+Commands:
+  run       loop worker + check until pass or --max
+  check     run the project check command once
+  status    print .erixpo state if present
+  isolate   create a sibling git worktree + branch
+  worktrees list isolated trees
+  merge     merge an isolated branch into the current branch (no push)
+  prune     remove an isolated worktree
+  search    search sessions / learnings / worktrees
+  review    run mechanical stage-1 review (stage 2 is a different agent session)
+
+Options for run:
+  --worker NAME    claude | codex | cursor | opencode | hermes | gemini | generic
+  --max N          iteration cap (default 20)
+  --prompt FILE    extra prompt file (default: .erixpo/plan.md)
+  --isolate        run inside a new worktree (default)
+  --no-isolate     run in this checkout
+  --slug NAME      worktree slug
+
+Options for isolate / merge / prune:
+  --slug NAME
+  --id ID
+  --delete-branch
+  --with-env       copy .env.example only
+
+Options for search:
+  --kind all|sessions|learnings|worktrees
+
+Options for review:
+  --stage 1        mechanical only (the only stage this CLI runs)
+EOF
+}
+
+resolve_script() {
+  local name="$1"
+  if [[ -n "$SCRIPTS" && -f "$SCRIPTS/$name" ]]; then
+    printf '%s' "$SCRIPTS/$name"
+    return 0
+  fi
+  echo "missing $name (looked in $SCRIPTS)" >&2
+  return 1
+}
+
+read_check() {
+  local line=""
+  if [[ -f "$ROOT/.erixpo/stack.md" ]]; then
+    line="$(grep -E '^check:' "$ROOT/.erixpo/stack.md" 2>/dev/null | head -1 | sed 's/^check:[[:space:]]*//' || true)"
+  fi
+  if [[ -z "$line" && -f "$ROOT/AGENTS.md" ]]; then
+    line="$(grep -E '^check:' "$ROOT/AGENTS.md" 2>/dev/null | head -1 | sed 's/^check:[[:space:]]*//' || true)"
+  fi
+  if [[ -z "$line" ]]; then
+    echo "write a one-line 'check: <command>' into .erixpo/stack.md" >&2
+    return 1
+  fi
+  printf '%s' "$line"
+}
+
+write_loop_prompt() {
+  local dest="$1" src="$2" iter="$3"
+  {
+    if [[ -f "$ROOT/templates/PROMPT.md" ]]; then
+      cat "$ROOT/templates/PROMPT.md"
+    elif [[ -f "$ROOT/.erixpo/pack-templates/PROMPT.md" ]]; then
+      cat "$ROOT/.erixpo/pack-templates/PROMPT.md"
+    else
+      cat <<'INNER'
+You are a factory worker. Fresh context. Disk is memory.
+
+1. Read AGENTS.md, documents/, .erixpo/, git status.
+2. Search .erixpo/sessions.jsonl and learnings.jsonl for the files you will touch.
+3. If the check command already passes and the current slice is done, print ERIXPO_DONE and exit.
+4. Otherwise do THE SINGLE next incomplete slice.
+5. Handle the edge cases listed for that slice. Read failures.md if installed.
+6. Run the check command.
+7. If it fails, fix only that failure.
+8. Update documents and progress.html.
+9. If the same class of mistake repeats three times, stop and write a pitfall. Do not burn the budget.
+10. Commit real progress on this branch only.
+11. Exit. The outer loop will start you again.
+
+Never print ERIXPO_DONE unless the check passed in THIS iteration.
+Never merge onto the user's main branch.
+INNER
+    fi
+    echo
+    echo "## Iteration $iter"
+    echo
+    echo "Project root: $ROOT"
+    echo
+    echo "## Plan"
+    echo
+    cat "$src"
+    if [[ -f "$ROOT/.erixpo/lessons.md" ]]; then
+      echo
+      echo "## Lessons"
+      echo
+      cat "$ROOT/.erixpo/lessons.md"
+    fi
+  } > "$dest"
+}
+
+cmd="${1:-}"
+shift || true
+
+ID=""
+DELETE_BRANCH=0
+WITH_ENV=0
+SEARCH_Q=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --worker) WORKER="$2"; shift 2 ;;
+    --max) MAX="$2"; shift 2 ;;
+    --prompt) ORDER="$2"; shift 2 ;;
+    --isolate) ISOLATE=1; shift ;;
+    --no-isolate) ISOLATE=0; shift ;;
+    --slug) SLUG="$2"; shift 2 ;;
+    --id) ID="$2"; shift 2 ;;
+    --delete-branch) DELETE_BRANCH=1; shift ;;
+    --with-env) WITH_ENV=1; shift ;;
+    --kind) KIND="$2"; shift 2 ;;
+    --stage) STAGE="$2"; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *)
+      SEARCH_Q+=("$1")
+      shift
+      ;;
+  esac
+done
+
+case "$cmd" in
+  status)
+    if [[ -f "$ROOT/.erixpo/state.md" ]]; then
+      cat "$ROOT/.erixpo/state.md"
+    elif [[ -f "$ROOT/.erixpo/state.yaml" ]]; then
+      cat "$ROOT/.erixpo/state.yaml"
+    else
+      echo "erixpo not initialized in $ROOT"
+      exit 1
+    fi
+    if [[ -f "$ROOT/.erixpo/worktrees.jsonl" ]]; then
+      echo
+      echo "## worktrees"
+      cat "$ROOT/.erixpo/worktrees.jsonl"
+    fi
+    ;;
+  check)
+    CHECK="$(read_check)"
+    echo "check: $CHECK"
+    bash -lc "$CHECK"
+    ;;
+  isolate|worktrees|merge|prune)
+    WT="$(resolve_script worktree.sh)"
+    extra=()
+    [[ -n "$SLUG" && "$cmd" == isolate ]] && extra+=(--slug "$SLUG")
+    [[ "$WITH_ENV" -eq 1 ]] && extra+=(--with-env)
+    [[ -n "$ID" ]] && extra+=(--id "$ID")
+    [[ "$DELETE_BRANCH" -eq 1 ]] && extra+=(--delete-branch)
+    bash "$WT" "$cmd" "${extra[@]+"${extra[@]}"}"
+    ;;
+  search)
+    SS="$(resolve_script session-search.sh)"
+    bash "$SS" --root "$ROOT" --kind "$KIND" "${SEARCH_Q[@]+"${SEARCH_Q[@]}"}"
+    ;;
+  review)
+    if [[ -n "$STAGE" && "$STAGE" != "1" ]]; then
+      echo "this CLI only runs stage 1. stage 2 is a different agent session (/erixpo review)." >&2
+      exit 1
+    fi
+    RS="$(resolve_script review-stage1.sh)"
+    bash "$RS"
+    ;;
+  run)
+    ADAPTER="$ADAPTERS/${WORKER}.sh"
+    if [[ ! -x "$ADAPTER" && ! -f "$ADAPTER" ]]; then
+      echo "missing adapter $ADAPTER" >&2
+      exit 1
+    fi
+    if [[ "$ISOLATE" -eq 1 ]]; then
+      WT="$(resolve_script worktree.sh)"
+      iso_out="$(bash "$WT" isolate --slug "$SLUG")"
+      echo "$iso_out"
+      new_root="$(printf '%s\n' "$iso_out" | awk -F': ' '/^path:/{print $2; exit}')"
+      if [[ -z "$new_root" || ! -d "$new_root" ]]; then
+        echo "isolate did not return a usable path" >&2
+        exit 1
+      fi
+      ROOT="$new_root"
+      cd "$ROOT"
+    fi
+    CHECK="$(read_check)"
+    PLAN_FILE="${ORDER:-$ROOT/.erixpo/plan.md}"
+    if [[ ! -f "$PLAN_FILE" ]]; then
+      echo "no plan at $PLAN_FILE" >&2
+      exit 1
+    fi
+    mkdir -p "$ROOT/.erixpo"
+    i=1
+    while [[ "$i" -le "$MAX" ]]; do
+      echo "── erixpo iteration $i / $MAX ──"
+      LOOP_PROMPT="$ROOT/.erixpo/loop-prompt.md"
+      write_loop_prompt "$LOOP_PROMPT" "$PLAN_FILE" "$i"
+      echo "$(date -Iseconds) iteration=$i worker=$WORKER root=$ROOT" >> "$ROOT/.erixpo/loop.log"
+      bash "$ADAPTER" "$ROOT" "$LOOP_PROMPT" "$i" || echo "worker exited non-zero (continuing to check)"
+      echo "check: $CHECK"
+      if bash -lc "$CHECK"; then
+        echo "check passed on iteration $i"
+        echo "$(date -Iseconds) passed iteration=$i" >> "$ROOT/.erixpo/loop.log"
+        echo "next: two-stage review in this tree, then bin/erixpo merge --id <id> from the human checkout"
+        exit 0
+      fi
+      i=$((i + 1))
+    done
+    echo "budget exhausted after $MAX iterations" >&2
+    exit 2
+    ;;
+  ""|-h|--help)
+    usage
+    ;;
+  *)
+    echo "unknown command: $cmd" >&2
+    usage
+    exit 1
+    ;;
+esac
