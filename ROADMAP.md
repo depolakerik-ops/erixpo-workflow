@@ -1,23 +1,16 @@
 # Roadmap
 
-## 0.1
-Portable skills, installer, wiki templates, outer-loop CLI, adapters.
-
-## 0.2
-Self-improvement, general work, PROFILE / MEMORY / USER, learnings.jsonl.
-
-## 0.3
-Two-stage review, worktree isolation, session search, failure catalog.
-
 ## 0.4
-Host-aware install, conversational uninstall, UI + tool research, in-slice tests.
-Harder stage-1 gate, worktree install: bootstrap, pack smoke test, fix-track regression tests.
+Host-aware install, uninstall interview, research, tests, stage-1 gates, smoke.
+
+## 0.5
+Living design language in documents/ui/ (tokens, motion, components, screens, mockups, changelog). erixpo-ui skill. Plans name UI tokens per slice.
 
 ## Next
-- Budget flags (--max-usd)
+- Budget flags
 - GitHub issue → plan
-- Optional Docker sandbox
-- Visual / surface-specific review checklists
+- Docker sandbox
+- Visual review checklists
 
 ## Not now
 Web console, credit marketplace, auto-merge to main.
