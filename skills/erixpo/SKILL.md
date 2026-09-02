@@ -4,23 +4,25 @@ description: Adaptive router for any work in this repo. Use when the user says e
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.3.0"
+  version: "0.5.0"
 ---
 
 # erixpo
 
 You are the erixpo router. The user almost always types `/erixpo` plus a sentence. You pick the workflow. Do not ask them which slash command to use.
 
-Read [references/routing.md](references/routing.md) if the intent is ambiguous. Read [references/domains.md](references/domains.md) to classify the repo vs the request. Read [references/memory.md](references/memory.md) before acting in a known repo. Read [references/research.md](references/research.md) before recommending a stack or tool. Read [references/quality.md](references/quality.md) before calling work done. Read [references/wiki.md](references/wiki.md) whenever you create or update docs. Read [references/failures.md](references/failures.md) when something smells off. Read [references/worktrees.md](references/worktrees.md) before an unattended run or a second agent. Read [references/review.md](references/review.md) before calling a slice reviewed. Read [references/sessions.md](references/sessions.md) before planning.
+Read [references/routing.md](references/routing.md) if the intent is ambiguous. Read [references/domains.md](references/domains.md) to classify the repo vs the request. Read [references/memory.md](references/memory.md) before acting in a known repo. Read [references/judgment.md](references/judgment.md) before you pick the first familiar stack or look. Read [references/research.md](references/research.md) before recommending a stack or tool. Read [references/ui.md](references/ui.md) when humans will see a surface. Read [references/testing.md](references/testing.md) before calling a slice tested. Read [references/quality.md](references/quality.md) before calling work done. Read [references/wiki.md](references/wiki.md) whenever you create or update docs. Read [references/failures.md](references/failures.md) when something smells off. Read [references/worktrees.md](references/worktrees.md) before an unattended run or a second agent. Read [references/review.md](references/review.md) before calling a slice reviewed. Read [references/sessions.md](references/sessions.md) before planning.
 
 ## First 30 seconds
 
 1. Look at the project root: `AGENTS.md`, `documents/`, `.erixpo/` (PROFILE, MEMORY, USER, lessons), existing source.
 2. If PROFILE/MEMORY/USER exist, read them. They specialize you to **this** folder.
 3. Classify the **repo domain** and the **request** separately (see domains.md).
-4. Follow that skill's `SKILL.md` (`erixpo-init`, `erixpo-new`, `erixpo-auto`, `erixpo-feature`, `erixpo-fix`, `erixpo-review`, `erixpo-docs`, `erixpo-work`, `erixpo-learn`, `erixpo-search`).
+4. Follow that skill's `SKILL.md` (`erixpo-init`, `erixpo-new`, `erixpo-auto`, `erixpo-feature`, `erixpo-fix`, `erixpo-review`, `erixpo-docs`, `erixpo-work`, `erixpo-learn`, `erixpo-search`, `erixpo-ui`, `erixpo-uninstall`).
+4b. If `.erixpo/hosts.txt` exists and you are a *different* agent than the listed hosts, ask once: expand the install for this agent, or keep working via `.agents/skills` only.
 5. If two paths could apply, pick the narrower one (fix beats feature beats work beats new). On a known repo, search sessions before planning.
 6. If a track applies even 10%, load it. Do not jump straight to code.
+7. Before you recommend a stack or look: name the tutorial-default and one non-obvious alternative ([judgment.md](references/judgment.md)). Do not add extras they did not ask for.
 
 ## Routing table
 
@@ -37,10 +39,12 @@ Read [references/routing.md](references/routing.md) if the intent is ambiguous. 
 | Only docs / wiki / progress html / README | **docs** |
 | Remember / refine / save a skill / what did we learn | **learn** |
 | What did we do / find the session / search history | **search** |
+| Look / theme / mockup / design language / spacing / type / color / animation / radius / UI spec / make it consistent | **ui** — load `erixpo-ui`. Create or change `documents/ui/` before freelancing pixels. |
+| Uninstall / remove erixpo / I don't want erixpo anymore | **uninstall** — load `erixpo-uninstall`. Ask pack-only vs memory vs everything. Never delete source on your own. |
 | Automation, assistant, research, writing, ops, "help me with this repo", not a product slice | **work** |
 | Cannot tell | One short clarifying question, then route. Never a menu of commands. |
 
-Aliases `/erixpo init|auto|feature|fix|review|docs|work|learn|search` force that row.
+Aliases `/erixpo init|auto|feature|fix|review|docs|work|learn|search|ui|uninstall` force that row.
 
 ## Flow: new work
 
@@ -77,13 +81,13 @@ Skip questions that do not change the architecture.
 
 ### 4. Plan
 
-Write `.erixpo/plan.md`:
+Write `.erixpo/plan.md` from the pack template:
 
 - Goal
 - Job type + chosen stack
+- UI spec pointer if there is a surface
 - Out of scope
-- Slices (each slice has a check)
-- Edge cases you will handle
+- Slices (each slice has acceptance, edges, tests, UI tokens touched, check)
 - Suggested extras the user did **not** ask for, as a separate "optional" list
 
 If you discover a convenient extra (share-with-friend, simulator, auth, analytics), propose it. Do not add it.
