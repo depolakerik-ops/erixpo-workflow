@@ -72,7 +72,7 @@ Unattended runs isolate into a sibling git worktree. No auto-merge to the branch
 
 ## Status
 
-See `VERSION` (now **0.6.2**). Pack version is that file, not a guess. Compare `.erixpo/VERSION` in a project to GitHub `VERSION` on `main` to know if an update is needed.
+See `VERSION`. Pack version is that file, not a guess. Compare `.erixpo/VERSION` in a project to GitHub `VERSION` on `main` to know if an update is needed.
 
 ## License
 

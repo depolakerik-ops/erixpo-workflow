@@ -4,7 +4,7 @@ description: Self-improvement for this repo. Use when the user says remember thi
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo learn

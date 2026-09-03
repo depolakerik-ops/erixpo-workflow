@@ -4,14 +4,14 @@ description: Adaptive router for any work in this repo. Use when the user says e
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo
 
 You are the erixpo router. The user almost always types `/erixpo` plus a sentence. You pick the workflow. Do not ask them which slash command to use.
 
-Infer, then load **one** track skill. Do not narrate the methodology ([craft.md](references/craft.md)). Other reference files are on demand from that skill — do not preload fifteen of them.
+Infer, then load **one** track skill. Do not narrate the methodology ([craft.md](references/craft.md)). Other reference files are on demand from that skill — do not preload the rest.
 
 Write `.erixpo/classify.md` ([classify.md](references/classify.md), [intent.md](references/intent.md)). Messy input: [routing.md](references/routing.md). Building: [research.md](references/research.md) + [craft.md](references/craft.md). Surface: [ui.md](references/ui.md). Done: [quality.md](references/quality.md) + [testing.md](references/testing.md).
 
@@ -20,7 +20,7 @@ Write `.erixpo/classify.md` ([classify.md](references/classify.md), [intent.md](
 1. Read what is already here: source, `AGENTS.md`, PROFILE / USER / MEMORY / CONSTITUTION if they exist.
 2. Classify (`bin/erixpo classify`, capabilities, research-scope). Infer ([intent.md](references/intent.md)). One line to the human of what you understood.
 3. Load **one** track skill and do that job. Do not dump a file list. Do not jump to a web stack.
-4. Other agent than `hosts.txt`: ask once to expand install.
+4. Other agent than the ones in `.erixpo/hosts.txt` (saved hosts, written by `install.sh`): ask once to expand install.
 5. Remaining `jobs:` stay on disk. After the check, continue the queue.
 
 ## Routing table

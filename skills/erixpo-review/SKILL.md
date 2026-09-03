@@ -4,7 +4,7 @@ description: Two-stage review of an erixpo project or slice. Use when the user s
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo review

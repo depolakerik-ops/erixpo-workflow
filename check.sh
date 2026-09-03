@@ -55,6 +55,7 @@ VER="$(tr -d ' \t\n' < VERSION 2>/dev/null || true)"
 grep -q "\"version\": \"$VER\"" .claude-plugin/plugin.json || { echo "plugin.json version != VERSION ($VER)"; fail=1; }
 grep -q "\"version\": \"$VER\"" .claude-plugin/marketplace.json || { echo "marketplace.json version != VERSION ($VER)"; fail=1; }
 [[ -f skills/erixpo-update/SKILL.md ]] || { echo "missing erixpo-update skill"; fail=1; }
+for f in skills/*/SKILL.md; do grep -q "version: \"$VER\"" "$f" || { echo "$f version != VERSION ($VER)"; fail=1; }; done
 
 echo "== v0.6 protocol files =="
 for f in \
@@ -77,6 +78,8 @@ do
   [[ -f "$f" ]] || { echo "missing $f"; fail=1; }
 done
 grep -q 'bin/erixpo close' bin/erixpo || { echo "bin/erixpo missing close"; fail=1; }
+grep -q 'sweep' bin/erixpo || { echo "bin/erixpo missing sweep"; fail=1; }
+grep -q 'isolate' bin/erixpo || { echo "bin/erixpo missing isolate"; fail=1; }
 grep -q 'erixpo-ui' install.sh || { echo "install.sh SKILL_NAMES missing erixpo-ui"; fail=1; }
 # plan templates must both mention scaffold / tests / UI change-type
 grep -q 'scaffold' templates/.erixpo/plan.md || { echo "rich plan missing scaffold"; fail=1; }

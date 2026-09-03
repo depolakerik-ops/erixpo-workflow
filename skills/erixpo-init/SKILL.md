@@ -4,7 +4,7 @@ description: Initialize erixpo in a new or existing repository. Use when the use
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo init

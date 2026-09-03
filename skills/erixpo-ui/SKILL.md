@@ -4,7 +4,7 @@ description: Create or change the project design language. Use when the work has
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo ui

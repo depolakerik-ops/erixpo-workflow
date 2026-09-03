@@ -4,7 +4,7 @@ description: Remove the erixpo workflow from this project after asking what to k
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo uninstall

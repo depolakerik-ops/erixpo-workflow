@@ -4,7 +4,7 @@ description: Add a feature to an existing erixpo-managed project. Use when the u
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo feature

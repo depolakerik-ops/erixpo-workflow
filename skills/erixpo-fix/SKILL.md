@@ -4,7 +4,7 @@ description: Fix a bug. Reproduce, fix, add a regression test that fails without
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo fix

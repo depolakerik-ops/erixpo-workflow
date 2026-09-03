@@ -4,7 +4,7 @@ description: General work inside this repo that is not building a product. Use w
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo work

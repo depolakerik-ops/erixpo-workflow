@@ -4,7 +4,7 @@ description: Create or refresh the project wiki per ceremony. Use when the user 
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo docs

@@ -4,7 +4,7 @@ description: Refresh the erixpo pack in this project from GitHub. Use when the u
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.1"
+  version: "0.6.2"
 ---
 
 # erixpo update

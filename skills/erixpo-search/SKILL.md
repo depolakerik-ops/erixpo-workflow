@@ -4,7 +4,7 @@ description: Search prior erixpo sessions, learnings, and worktrees in this repo
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo search

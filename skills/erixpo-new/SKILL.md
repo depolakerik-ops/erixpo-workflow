@@ -4,7 +4,7 @@ description: Start a new product with erixpo. Interview the user (surface is man
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.0"
+  version: "0.6.2"
 ---
 
 # erixpo-new
