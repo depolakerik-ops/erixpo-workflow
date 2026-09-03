@@ -1,6 +1,6 @@
 ---
 name: erixpo-auto
-description: Autonomous build loop for an approved erixpo plan. Use when the user says erixpo auto, go, continue, keep building, or when .erixpo/plan.md is approved. Same quality bar as bin/erixpo run (templates/PROMPT.md). One slice per iteration with tests, UI spec, self-review, check, wiki per ceremony. USER.md autonomy wins; tests are not optional.
+description: Autonomous build loop for an approved erixpo plan. Use when the user says erixpo auto (or go/continue/keep building about an approved .erixpo/plan.md). Same quality bar as bin/erixpo run (templates/PROMPT.md). One slice per iteration with tests, UI spec, self-review, check, wiki per ceremony. USER.md autonomy wins; tests are not optional.
 license: MIT
 metadata:
   author: Erixpo

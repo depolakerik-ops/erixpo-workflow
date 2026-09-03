@@ -1,6 +1,6 @@
 ---
 name: erixpo-search
-description: Search prior erixpo sessions, learnings, and worktrees in this repo. Use when the user says what did we do, find the session, search memory, prior run, or at the start of a non-trivial job before planning. Reads .erixpo/*.jsonl only. Does not change product code.
+description: Read-only search of prior erixpo sessions, learnings, and worktrees in this repo. Use when the user says what did we do, find the session, prior run, or at the start of a non-trivial job before planning. Reads .erixpo/*.jsonl only. Does not write learnings (that is erixpo-learn) and does not change product code.
 license: MIT
 metadata:
   author: Erixpo

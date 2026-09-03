@@ -36,6 +36,10 @@ Engine files live only in `.erixpo/` (`bin/`, `adapters/`, `scripts/`, `pack-tem
 
 `.erixpo/` is generated machine state (ceremony pages, plan, sessions, registry) plus the installed engine copy above — never commit it from a project. `install.sh --uninstall` removes pack files via the manifest; `--purge` drops `.erixpo/` itself.
 
+## Global install
+
+`install.sh --global` installs the same skill set for every project on the machine, into `$HOME/.<host>/skills/` (plus `.agents/skills/`) for each resolved host. Verify with `ls ~/.agents/skills/erixpo` (or the vendor folder). Project installs still write `.erixpo/` + compat links into the target; `--global` never touches the current project.
+
 ```bash
 bash install.sh --detect
 bash install.sh --host cursor

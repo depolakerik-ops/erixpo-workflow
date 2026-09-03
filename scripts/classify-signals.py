@@ -298,13 +298,22 @@ def selftest() -> int:
 
 
 def main(argv: list[str]) -> int:
-    if argv[1:] == ["--selftest"]:
+    if sys.version_info < (3, 8):
+        print("classify-signals.py needs python3.8+", file=sys.stderr)
+        return 2
+    if len(argv) > 1 and argv[1].startswith("--") and argv[1] != "--selftest":
+        print("usage: classify-signals.py [--selftest] <sentence>", file=sys.stderr)
+        return 2
+    if "--selftest" in argv[1:]:
         return selftest()
-    text = " ".join(argv[1:]).strip()
+    text = " ".join(a for a in argv[1:] if a != "--selftest").strip()
     if not text or text in ("-h", "--help"):
         print("usage: classify-signals.py [--selftest] <sentence>", file=sys.stderr)
         return 2
-    sys.stdout.write(format_md(classify(text)))
+    try:
+        sys.stdout.write(format_md(classify(text)))
+    except BrokenPipeError:
+        pass
     return 0
 
 

@@ -49,12 +49,12 @@ resolve_hosts() {
   if [[ "$HOST_ARG" == all ]]; then HOSTS=("${ALL_HOSTS[@]}"); HOSTS+=(agents); return; fi
   if [[ "$HOST_ARG" != auto ]]; then HOSTS=("$HOST_ARG"); else HOSTS=("$primary"); fi
   HOSTS+=(agents)
-  if [[ "$EXPAND" -eq 1 || "$HOST_ARG" == auto ]]; then
-    saved_dump="$(read_saved_hosts || true)"
-    if [[ -n "$saved_dump" ]]; then while IFS= read -r h; do [[ -n "$h" ]] && HOSTS+=("$h"); done <<EOF
+  # Installs are additive: previously saved hosts are always kept, so a second
+  # install for another host never drops the first from hosts.txt.
+  saved_dump="$(read_saved_hosts || true)"
+  if [[ -n "$saved_dump" ]]; then while IFS= read -r h; do [[ -n "$h" ]] && HOSTS+=("$h"); done <<EOF
 $saved_dump
 EOF
-    fi
   fi
   HOSTS=($(uniq_words "${HOSTS[@]}"))
 }
@@ -105,10 +105,16 @@ do_install() {
 do_uninstall() {
   echo "uninstalling erixpo-workflow from $DEST"
   if [[ -f "$MANIFEST" ]]; then
-    local line; while IFS= read -r line || [[ -n "$line" ]]; do [[ -z "$line" || "$line" == \#* ]] && continue; rm_path "$DEST/$line"; done < "$MANIFEST"
+    local line target; while IFS= read -r line || [[ -n "$line" ]]; do
+      [[ -z "$line" || "$line" == \#* ]] && continue
+      case "$line" in /*|*..*) echo "skip unsafe manifest line: $line" >&2; continue ;; esac
+      target="$DEST/$line"
+      [[ "$target" == "$DEST"/* ]] || { echo "skip escaping manifest line: $line" >&2; continue; }
+      rm_path "$target"
+    done < "$MANIFEST"
   else
     local h rel cmd; for h in "${ALL_HOSTS[@]}" agents; do rel="$(host_skill_rel "$h")"; for n in "${SKILL_NAMES[@]}"; do rm_path "$DEST/$rel/$n"; done; cmd="$(host_cmd_rel "$h")"; [[ -n "$cmd" ]] && rm_path "$DEST/$cmd/erixpo.md"; done
-    rm_path "$DEST/bin/erixpo"; local a; for a in "${ADAPTER_NAMES[@]}"; do rm_path "$DEST/adapters/$a"; done; for p in "$DEST/bin" "$DEST/scripts"; do if [[ -L "$p" ]]; then rm -f "$p"; echo "removed $p"; fi; done; rmdir_empty "$DEST/bin"; rmdir_empty "$DEST/scripts"; rmdir_empty "$DEST/adapters"; rm_path "$DEST/.erixpo/pack-templates"
+    rm_path "$DEST/bin/erixpo"; local a p; for a in "${ADAPTER_NAMES[@]}"; do rm_path "$DEST/adapters/$a"; done; for p in "$DEST/bin" "$DEST/scripts"; do if [[ -L "$p" ]]; then rm -f "$p"; echo "removed $p"; fi; done; rmdir_empty "$DEST/bin"; rmdir_empty "$DEST/scripts"; rmdir_empty "$DEST/adapters"; rm_path "$DEST/.erixpo/pack-templates"; rm_path "$DEST/.erixpo/bin"; rm_path "$DEST/.erixpo/scripts"; rm_path "$DEST/.erixpo/adapters"; rm_path "$DEST/.erixpo/VERSION"
   fi
   if [[ "$PURGE_WORKTREES" -eq 1 ]]; then
     local repo base wt; repo="$(basename "$DEST")"; base="$(dirname "$DEST")/.erixpo-worktrees"

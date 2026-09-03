@@ -53,6 +53,34 @@ grep -q "$VER" "$TMP/.erixpo/install-manifest.txt" || bad "install manifest not 
 out="$(python3 "$ROOT/scripts/classify-signals.py" "please update erixpo there is new update")"
 printf '%s\n' "$out" | grep -q 'request_class: update' || bad "update erixpo != update"
 
+say "== install host matrix + multi-host merge =="
+MHOST="$(mktemp -d)"; CLEANUP+=("$MHOST")
+bash "$ROOT/install.sh" --target "$MHOST" --host claude >/dev/null
+[[ -d "$MHOST/.claude/skills/erixpo" ]] || bad "missing .claude/skills after --host claude"
+[[ -d "$MHOST/.agents/skills/erixpo" ]] || bad "missing .agents/skills after --host claude"
+[[ -d "$MHOST/.codex/skills" ]] && bad "sprayed .codex/skills on --host claude"
+bash "$ROOT/install.sh" --target "$MHOST" --host codex >/dev/null
+grep -q '^claude$' "$MHOST/.erixpo/hosts.txt" || bad "hosts.txt lost claude after second install"
+grep -q '^codex$' "$MHOST/.erixpo/hosts.txt" || bad "hosts.txt missing codex after second install"
+[[ -d "$MHOST/.codex/skills/erixpo" ]] || bad "missing .codex/skills after second install"
+
+say "== install upgrade over legacy layout =="
+UPG="$(mktemp -d)"; CLEANUP+=("$UPG")
+mkdir -p "$UPG/bin" "$UPG/scripts"
+cp "$ROOT/bin/erixpo" "$UPG/bin/erixpo"
+cp "$ROOT/scripts/worktree.sh" "$UPG/scripts/worktree.sh"
+echo "user content" > "$UPG/scripts/mine.txt"
+bash "$ROOT/install.sh" --target "$UPG" --host generic >/dev/null
+[[ -L "$UPG/bin" ]] || bad "bin not converted to symlink on upgrade"
+[[ -f "$UPG/scripts/mine.txt" ]] || bad "upgrade deleted user file in scripts/"
+grep -q "user content" "$UPG/scripts/mine.txt" || bad "upgrade clobbered user file"
+
+say "== install --global respects HOME =="
+GHOME="$(mktemp -d)"; CLEANUP+=("$GHOME")
+GTARG="$(mktemp -d)"; CLEANUP+=("$GTARG")
+HOME="$GHOME" bash "$ROOT/install.sh" --target "$GTARG" --host generic --global >/dev/null
+[[ -d "$GHOME/.agents/skills/erixpo" ]] || bad "missing HOME/.agents/skills after --global"
+
 say "== review-stage1 rejects dummy check =="
 FIX="$(mktemp -d)"; CLEANUP+=("$FIX")
 init_git "$FIX"

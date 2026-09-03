@@ -12,7 +12,7 @@ From the project you want to work on:
 
 ```bash
 git clone https://github.com/depolakerik-ops/erixpo-workflow /tmp/erixpo-workflow
-bash /tmp/erixpo-workflow/install.sh
+bash /tmp/erixpo-workflow/install.sh --host auto
 ```
 
 Host-aware: `.agents/skills/` plus the vendor folder for the agent that is actually running. CLI into `bin/` + `.erixpo/`.

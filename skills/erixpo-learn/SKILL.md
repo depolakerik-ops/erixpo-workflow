@@ -1,6 +1,6 @@
 ---
 name: erixpo-learn
-description: Self-improvement for this repo. Use when the user says remember this, what did we learn, refine, skillify, search memory, prune learnings, or after a finished erixpo job. Writes typed learnings, updates MEMORY.md and USER.md (taste/autonomy corrections), may promote a procedure into a project skill. Never silently changes the immutable pack skills.
+description: Self-improvement for this repo. Use when the user says remember this, what did we learn, refine, skillify, prune learnings, or after a finished erixpo job. For read-only recall of past work, use erixpo-search instead. Writes typed learnings, updates MEMORY.md and USER.md (taste/autonomy corrections), may promote a procedure into a project skill. Never silently changes the immutable pack skills.
 license: MIT
 metadata:
   author: Erixpo
