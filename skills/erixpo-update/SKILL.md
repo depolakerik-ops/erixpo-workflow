@@ -39,6 +39,6 @@ If `.erixpo/hosts.txt` lists extra agents, `--host auto` already expands from th
 4. Prove it:
    - `cat .erixpo/VERSION` matches pack `VERSION`
    - `scripts/research-scope.py` (and other pack scripts) exist
-   - product files still exist
+   - product files still exist, and the product check still passes ([testing](../erixpo/references/testing.md); ceremony untouched per [ceremony](../erixpo/references/ceremony.md))
 
 5. Tell the user the new version. One sessions.jsonl line, track `update`.

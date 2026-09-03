@@ -81,6 +81,9 @@ grep -q 'bin/erixpo close' bin/erixpo || { echo "bin/erixpo missing close"; fail
 grep -q 'sweep' bin/erixpo || { echo "bin/erixpo missing sweep"; fail=1; }
 grep -q 'isolate' bin/erixpo || { echo "bin/erixpo missing isolate"; fail=1; }
 grep -q 'erixpo-ui' install.sh || { echo "install.sh SKILL_NAMES missing erixpo-ui"; fail=1; }
+grep -q 'install_cli "$DEST/bin"' install.sh && { echo "install.sh still writes top-level DEST/bin (use .erixpo-only + compat link)"; fail=1; }
+grep -q 'install_compat_link' install.sh || { echo "install.sh missing compat-link step"; fail=1; }
+[[ -z "$(git ls-files '.erixpo' 2>/dev/null)" ]] || { echo ".erixpo files committed (generated state must stay out of git)"; fail=1; }
 # plan templates must both mention scaffold / tests / UI change-type
 grep -q 'scaffold' templates/.erixpo/plan.md || { echo "rich plan missing scaffold"; fail=1; }
 grep -q 'scaffold' templates/erixpo/plan.md || { echo "templates/erixpo/plan.md drifted (missing scaffold)"; fail=1; }

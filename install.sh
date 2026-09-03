@@ -71,6 +71,12 @@ copy_tree() { local from="$1" to="$2" rel="$3"; mkdir -p "$(dirname "$to")"; rm 
 install_skills() { local base="$1" rel_base="$2" skill name; mkdir -p "$base" 2>/dev/null || true; for skill in "$SRC"/*; do [[ -d "$skill" && -f "$skill/SKILL.md" ]] || continue; name="$(basename "$skill")"; copy_tree "$skill" "$base/$name" "$rel_base/$name"; echo "installed $name -> $base/$name"; done; }
 install_commands() { local dest_dir="$1" rel_base="$2" f; [[ -d "$ROOT/commands" && -n "$dest_dir" ]] || return 0; mkdir -p "$dest_dir"; cp -R "$ROOT/commands/." "$dest_dir/"; for f in "$ROOT/commands/"*; do [[ -e "$f" ]] || continue; manifest_add "$rel_base/$(basename "$f")"; done; echo "installed commands -> $dest_dir"; }
 install_cli() { local bin_dest="$1" ad_dest="$2" bin_rel="$3" ad_rel="$4" a; [[ -d "$ROOT/bin" ]] || return 0; mkdir -p "$bin_dest" "$ad_dest"; cp -R "$ROOT/bin/." "$bin_dest/"; manifest_add "$bin_rel/erixpo"; if [[ -d "$ROOT/adapters" ]]; then cp -R "$ROOT/adapters/." "$ad_dest/"; for a in "$ROOT/adapters/"*.sh; do [[ -f "$a" ]] || continue; manifest_add "$ad_rel/$(basename "$a")"; done; fi; chmod +x "$bin_dest/erixpo" 2>/dev/null || true; echo "installed CLI -> $bin_dest"; }
+# Compat symlink: $1 = link path, $2 = target (relative), $3 = manifest rel.
+# Leaves pre-existing real files alone; only replaces our own symlink or free paths.
+install_compat_link() { local link="$1" target="$2" rel="$3"; if [[ -L "$link" ]]; then rm -f "$link"; elif [[ -e "$link" ]]; then echo "keep existing $link (not ours); skip compat link"; return 0; fi; ln -s "$target" "$link"; manifest_add "$rel"; echo "linked $link -> $target"; }
+# Remove our legacy top-level copies from pre-0.6.3 installs (real files only,
+# never user content); rmdir_empty drops the dir solely when nothing remains.
+remove_legacy_top() { local a s; rm -f "$DEST/bin/erixpo"; for a in "${ADAPTER_NAMES[@]}"; do rm -f "$DEST/adapters/$a"; done; for s in "${SCRIPT_NAMES[@]}"; do rm -f "$DEST/scripts/$s"; done; rmdir_empty "$DEST/adapters"; rmdir_empty "$DEST/scripts"; rmdir_empty "$DEST/bin"; }
 save_hosts() { mkdir -p "$DEST/.erixpo"; { echo "# hosts this project is installed for"; local h; for h in "${HOSTS[@]}"; do echo "$h"; done; } > "$HOSTS_FILE"; }
 do_install() {
   [[ -d "$SRC" ]] || { echo "skills/ missing" >&2; exit 1; }
@@ -86,8 +92,10 @@ do_install() {
   done
   if [[ -d "$ROOT/templates" ]]; then mkdir -p "$DEST/.erixpo/pack-templates"; cp -R "$ROOT/templates/." "$DEST/.erixpo/pack-templates/"; manifest_add ".erixpo/pack-templates"; fi
   install_cli "$DEST/.erixpo/bin" "$DEST/.erixpo/adapters" .erixpo/bin .erixpo/adapters
-  install_cli "$DEST/bin" "$DEST/adapters" bin adapters
-  if [[ -d "$ROOT/scripts" ]]; then mkdir -p "$DEST/.erixpo/scripts" "$DEST/scripts"; cp -R "$ROOT/scripts/." "$DEST/.erixpo/scripts/"; cp -R "$ROOT/scripts/." "$DEST/scripts/"; chmod +x "$DEST/scripts/"*.sh "$DEST/scripts/"*.py "$DEST/.erixpo/scripts/"*.sh "$DEST/.erixpo/scripts/"*.py 2>/dev/null || true; local s; for s in "${SCRIPT_NAMES[@]}"; do manifest_add ".erixpo/scripts/$s"; manifest_add "scripts/$s"; done; fi
+  remove_legacy_top
+  install_compat_link "$DEST/bin" ".erixpo/bin" bin
+  install_compat_link "$DEST/scripts" ".erixpo/scripts" scripts
+  if [[ -d "$ROOT/scripts" ]]; then mkdir -p "$DEST/.erixpo/scripts"; cp -R "$ROOT/scripts/." "$DEST/.erixpo/scripts/"; chmod +x "$DEST/.erixpo/scripts/"*.sh "$DEST/.erixpo/scripts/"*.py 2>/dev/null || true; local s; for s in "${SCRIPT_NAMES[@]}"; do manifest_add ".erixpo/scripts/$s"; done; fi
   if [[ -f "$ROOT/VERSION" ]]; then cp "$ROOT/VERSION" "$DEST/.erixpo/VERSION"; manifest_add ".erixpo/VERSION"; fi
   if [[ "$GLOBAL" -eq 1 ]]; then local h; for h in "${HOSTS[@]}"; do install_skills "$(host_home_skill "$h")" ""; done; fi
   save_hosts
@@ -100,7 +108,7 @@ do_uninstall() {
     local line; while IFS= read -r line || [[ -n "$line" ]]; do [[ -z "$line" || "$line" == \#* ]] && continue; rm_path "$DEST/$line"; done < "$MANIFEST"
   else
     local h rel cmd; for h in "${ALL_HOSTS[@]}" agents; do rel="$(host_skill_rel "$h")"; for n in "${SKILL_NAMES[@]}"; do rm_path "$DEST/$rel/$n"; done; cmd="$(host_cmd_rel "$h")"; [[ -n "$cmd" ]] && rm_path "$DEST/$cmd/erixpo.md"; done
-    rm_path "$DEST/bin/erixpo"; rm_path "$DEST/.erixpo/pack-templates"
+    rm_path "$DEST/bin/erixpo"; local a; for a in "${ADAPTER_NAMES[@]}"; do rm_path "$DEST/adapters/$a"; done; for p in "$DEST/bin" "$DEST/scripts"; do if [[ -L "$p" ]]; then rm -f "$p"; echo "removed $p"; fi; done; rmdir_empty "$DEST/bin"; rmdir_empty "$DEST/scripts"; rmdir_empty "$DEST/adapters"; rm_path "$DEST/.erixpo/pack-templates"
   fi
   if [[ "$PURGE_WORKTREES" -eq 1 ]]; then
     local repo base wt; repo="$(basename "$DEST")"; base="$(dirname "$DEST")/.erixpo-worktrees"

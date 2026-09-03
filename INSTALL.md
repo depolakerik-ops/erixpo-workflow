@@ -30,6 +30,12 @@ bash /tmp/erixpo-workflow/install.sh --host auto
 
 `--host auto` installs `.agents/skills/` plus the vendor folder for the detected host only.
 
+## Footprint — one real folder
+
+Engine files live only in `.erixpo/` (`bin/`, `adapters/`, `scripts/`, `pack-templates/`, `VERSION`, `hosts.txt`, manifest). `bin/` and `scripts/` at the project root are compat symlinks into `.erixpo/` so `bin/erixpo …` and `scripts/…` keep working; no top-level `adapters/` is created. Re-running install removes legacy top-level copies (pack files only, never your content) and heals the links.
+
+`.erixpo/` is generated machine state (ceremony pages, plan, sessions, registry) plus the installed engine copy above — never commit it from a project. `install.sh --uninstall` removes pack files via the manifest; `--purge` drops `.erixpo/` itself.
+
 ```bash
 bash install.sh --detect
 bash install.sh --host cursor

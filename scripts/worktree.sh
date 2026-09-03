@@ -13,13 +13,16 @@ KEEP_BRANCH=0
 NO_MERGE=0
 APPLY=0
 ID=""
+PORCELAIN=0
 
 usage() {
   cat <<'EOF'
 Usage: scripts/worktree.sh <command> [options]
 
 Commands:
-  isolate [--slug NAME] [--with-env]   create sibling worktree + branch
+  isolate [--slug NAME] [--with-env] [--porcelain]
+                                       create sibling worktree + branch
+                                       (--porcelain prints path=/id=/branch= lines)
   list                                 print live worktrees
   merge --id ID [--keep]               merge that branch into HEAD (no push)
   prune --id ID [--delete-branch]      remove worktree
@@ -45,6 +48,7 @@ while [[ $# -gt 0 ]]; do
     --keep-branch) KEEP_BRANCH=1; shift ;;
     --no-merge) NO_MERGE=1; shift ;;
     --apply) APPLY=1; shift ;;
+    --porcelain) PORCELAIN=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) echo "unknown: $1" >&2; usage; exit 1 ;;
   esac
@@ -245,30 +249,36 @@ cmd_isolate() {
     echo "already inside a worktree. isolate from the human checkout instead." >&2
     exit 1
   fi
-  local ts name branch base path id
+  local ts name branch base path id tag
   ts="$(stamp)"
   name="$(repo_name)"
-  SLUG="$(printf '%s' "$SLUG" | tr -cs 'a-zA-Z0-9._-' '-' | sed 's/^-//;s/-$//')"
+  SLUG="$(printf '%s' "$SLUG" | tr -cs 'a-zA-Z0-9._-' '-' | sed 's/^-//;s/-$//' | cut -c1-32 | sed 's/-$//')"
   [[ -n "$SLUG" ]] || SLUG="run"
-  branch="erixpo/${ts}-${SLUG}"
-  id="s-${ts}-${SLUG}"
+  tag="${ts}-${SLUG}"
+  for n in 2 3 4 5 6 7 8 9; do branch_exists "erixpo/${tag}" || break; tag="${ts}-${SLUG}-$n"; done
+  branch="erixpo/${tag}"
+  id="s-${tag}"
   base="$(worktrees_base)"
-  path="${base}/${name}-${ts}-${SLUG}"
+  path="${base}/${name}-${tag}"
   mkdir -p "$base"
-  if git -C "$ROOT" show-ref --verify --quiet "refs/heads/${branch}"; then
-    echo "branch already exists: $branch" >&2
+  if branch_exists "$branch"; then
+    echo "branch still exists after retries: $branch" >&2
     exit 1
   fi
   git -C "$ROOT" worktree add -b "$branch" "$path" HEAD
-  # .erixpo is often gitignored (machine state). Copy it so the worker has a plan.
+  # .erixpo is often gitignored (machine state). Copy it so the worker has a plan,
+  # but never the registry (worktrees.jsonl/state.yaml) or logs — the child gets
+  # a fresh registry instead of the parent's live rows.
   if [[ -d "$ROOT/.erixpo" ]]; then
     mkdir -p "$path/.erixpo"
     if command -v rsync >/dev/null 2>&1; then
       rsync -a --exclude '*.log' --exclude '.env' --exclude 'loop-prompt.md' \
+        --exclude 'worktrees.jsonl' --exclude 'state.yaml' \
         "$ROOT/.erixpo/" "$path/.erixpo/"
     else
       cp -R "$ROOT/.erixpo/." "$path/.erixpo/"
-      rm -f "$path/.erixpo/"*.log "$path/.erixpo/loop-prompt.md" 2>/dev/null || true
+      rm -f "$path/.erixpo/"*.log "$path/.erixpo/loop-prompt.md" "$path/.erixpo/.env" \
+        "$path/.erixpo/worktrees.jsonl" "$path/.erixpo/state.yaml" 2>/dev/null || true
     fi
   fi
   if [[ "$WITH_ENV" -eq 1 && -f "$ROOT/.env.example" ]]; then
@@ -297,6 +307,10 @@ PY
       echo "worktree_path: $path"
       echo "worktree_branch: $branch"
     } >> "$ROOT/.erixpo/state.yaml"
+  fi
+  if [[ "$PORCELAIN" -eq 1 ]]; then
+    printf 'path=%s\nid=%s\nbranch=%s\n' "$path" "$id" "$branch"
+    return 0
   fi
   echo "isolated"
   echo "id: $id"

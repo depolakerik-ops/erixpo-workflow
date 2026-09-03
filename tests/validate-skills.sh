@@ -42,5 +42,14 @@ PY
   else
     echo "ok $name"
   fi
+  # relative .md links must resolve inside the repo (skip http(s), anchors, mailto)
+  while IFS= read -r tgt; do
+    case "$tgt" in http*|https*|mailto:*|\#*|"") continue ;; esac
+    tgt="${tgt%%\#*}"
+    if [[ ! -e "$skill/$tgt" ]]; then
+      echo "FAIL $name: dangling link $tgt"
+      err=1
+    fi
+  done < <(grep -o '\]([^)]*)' "$md" | sed 's/^](//;s/)$//' | grep '\.md' || true)
 done
 exit "$err"

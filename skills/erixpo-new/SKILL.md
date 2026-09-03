@@ -11,7 +11,7 @@ metadata:
 
 Greenfield or "I want to build X". Do not jump to code.
 
-Read [intent.md](../erixpo/references/intent.md), [domains.md](../erixpo/references/domains.md), [ceremony.md](../erixpo/references/ceremony.md), [scaffold.md](../erixpo/references/scaffold.md), [judgment.md](../erixpo/references/judgment.md).
+Read [intent.md](../erixpo/references/intent.md) and [ceremony.md](../erixpo/references/ceremony.md) up front. Load [domains.md](../erixpo/references/domains.md), [scaffold.md](../erixpo/references/scaffold.md), [judgment.md](../erixpo/references/judgment.md) on demand when the phase needs them — do not preload all five.
 
 ## Phase A — Infer, then at most one question
 

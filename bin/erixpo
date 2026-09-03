@@ -5,23 +5,7 @@ set -euo pipefail
 ROOT="$(pwd)"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PACK="$(cd "$HERE/.." && pwd)"
-if [[ -d "$HERE/../adapters" ]]; then
-  ADAPTERS="$HERE/../adapters"
-elif [[ -d "$ROOT/.erixpo/adapters" ]]; then
-  ADAPTERS="$ROOT/.erixpo/adapters"
-elif [[ -d "$ROOT/adapters" ]]; then
-  ADAPTERS="$ROOT/adapters"
-else
-  ADAPTERS="$HERE/../adapters"
-fi
-
-SCRIPTS=""
-for cand in "$PACK/scripts" "$ROOT/.erixpo/scripts" "$ROOT/scripts" "$HERE/../scripts"; do
-  if [[ -d "$cand" ]]; then
-    SCRIPTS="$cand"
-    break
-  fi
-done
+# ADAPTERS/SCRIPTS resolve after --root parsing (see below): they depend on ROOT.
 
 MAX=20
 WORKER="${ERIXPO_WORKER:-claude}"
@@ -173,6 +157,11 @@ INNER
   } > "$dest"
 }
 
+while [[ "${1:-}" == --root ]]; do
+  [[ $# -ge 2 && -n "${2:-}" ]] || { echo "--root needs a directory" >&2; exit 1; }
+  ROOT="$2"; shift 2
+done
+ROOT="$(git -C "$ROOT" rev-parse --show-toplevel 2>/dev/null || { cd "$ROOT" && pwd; })"
 cmd="${1:-}"
 shift || true
 
@@ -203,11 +192,36 @@ while [[ $# -gt 0 ]]; do
     --kind) KIND="$2"; shift 2 ;;
     --stage) STAGE="$2"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
+    -*)
+      echo "unknown flag: $1" >&2
+      usage
+      exit 1
+      ;;
     *)
       SEARCH_Q+=("$1")
       shift
       ;;
   esac
+done
+
+[[ "$MAX" =~ ^[0-9]+$ && "$MAX" -ge 1 ]] || { echo "--max must be a positive integer" >&2; exit 1; }
+
+if [[ -d "$HERE/../adapters" ]]; then
+  ADAPTERS="$HERE/../adapters"
+elif [[ -d "$ROOT/.erixpo/adapters" ]]; then
+  ADAPTERS="$ROOT/.erixpo/adapters"
+elif [[ -d "$ROOT/adapters" ]]; then
+  ADAPTERS="$ROOT/adapters"
+else
+  ADAPTERS="$HERE/../adapters"
+fi
+
+SCRIPTS=""
+for cand in "$ROOT/.erixpo/scripts" "$ROOT/scripts" "$PACK/scripts" "$HERE/../scripts"; do
+  if [[ -d "$cand" ]]; then
+    SCRIPTS="$cand"
+    break
+  fi
 done
 
 case "$cmd" in
@@ -302,31 +316,44 @@ PY
     iso_id=""
     if [[ "$ISOLATE" -eq 1 ]]; then
       WT="$(resolve_script worktree.sh)"
-      iso_out="$(bash "$WT" isolate --slug "$SLUG")"
+      iso_out="$(bash "$WT" isolate --slug "$SLUG" --porcelain)"
       echo "$iso_out"
-      new_root="$(printf '%s\n' "$iso_out" | awk -F': ' '/^path:/{print $2; exit}')"
-      iso_id="$(printf '%s\n' "$iso_out" | awk -F': ' '/^id:/{print $2; exit}')"
+      new_root=""; iso_id=""
+      while IFS='=' read -r k v; do
+        case "$k" in
+          path) new_root="$v" ;;
+          id) iso_id="$v" ;;
+        esac
+      done <<< "$iso_out"
       if [[ -z "$new_root" || ! -d "$new_root" ]]; then
         echo "isolate did not return a usable path" >&2
         exit 1
       fi
       ROOT="$new_root"
       cd "$ROOT"
+      trap 'echo "close with: bin/erixpo close --id $iso_id" >&2' INT TERM
     fi
     CHECK="$(read_check)"
     PLAN_FILE="${ORDER:-$ROOT/.erixpo/plan.md}"
     if [[ ! -f "$PLAN_FILE" ]]; then
       echo "no plan at $PLAN_FILE" >&2
+      [[ -n "$iso_id" ]] && echo "next: bin/erixpo close --id $iso_id" >&2
       exit 1
     fi
     mkdir -p "$ROOT/.erixpo"
     i=1
+    fails=0
     while [[ "$i" -le "$MAX" ]]; do
       echo "── erixpo iteration $i / $MAX ──"
       LOOP_PROMPT="$ROOT/.erixpo/loop-prompt.md"
       write_loop_prompt "$LOOP_PROMPT" "$PLAN_FILE" "$i"
       echo "$(date -Iseconds) iteration=$i worker=$WORKER root=$ROOT" >> "$ROOT/.erixpo/loop.log"
-      bash "$ADAPTER" "$ROOT" "$LOOP_PROMPT" "$i" || echo "worker exited non-zero (continuing to check)"
+      if bash "$ADAPTER" "$ROOT" "$LOOP_PROMPT" "$i"; then
+        fails=0
+      else
+        fails=$((fails + 1))
+        echo "worker exited non-zero ($fails consecutive; continuing to check)"
+      fi
       echo "check: $CHECK"
       if bash -lc "$CHECK"; then
         echo "check passed on iteration $i"
@@ -339,8 +366,14 @@ PY
         exit 0
       fi
       i=$((i + 1))
+      if [[ "$fails" -ge 3 ]]; then
+        echo "3 consecutive worker failures; stopping" >&2
+        [[ -n "$iso_id" ]] && echo "next: bin/erixpo close --id $iso_id" >&2
+        exit 1
+      fi
     done
     echo "budget exhausted after $MAX iterations" >&2
+    [[ -n "$iso_id" ]] && echo "next: bin/erixpo close --id $iso_id" >&2
     exit 2
     ;;
   ""|-h|--help)

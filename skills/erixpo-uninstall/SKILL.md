@@ -39,3 +39,4 @@ bash /tmp/erixpo-workflow/install.sh --uninstall --purge --purge-worktrees --pur
 - Do not `rm -rf` the project.
 - Do not delete `src/`, app code, `.env`, or `.git`.
 - After the script exits, list what is gone and what is left.
+- Ceremony and test rules apply until the pack is gone ([ceremony](../erixpo/references/ceremony.md), [testing](../erixpo/references/testing.md)).

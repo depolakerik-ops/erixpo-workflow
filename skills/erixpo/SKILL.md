@@ -27,7 +27,7 @@ Write `.erixpo/classify.md` ([classify.md](references/classify.md), [intent.md](
 
 Classify, then route by `request_class` ([classify.md](references/classify.md), [routing.md](references/routing.md)). Do not first-match a synonym.
 
-Aliases `/erixpo init|auto|feature|fix|review|docs|work|learn|search|ui|uninstall|update` force that `request_class` after classify of repo / surface / ceremony.
+Aliases `/erixpo init|auto|feature|fix|review|docs|work|learn|search|ui|new|uninstall|update` force that `request_class` after classify of repo / surface / ceremony.
 
 | Signal | Flow |
 |---|---|
@@ -85,7 +85,7 @@ Use `erixpo-docs` if that is the only job.
 
 ## Sub-agents
 
-Default: one worker.
+Details: [subagents.md](references/subagents.md). Default: one worker.
 
 Spawn another agent only when the work is disjoint (different files, no shared contract). Each extra agent gets its own worktree. Overlapping files → do not spawn.
 
@@ -97,7 +97,7 @@ Unattended `bin/erixpo run` isolates into a sibling worktree by default. Do not 
 
 Run a short **learn** pass (see `erixpo-learn`): one sessions.jsonl line, and a learning line if a verified pitfall/pattern/preference appeared. Do not skip this when the user corrected you.
 
-Read [references/memory.md](references/memory.md) and [references/domains.md](references/domains.md). Then continue remaining `jobs:` in `.erixpo/classify.md` if any.
+Read [memory.md](references/memory.md) and [domains.md](references/domains.md). Then continue remaining `jobs:` in `.erixpo/classify.md` if any.
 
 ## Done
 

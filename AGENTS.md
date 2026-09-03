@@ -19,7 +19,7 @@ That runs bash syntax, skill frontmatter, adapter contract, template presence, V
 - `bin/` + `adapters/` — outer loop (`run`, `review --stage 1`, `close`, `sweep`, `isolate`)
 - `skills/erixpo/references/` — protocols (classify, scaffold, ceremony, ui, slop, testing, worktrees, …)
 - `commands/` + `agents/` — the single user-facing slash command (`erixpo.md`) and reviewer agent
-- `scripts/` + `tests/` + `examples/` + `references/` — helpers, smoke/contract tests, sample ceremony, shared judgment notes
+- `scripts/` + `tests/` + `examples/` + `references/` — helpers, smoke/contract tests, sample ceremony, shared judgment notes (top-level `references/` holds relocation stubs only; canonical copies live in `skills/erixpo/references/`)
 
 ## Isolation
 Unattended loops use `bin/erixpo isolate`. After stage-2 `ship` and the user says close, `bin/erixpo close --id` merges and removes the tree. `sweep` finds leftovers. Session history lives in `.erixpo/sessions.jsonl`.
