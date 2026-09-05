@@ -4,7 +4,7 @@ description: Read-only search of prior erixpo sessions, learnings, and worktrees
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.2"
+  version: "0.7.0"
 ---
 
 # erixpo search
@@ -18,20 +18,20 @@ Read [sessions.md](../erixpo/references/sessions.md).
 1. Run:
 
 ```bash
-bin/erixpo search --kind all <query>
+.erixpo/bin/erixpo search --kind all <query>
 ```
 
-If the CLI is missing, grep `.erixpo/sessions.jsonl`, `.erixpo/learnings.jsonl`, and `.erixpo/worktrees.jsonl` yourself.
+If the CLI is missing, read the JSONL files as data, skipping malformed records. For learnings resolve the last appended record per key before filtering status and query; only active lessons apply. Raw grep matches are historical evidence, not necessarily current guidance. Resolve worktree revisions by id as well.
 
 2. Show 3–8 hits, newest first among equals:
 
 ```
 Prior session: s-… — <goal> (pass|fail, ts)
-Prior learning applied: <key> — <insight>
-Live worktree: <id> — <branch> @ <path>
+Prior learning: <key> — <insight>
+Worktree: <id> — <branch> @ <path> [status]
 ```
 
-3. If a hit changes what you will do, say so in one line. Then route back to the original job (fix / feature / auto / review). Search is not a destination. Live worktrees are status, not a merge cue — the human runs `bin/erixpo close --id` after stage-2 ship.
+3. If a hit changes what you will do, say so in one line. Then route back to the original job (fix / feature / auto / review). Search is not a destination. Live worktrees are status, not a merge cue — the human runs `.erixpo/bin/erixpo close --id` after stage-2 ship.
 
 ## Empty query
 
@@ -44,4 +44,4 @@ User said `/erixpo search` or "what did we do last". Print the last 8 sessions a
 - Do not write secrets that someone accidentally logged — redact and offer prune via `erixpo-learn`
 - Do not treat search as a substitute for reading PROFILE / MEMORY / USER
 - Do not treat `classify.md` as session history
-- Do not close or prune a worktree from search; the human runs `bin/erixpo close --id` after review
+- Do not close or prune a worktree from search; the human runs `.erixpo/bin/erixpo close --id` after review

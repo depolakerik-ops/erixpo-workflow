@@ -1,38 +1,33 @@
 # Review
 
+Result: keep-iterating
+Review-ID:
+Reviewer:
 Date:
 Scope:
 Tree: in-place | worktree
 Branch:
 Isolation id:
-Check command:
-Check result:
-Stage-1 file: `.erixpo/REVIEW-stage1.md`
+Stage-1 file: .erixpo/REVIEW-stage1.md
+Stage-1 evidence: .erixpo/REVIEW-stage1.json
 
-## Stage 1
+## Evidence
 
-Result: pass | fail
-BASE:
-Pairing: ran | skipped (class | ERIXPO_DOCS_ONLY | ERIXPO_SKIP_TEST_PAIRING | no git | no committed range)
-Notes:
+Check command and result:
+Independent inspection:
 
-## Stage 2
+## Findings
 
-Result: pass | fail
 Blockers:
 Should-fix:
-Later:
+Untested and limitations:
 
-### Visual / UI
+## Visual / UI (only when applicable)
 
-- Change-type: none | create | relanguage | retoken | recompose | reflow | remotion | new-screen | consistency
-- LANGUAGE.md / slop.md / layout.md:
-- Proof: screenshot | simulator | browser | native preview | `untested: visual` (why):
-
-## Verdict
-
-ship | fix-blockers | keep-iterating
+Task completion, hierarchy, density, platform conventions:
+Accessibility and empty/error/loading states:
+Proof artifact:
 
 ## Close
 
-On ship + worktree, after the user says merge: `bin/erixpo close --id <id>` (merge + prune). `bin/erixpo merge --id <id>` is still valid.
+Set Result to ship only after independent review. Copy the current stage-1 review_id into Review-ID. Changed files or commits require a new review. After the user authorizes landing, run `.erixpo/bin/erixpo close --id <id>` from the original checkout.

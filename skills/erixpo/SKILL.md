@@ -4,21 +4,21 @@ description: Adaptive router for any work in this repo. Use when the user says e
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.2"
+  version: "0.7.0"
 ---
 
 # erixpo
 
 You are the erixpo router. The user almost always types `/erixpo` plus a sentence. You pick the workflow. Do not ask them which slash command to use.
 
-Infer, then load **one** track skill. Do not narrate the methodology ([craft.md](references/craft.md)). Other reference files are on demand from that skill — do not preload the rest.
+The project can belong to any domain. Determine its deliverable, environment and quality evidence using [domains.md](references/domains.md); framework/platform names are clues, not an allowlist. Infer, then load **one** track skill. Do not narrate the methodology ([craft.md](references/craft.md)). Other reference files are on demand from that skill — do not preload the rest.
 
-Write `.erixpo/classify.md` ([classify.md](references/classify.md), [intent.md](references/intent.md)). Messy input: [routing.md](references/routing.md). Building: [research.md](references/research.md) + [craft.md](references/craft.md). Surface: [ui.md](references/ui.md). Done: [quality.md](references/quality.md) + [testing.md](references/testing.md).
+Write `.erixpo/classify.md` except for its explicit one-shot/maintenance exceptions ([classify.md](references/classify.md), [intent.md](references/intent.md)). Messy input: [routing.md](references/routing.md). Building: [research.md](references/research.md) + [craft.md](references/craft.md). Surface: [ui.md](references/ui.md). Done: [quality.md](references/quality.md) + [testing.md](references/testing.md).
 
 ## First 30 seconds
 
 1. Read what is already here: source, `AGENTS.md`, PROFILE / USER / MEMORY / CONSTITUTION if they exist.
-2. Classify (`bin/erixpo classify`, capabilities, research-scope). Infer ([intent.md](references/intent.md)). One line to the human of what you understood.
+2. Classify (`.erixpo/bin/erixpo classify`, capabilities, research-scope). Infer ([intent.md](references/intent.md)). One line to the human of what you understood.
 3. Load **one** track skill and do that job. Do not dump a file list. Do not jump to a web stack.
 4. Other agent than the ones in `.erixpo/hosts.txt` (saved hosts, written by `install.sh`): ask once to expand install.
 5. Remaining `jobs:` stay on disk. After the check, continue the queue.
@@ -31,8 +31,11 @@ Aliases `/erixpo init|auto|feature|fix|review|docs|work|learn|search|ui|new|unin
 
 | Signal | Flow |
 |---|---|
-| No `AGENTS.md` and no `.erixpo/` | **init** first, then continue with the original sentence |
+| No populated `.erixpo/PROFILE.md` describing this project (installed engine files alone do not count as initialization) | One-shot light artifact: work directly; recurring/project work: **init**, then continue |
 | look at this / look at / look over / take a look / inspect / audit (no theme/color/layout/mockup) | **review** |
+| New product or scaffold, including UI attributes such as responsive layout | **new**; UI change-type supplements the job instead of replacing it. |
+| Bug / small fix | **fix**, reproduce and check the smallest sound correction. |
+| Add behavior to an existing project | **feature**, size from repository impact; large architectural changes receive full research and multiple slices. |
 | redesign / theme / color / layout / recompose / breakpoints / animation / spacing / font / radius / mockup / design language / "make it consistent" | **ui** — load `erixpo-ui`. Create or change `documents/ui/` before freelancing pixels. |
 | Bare "look" with no object | One clarifying question. Never a command menu. |
 | update / upgrade / refresh / reinstall **erixpo** / "new erixpo update" | **update** — pack only. Do not touch the product. |
@@ -49,7 +52,7 @@ Infer first ([intent.md](references/intent.md)). Ask at most one question if sur
 
 ### 2. Research
 
-Only if `research-scope` is narrow or full ([research.md](references/research.md)). Live-search this year: official docs, comparables, practices. Cite URLs. Never install a third-party skill or MCP without asking.
+Only if `research-scope` is narrow or full ([research.md](references/research.md)). Open current official sources for the actual versions: official docs, comparables, practices. Cite URLs. For full research, explicitly assess compliance and discover useful skills/MCP capabilities, starting with installed tools and skills.sh. Follow the research protocol for concrete project-local proposals and installation authorization.
 
 ### 3. Choose
 
@@ -69,7 +72,7 @@ Write `.erixpo/plan.md` from the pack template:
 
 If you discover a convenient extra (share-with-friend, simulator, auth, analytics), propose it. Do not add it.
 
-Wait for explicit approval ("go", "yes", "do it", "approved").
+Follow [intent.md](references/intent.md): wait for plan approval only when current authorization does not already cover execution. A new track or plan file does not invalidate prior "go", "you pick" or unattended authorization.
 
 ### 5. Auto
 
@@ -89,9 +92,9 @@ Details: [subagents.md](references/subagents.md). Default: one worker.
 
 Spawn another agent only when the work is disjoint (different files, no shared contract). Each extra agent gets its own worktree. Overlapping files → do not spawn.
 
-Review is two stages. Stage 1 is mechanical (`bin/erixpo review --stage 1`). Stage 2 is always a fresh session — the implementer does not mark their own work done.
+Review is two stages. Stage 1 is mechanical (`.erixpo/bin/erixpo review --stage 1`). When stage-2 review is required by ceremony or isolation, it is always a fresh session—the implementer cannot supply their own independent approval. Every job still receives self-review and domain-appropriate verification; a light standalone artifact does not need a software ship ceremony.
 
-Unattended `bin/erixpo run` isolates into a sibling worktree by default. Do not merge that branch until stage-2 says `ship` and the user says merge/close. Then `bin/erixpo close --id <id>` from the human checkout — do not leave the tree on disk.
+Unattended `.erixpo/bin/erixpo run` isolates into a sibling worktree by default. Do not merge that branch until stage-2 says `ship` and the user says merge/close. Then `.erixpo/bin/erixpo close --id <id>` from the human checkout — do not leave the tree on disk.
 
 ## After every non-trivial finished job
 
@@ -101,7 +104,7 @@ Read [memory.md](references/memory.md) and [domains.md](references/domains.md). 
 
 ## Done
 
-Done means the project's check command exits 0 **and** the slice tests listed in the plan ran ([testing.md](references/testing.md)). Not "looks good."
+For code, done means the project's check command exits 0 **and** the slice tests listed in the plan ran ([testing.md](references/testing.md)). For other domains, require the observable artifact checks defined in domains.md and the plan. Not "looks good."
 
 ## Tone
 

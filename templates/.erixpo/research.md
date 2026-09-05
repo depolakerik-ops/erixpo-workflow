@@ -19,7 +19,7 @@ why:
 ## Constitution / scaffold
 - Constitution: `.erixpo/CONSTITUTION.md` (write in init or slice 0 — pack scaffold.md)
 - Greenfield slice 0 required? yes / no / n/a existing
-- Official init command (this year, this surface):
+- Official init command (chosen version, this surface):
 - Test harness in slice 0:
 
 ## Outside the box
@@ -51,3 +51,20 @@ why:
 ## Skills to consider (not installed)
 
 ## MCP to consider (not installed)
+
+## Compliance applicability
+- Area / applies, not applicable (reason), or unknown:
+- Audience, market, distribution and data assumptions:
+- Opened primary source / access date / applicable version:
+- Implementation requirement and verification:
+- Missing decision (if any):
+
+## Capability discovery outcome
+- Installed capabilities and remaining gap:
+- skills.sh search and upstream skill inspected:
+- MCP provider/registry inspected when needed:
+- Candidate / benefit / source and revision / host compatibility:
+- Project-local destination and exact command or config proposal:
+- Credentials, permissions and cost:
+- Authorization / verification / removal:
+- Or no additions needed (reason), or discovery unavailable (limitation):

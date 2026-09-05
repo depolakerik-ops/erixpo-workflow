@@ -1,26 +1,20 @@
 # Roadmap
 
-## 0.4
-Host-aware install, uninstall interview, research, tests, stage-1 gates, smoke.
+## 0.7.0 reliability
 
-## 0.5
-Living design language in documents/ui/ (tokens, motion, components, screens, mockups, changelog). erixpo-ui skill. Plans name UI tokens per slice.
+Ownership-aware installation, safe worktree cleanup, persistent handoffs, artifact-bound review, explicit plan completion, time limits, and deterministic lifecycle tests. Research and documentation scale to the actual task.
 
-## 0.6.1
-`VERSION` file. `/erixpo update` reinstalls the pack only (does not rewrite product classify.md). `.erixpo/VERSION` after install.
+## Next evidence to collect
 
-## 0.6
-Classify-then-route (multi-intent queue, `look` ≠ UI). Constitution + native scaffold as slice 0. Ceremony scaling. UI change-types (relanguage / retoken / recompose / reflow / remotion), breakpoints, platform mapping, per-surface anti-slop. Tests as harness+gate; stage-1 diffs against merge base. Unattended `PROMPT.md` matches auto. `USER.md` working style. `bin/erixpo close` / `sweep`. Pack versions aligned.
+- Run paired behavioral evaluations on named provider/model versions and retain outcomes, failures, elapsed time, and costs when available.
+- Exercise Linux/macOS CI and real provider headless modes before publishing a certified support matrix.
+- Calibrate visual review against human judgments on native and web tasks.
+- Measure which protocol steps can be removed without harming completion or safety.
 
-Enforcement (same 0.6): `classify-signals.py` fixtures, `detect-capabilities.sh`, loop prompt injects classify/USER/capabilities/contract paths, `status` warns leftover trees, stage-1 hex-outside-theme_file.
+## Later
 
-Intent + research intensity: infer first (`intent.md`). **Any build** (any field) live-searches this year (`feature`/`auto`/`work` = narrow; new/relanguage = full). Skip only non-build (fix, review, learn). Comparables in that field. Official default when USER is not ask-every-slice.
-
-## Next
-- Budget flags
-- GitHub issue → plan
-- Docker sandbox
-- Visual review checklists (device/browser proof wired into check)
+Issue-to-plan integration and stronger execution sandboxing after the lifecycle and adapter assumptions have measured support.
 
 ## Not now
-Web console, credit marketplace, auto-merge to main.
+
+Web console, credit marketplace, automatic merge to main, platform-specific router skills.

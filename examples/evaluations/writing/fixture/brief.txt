@@ -1,0 +1,5 @@
+Export maintenance date: 2026-10-12
+Window: 09:00–09:30 UTC
+Impact: exports unavailable; existing files remain accessible.
+Support: help@example.com
+Audience: existing users.

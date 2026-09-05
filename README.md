@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="https://github.com/erixpo/erixpo-workflow/actions/workflows/validate.yml"><img src="https://github.com/erixpo/erixpo-workflow/actions/workflows/validate.yml/badge.svg" alt="Repository validation status" /></a>
-  <a href="VERSION"><img src="https://img.shields.io/badge/pack-0.6.2-c8f36a" alt="Pack version 0.6.2 — see VERSION" /></a>
+  <a href="VERSION"><img src="https://img.shields.io/badge/pack-0.7.0-c8f36a" alt="Pack version 0.7.0 — see VERSION" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-c8f36a" alt="MIT license" /></a>
 </p>
 
@@ -37,7 +37,7 @@ Use it for an existing codebase, a new native app, a website, a script, or a fol
 
 ## Quick start
 
-You need **Git, Bash, Python 3**, and an agent capable of reading `SKILL.md` instructions. Unattended runs also need an installed, authenticated worker CLI and a Git repository. Your agent's usage costs still apply.
+You need **Git, Bash, Python 3.9+**, and an agent capable of reading `SKILL.md` instructions. Unattended runs also need an installed, authenticated worker CLI and a Git repository. Your agent's usage costs still apply.
 
 Run this **from the project you want to work on**, using a fresh temporary checkout:
 
@@ -86,7 +86,7 @@ Using the same temporary checkout from the quick start:
 bash "$erixpo_pack/install.sh" --global --host codex
 ```
 
-**Current behavior:** `--global` installs into the current project and additionally copies skills into the resolved home skill directories. It is not a global-only installation. Run it from the intended project.
+`--global` installs home skill folders and the engine under `~/.erixpo/` without changing the current project. Use `~/.erixpo/bin/erixpo --root /path/to/project <command>` for the global runtime; global uninstall is symmetric.
 
 Add another host to that project:
 
@@ -100,13 +100,13 @@ See the [installation guide](INSTALL.md) for paths, updates, and removal.
 
 ## How it works
 
-Skills guide the agent's decisions. The outer-loop CLI repeats a worker invocation and a project check. These are separate parts of the system: instructions guide behavior, while the runner mechanically checks the command's exit status.
+Skills guide the agent's decisions. The runtime follows approved slices, executes independent checks, records evidence and outcomes, and bounds unattended execution. A passing baseline cannot complete a plan that still has unfinished slices.
 
 ```mermaid
 flowchart TD
     request["Your request + repository"] --> route["Classify and choose a track"]
     route --> work["Plan and perform the work"]
-    work --> check{"Project check passes?"}
+    work --> check{"All approved slices done + fresh checks pass?"}
     check -->|"No · within run limits"| work
     check -->|Yes| review["Mechanical + fresh-session review"]
     review --> decision{"Ready and merge approved?"}
@@ -115,7 +115,7 @@ flowchart TD
     decision -->|"Awaiting approval"| hold["Keep work isolated"]
 ```
 
-This diagram describes the intended development workflow. Non-code tasks use the relevant work track and verification criteria. The runner itself stops when `check:` passes; it does not perform the fresh-session review or obtain merge approval.
+This diagram describes the intended development workflow. Non-code tasks use the relevant work track and verification criteria. The runner stops successfully only when all approved slices are complete and their configured checks plus the project check pass after successful worker execution. It does not perform fresh-session review or obtain merge approval.
 
 > **Passing checks is a checkpoint.** The workflow requires the relevant tests and a two-stage review before shipping. You decide when to merge. A worktree isolates Git changes; it is not a security sandbox.
 
@@ -158,47 +158,47 @@ The installer contains the following host mappings and worker adapters. **An ava
 
 ## Run, review, and close
 
-After initialization, ensure `.erixpo/plan.md` exists and `.erixpo/stack.md` contains a runnable one-line `check:` command. The quality of that check determines what the runner can verify.
+After initialization, ensure `.erixpo/plan.md` has `status: approved` and explicit slice Status fields or acceptance checkboxes and `.erixpo/stack.md` contains a runnable one-line `check:` command. The quality of that check determines what the runner can verify.
 
 ```bash
 # Start an isolated run, capped at 20 iterations.
-bin/erixpo run --worker claude --max 20
+.erixpo/bin/erixpo run --worker claude --max 20 --timeout 3600
 ```
 
 The runner prints the worktree path and ID. In that worktree, run the mechanical review:
 
 ```bash
-bin/erixpo review --stage 1
+.erixpo/bin/erixpo review --stage 1
 ```
 
 Then open a **fresh agent session in the same worktree** and ask `/erixpo review` for stage two. Once the review says `ship` and you approve the merge, return to the original checkout:
 
 ```bash
 # Replace s-… with the actual worktree ID.
-bin/erixpo close --id s-…
+.erixpo/bin/erixpo close --id s-…
 ```
 
-`close` merges locally and removes the worktree and branch by default; it does not push. The runner also stops on its iteration cap or after three consecutive worker failures, unless the check passes first.
+`close` merges locally and removes the worktree and branch by default; it does not push. The runner also stops on its iteration/wall-time cap, three consecutive worker or check failures, or three iterations without slice progress. State and verification receipts explain why it stopped. Close refuses dirty or running trees, requires reviews bound to the current artifact, and preserves durable memory before removal.
 
 <details>
 <summary><strong>Inspection and cleanup commands</strong></summary>
 
 ```bash
-bin/erixpo status
-bin/erixpo worktrees
-bin/erixpo sweep          # report leftovers
-bin/erixpo sweep --apply  # clean eligible leftovers
-bin/erixpo classify "look at checkout"
-bin/erixpo capabilities
+.erixpo/bin/erixpo status
+.erixpo/bin/erixpo worktrees
+.erixpo/bin/erixpo sweep          # report leftovers
+.erixpo/bin/erixpo sweep --apply  # clean eligible leftovers
+.erixpo/bin/erixpo classify "look at checkout"
+.erixpo/bin/erixpo capabilities
 ```
 
-For research intensity hints, invoke the helper directly:
+For research intensity hints:
 
 ```bash
-python3 .erixpo/scripts/research-scope.py --class new
+.erixpo/bin/erixpo research-scope --class new
 ```
 
-See `bin/erixpo --help` and the [worktree protocol](skills/erixpo/references/worktrees.md) for advanced options.
+See `.erixpo/bin/erixpo --help` and the [worktree protocol](skills/erixpo/references/worktrees.md) for advanced options.
 
 </details>
 
@@ -206,13 +206,13 @@ See `bin/erixpo --help` and the [worktree protocol](skills/erixpo/references/wor
 
 Working state lives under `.erixpo/`: the plan, stack/check command, user preferences, lessons, and session history. Project documentation is organized under `documents/` when initialized by the workflow.
 
-This gives later sessions files to consult. It does not depend on the model retaining the previous conversation. Treat `.erixpo/` as generated local state and keep it out of version control in consuming projects; see [installation footprint](INSTALL.md#footprint--one-real-folder).
+This gives later sessions files to consult. It does not depend on the model retaining the previous conversation. Treat `.erixpo/` as generated local state and keep it out of version control in consuming projects; see [installation footprint](INSTALL.md#project-install).
 
 ## Project status and documentation
 
 [VERSION](VERSION) is the source of truth for the pack version. Compare it with `.erixpo/VERSION` in an installed project, or ask `/erixpo update` to update the pack.
 
-Budget flags, GitHub issue-to-plan integration, Docker sandboxing, and wired visual review checks are **planned**, not current features. See the [roadmap](ROADMAP.md).
+Iteration and wall-time budgets are implemented. GitHub issue-to-plan integration, stronger execution sandboxing, and automated visual review are future work. See the [roadmap](ROADMAP.md).
 
 | Resource | What you'll find |
 |---|---|
@@ -222,3 +222,11 @@ Budget flags, GitHub issue-to-plan integration, Docker sandboxing, and wired vis
 | [Contributing](CONTRIBUTING.md) | How to contribute and run `bash check.sh` |
 | [Security](SECURITY.md) | Reporting security issues |
 | [License](LICENSE) | MIT |
+
+## Reliability and evaluation
+
+Requirements: Bash, Git, Python 3.9+, macOS/Linux. See [installation and ownership](INSTALL.md) and [adapter support](adapters/README.md) for what is tested. Provider command contracts are tested with fake executables; live provider compatibility is not certified.
+
+`bash check.sh` runs installed lifecycle regressions and fixture checks. The [paired evaluation suite](examples/evaluations/README.md) can compare the same configured model with and without erixpo. No live model performance claim is made until those trials are run and scored.
+
+One-shot writing/research artifacts can stay lightweight without initialization. Recurring projects gain persistent context as needed. Research targets unknown or stale decisions and reuses verified version-matched sources.

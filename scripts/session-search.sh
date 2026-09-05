@@ -1,102 +1,129 @@
 #!/usr/bin/env bash
-# Search .erixpo sessions / learnings / worktrees. No SQLite.
+# Read-only search of effective memory, sessions and registered worktrees.
 set -euo pipefail
-
 ROOT="$(pwd)"
 KIND="all"
 QUERY=()
-
 usage() {
-  cat <<'EOF'
-Usage: scripts/session-search.sh [--root DIR] [--kind all|sessions|learnings|worktrees] [query…]
-EOF
+  echo 'Usage: scripts/session-search.sh [--root DIR] [--kind all|sessions|learnings|worktrees] [query…]'
 }
-
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --root) ROOT="$2"; shift 2 ;;
-    --kind) KIND="$2"; shift 2 ;;
+    --root|--kind)
+      [[ $# -ge 2 && -n "$2" ]] || { echo "missing value for $1" >&2; exit 2; }
+      if [[ "$1" == --root ]]; then ROOT="$2"; else KIND="$2"; fi
+      shift 2 ;;
+    --) shift; QUERY+=("$@"); break ;;
     -h|--help) usage; exit 0 ;;
+    --*) echo "unknown option: $1" >&2; exit 2 ;;
     *) QUERY+=("$1"); shift ;;
   esac
 done
-
 python3 - "$ROOT" "$KIND" "${QUERY[*]-}" <<'PY'
-import json, os, sys, re
+import json
+from pathlib import Path
+import re
+import sys
 
-root, kind, query = sys.argv[1], sys.argv[2], sys.argv[3].strip().lower()
-tokens = [t for t in re.split(r"\s+", query) if t]
-files = {
-    "sessions": os.path.join(root, ".erixpo", "sessions.jsonl"),
-    "learnings": os.path.join(root, ".erixpo", "learnings.jsonl"),
-    "worktrees": os.path.join(root, ".erixpo", "worktrees.jsonl"),
-}
-if kind == "all":
-    chosen = list(files.items())
-elif kind in files:
-    chosen = [(kind, files[kind])]
-else:
-    print(f"unknown kind {kind}", file=sys.stderr)
+root, kind, query = Path(sys.argv[1]), sys.argv[2], sys.argv[3].strip().casefold()
+if kind not in ('all', 'sessions', 'learnings', 'worktrees'):
+    print('unknown kind ' + kind, file=sys.stderr)
     sys.exit(1)
+tokens = set(re.findall(r'[\w./-]+', query))
+state = root / '.erixpo'
 
-def score(row, blob):
-    s = 0
-    if query and query in blob:
-        s += 8
-    for t in tokens:
-        if t in blob:
-            s += 2
-    for f in row.get("files") or []:
-        blob_f = str(f).lower()
-        if query and query in blob_f:
-            s += 4
-        for t in tokens:
-            if t in blob_f:
-                s += 1
-    if row.get("status") in {"retracted", "stale", "pruned"}:
-        s -= 5
-    return s
 
-hits = []
-for name, path in chosen:
-    if not os.path.isfile(path):
-        continue
-    for raw in open(path, encoding="utf-8"):
-        raw = raw.strip()
-        if not raw:
-            continue
+def text(value):
+    if not isinstance(value, str):
+        return ''
+    value = value.encode('utf-8', errors='replace').decode('utf-8')
+    return ' '.join(re.sub(r'[\x00-\x1f\x7f-\x9f]', ' ', value).split())
+
+
+def readable(path):
+    # Recalled content is project data; do not traverse links into other folders.
+    return not state.is_symlink() and not path.is_symlink() and not path.parent.is_symlink() and path.is_file()
+
+
+def rows(path, single=False):
+    if not readable(path):
+        return []
+    try:
+        data = path.read_bytes()
+    except OSError:
+        return []
+    result = []
+    for raw in [data] if single else data.splitlines():
         try:
             row = json.loads(raw)
-        except json.JSONDecodeError:
+        except (ValueError, UnicodeError):
             continue
-        if name == "learnings" and row.get("status") == "retracted":
-            continue
-        sc = score(row, raw.lower()) if tokens else 1
-        if tokens and sc <= 0:
-            continue
-        hits.append((sc, row.get("ts") or "", name, row))
+        if isinstance(row, dict):
+            result.append(row)
+    return result
 
-# score desc, then timestamp desc
-hits.sort(key=lambda x: (x[0], x[1] or ""), reverse=True)
 
+def effective(events, identity, required=False):
+    # Append order is authoritative, not timestamps that may be skewed. Resolve
+    # state BEFORE query matching, so a tombstone hides the previous insight even
+    # when the tombstone itself contains none of the query words.
+    latest = {}
+    for index, row in enumerate(events):
+        key = text(row.get(identity)).strip()
+        if required and not key:
+            continue
+        latest[('key', key) if key else ('line', index)] = row
+    return list(latest.values())
+
+
+def score(row):
+    fields = ('key', 'insight', 'goal', 'notes', 'track', 'type', 'source', 'branch', 'path', 'id', 'outcome')
+    blob = ' '.join(text(row.get(field)) for field in fields).casefold()
+    paths = row.get('files', [])
+    if not isinstance(paths, list):
+        paths = []
+    file_blob = ' '.join(text(path) for path in paths).casefold()
+    if not tokens:
+        return 1
+    return (8 if query and query in blob else 0) + sum(2 for token in tokens if token in blob) + (4 if query and query in file_blob else 0) + sum(3 for token in tokens if token in file_blob)
+
+
+sources = {}
+if kind in ('all', 'learnings'):
+    sources['learnings'] = [row for row in effective(rows(state / 'learnings.jsonl'), 'key', required=True)
+                            if row.get('status', 'active') == 'active' and text(row.get('insight')).strip()]
+if kind in ('all', 'sessions'):
+    sessions = effective(rows(state / 'sessions.jsonl'), 'id')
+    seen = {text(row.get('id')) for row in sessions if text(row.get('id'))}
+    directory = state / 'run-events'
+    if not directory.is_symlink() and not state.is_symlink():
+        for path in sorted(directory.glob('*.json')):
+            for row in rows(path, single=True):
+                ident = text(row.get('id'))
+                if ident and ident not in seen:
+                    seen.add(ident)
+                    sessions.append(row)
+    sources['sessions'] = sessions
+if kind in ('all', 'worktrees'):
+    sources['worktrees'] = effective(rows(state / 'worktrees.jsonl'), 'id', required=True)
+
+hits = []
+for name, events in sources.items():
+    for row in events:
+        rank = score(row)
+        if rank:
+            hits.append((rank, text(row.get('ts')), name, row))
+hits.sort(key=lambda hit: (hit[0], hit[1]), reverse=True)
 if not hits:
-    print("no hits")
-    sys.exit(0)
-
-for sc, ts, name, row in hits[:8]:
-    if name == "sessions":
-        print(
-            f"Prior session: {row.get('id', '?')} — {row.get('goal', '')} "
-            f"({row.get('check', '?')}, {row.get('ts', '')})"
-        )
-    elif name == "learnings":
-        print(
-            f"Prior learning applied: {row.get('key', '?')} — {row.get('insight', '')} "
-            f"(confidence {row.get('confidence', '?')}, {row.get('type', '')})"
-        )
+    print('no hits')
+for rank, stamp, name, row in hits[:8]:
+    if name == 'sessions':
+        print(f"Prior session: {text(row.get('id')) or '?'} — {text(row.get('goal'))[:600]} ({text(row.get('check')) or '?'}, {stamp})")
+    elif name == 'learnings':
+        confidence = row.get('confidence', '?')
+        if not isinstance(confidence, (int, float, str)):
+            confidence = '?'
+        print(f"Prior learning: {text(row.get('key'))} — {text(row.get('insight'))[:600]} (confidence {text(str(confidence))}, {text(row.get('type'))})")
     else:
-        print(
-            f"Live worktree: {row.get('id', '?')} — {row.get('branch', '')} "
-            f"@ {row.get('path', '')} [{row.get('status', '')}]"
-        )
+        print(f"Worktree: {text(row.get('id'))} — {text(row.get('branch'))} @ {text(row.get('path'))} [{text(row.get('status'))}]")
 PY

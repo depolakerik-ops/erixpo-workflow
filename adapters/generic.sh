@@ -2,6 +2,7 @@
 set -euo pipefail
 ROOT="${1:-$(pwd)}"
 PROMPT_FILE="${2:-$ROOT/.erixpo/plan.md}"
+export ERIXPO_ROOT="$ROOT" ERIXPO_PROMPT_FILE="$PROMPT_FILE" ERIXPO_ITERATION="${3:-1}"
 cd "$ROOT"
 if [[ -n "${ERIXPO_WORKER_CMD:-}" ]]; then
   eval "$ERIXPO_WORKER_CMD"

@@ -22,13 +22,13 @@ A failure is anything that lets the agent *say* it finished while the user still
 ## Isolation
 
 - Two agents in one working tree share the index. `git add` from one eats the other's unstaged files.
-- Unattended `bin/erixpo run` on a dirty tree will commit or overwrite human WIP.
+- Unattended `.erixpo/bin/erixpo run` on a dirty tree will commit or overwrite human WIP.
 - Worktrees do **not** copy gitignored files: `.env`, `node_modules`, `dist`, simulators, signing certs.
 - Symlinking one shared `node_modules` breaks the moment a branch bumps a dependency or a native addon. Prefer a fresh install; pnpm store is the cheap case.
 - Git refuses two worktrees on the same branch. Each run gets `erixpo/<date>-<slug>`.
 - Not a git repo → isolation is impossible. Say so. Do not invent a fake worktree.
 - Nested worktree inside another worktree → refuse.
-- Crash mid-run leaves a worktree and a branch. `bin/erixpo sweep` finds it. `bin/erixpo close --id` or `bin/erixpo sweep --apply` is how leftovers die, not `rm -rf` of `.git`.
+- Crash mid-run leaves a worktree and a branch. `.erixpo/bin/erixpo sweep` finds it. `.erixpo/bin/erixpo close --id` or `.erixpo/bin/erixpo sweep --apply` is how leftovers die, not `rm -rf` of `.git`.
 
 See [worktrees.md](worktrees.md).
 
@@ -76,7 +76,7 @@ See [review.md](review.md).
 - Do not merge an isolated branch onto the user's current branch without them saying merge / ship / land / close it.
 - Conflict ≠ "take ours". Stop and show the files.
 - Passing check in the worktree does not prove the main checkout still builds (ignored files differ).
-- Success that never lands, and success that lands but leaves the sibling checkout, `erixpo/*` branch, and jsonl row, are both merge failures. `bin/erixpo close --id` is how they die. `bin/erixpo sweep` reports leftovers; `sweep --apply` marks stale and deletes fully merged `erixpo/*` branches with no worktree. Never `rm -rf` `.git`. Never auto-merge to main. Never auto-close.
+- Success that never lands, and success that lands but leaves the sibling checkout, `erixpo/*` branch, and jsonl row, are both merge failures. `.erixpo/bin/erixpo close --id` is how they die. `.erixpo/bin/erixpo sweep` reports leftovers; `sweep --apply` marks stale and deletes fully merged `erixpo/*` branches with no worktree. Never `rm -rf` `.git`. Never auto-merge to main. Never auto-close.
 
 ## Scope and product
 
@@ -98,6 +98,6 @@ See [review.md](review.md).
 1. Stop the loop.
 2. Write what failed in `.erixpo/progress.md` and one sessions.jsonl line with `check: fail`.
 3. If the working tree is the user's: do not reset --hard. Isolate or stash only with permission.
-4. If a worktree is rotten: `bin/erixpo close --id` (lands if needed, then drops tree + branch) or `prune` (keeps the branch unless `--delete-branch`). `bin/erixpo sweep --apply` for stale rows and dead merged `erixpo/*` branches. Do not `rm -rf` `.git`.
+4. If a worktree is rotten: `.erixpo/bin/erixpo close --id` (lands if needed, then drops tree + branch) or `prune` (keeps the branch unless `--delete-branch`). `.erixpo/bin/erixpo sweep --apply` for stale rows and dead merged `erixpo/*` branches. Do not `rm -rf` `.git`.
 5. If a learning was wrong: `status: retracted`, do not delete the line.
 6. Then `/erixpo fix` or a new plan slice. Not a rewrite of the pack skills.

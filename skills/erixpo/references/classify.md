@@ -1,16 +1,16 @@
 # Classify
 
-Every non-trivial `/erixpo` job writes `.erixpo/classify.md` **before** loading a track skill. This file is the protocol. Do not paste the schema into SKILL.md or routing.md.
+Except for the explicit one-shot and maintenance exceptions below, every non-trivial `/erixpo` job writes `.erixpo/classify.md` **before** loading a track skill. This file is the protocol. Do not paste the schema into SKILL.md or routing.md.
 
 Then infer meaning ([intent.md](intent.md)) and set live-search intensity:
 
 ```bash
-bin/erixpo research-scope --class "$request_class" --ui "$ui_change"
+.erixpo/bin/erixpo research-scope --class "$request_class" --ui "$ui_change"
 ```
 
 `skip` → do not search the web. `narrow` / `full` → [research.md](research.md).
 
-If `AGENTS.md` and `.erixpo/` are both absent, run **init** first and keep the original sentence. Create `.erixpo/classify.md` as soon as the directory exists.
+One-shot light work can proceed without persistent classify/init. For project or recurring work, run **init** when no populated `.erixpo/PROFILE.md` describes the project and keep the original sentence. The installed `.erixpo/` engine alone is not initialization. Pack-maintenance requests bypass product initialization.
 
 If the template exists (`templates/.erixpo/classify.md` or `.erixpo/classify.md` empty-keyed), fill it. Do not invent extra keys.
 
@@ -21,7 +21,7 @@ If the template exists (`templates/.erixpo/classify.md` or `.erixpo/classify.md`
 ts:
 repo_class: software | site | automation | research | writing | ops | assistant | mixed | unknown
 request_class: init | new | feature | fix | review | ui | work | learn | search | auto | docs | uninstall | update
-surface: none | web | ios | android | macos | windows | tui | print | slides | mixed
+surface: none | web | ios | android | macos | windows | linux | tui | print | slides | mixed | other
 ui_change: none | create | relanguage | retoken | recompose | reflow | remotion | new-screen | consistency
 capabilities: (short: what this host/machine can actually run — Xcode, Android SDK, browser, shell-only, …)
 isolation: worktree | in-place | ask
@@ -83,13 +83,15 @@ After the first job's check: remove or mark that job done, set `request_class` t
 
 ## 4. Surface and UI change-type
 
-`surface` is where a human will see or touch the result. `none` if they will not.
+`surface` is where a human will see or touch the result. `none` if they will not. Use `other` for surfaces outside the listed examples (3D scene, animation, physical control panel), or `mixed` for multiple targets, and describe exact deliverables, runtime/platform and tools in `evidence`. These categories are routing metadata, not a list of supported projects. A framework such as Flutter, React Native or SwiftUI does not by itself establish the target platform.
+
+For standalone graphics, film, 3D assets or physical behavior, visual output does not automatically mean application UI. Use `new` for a new project or `work` for an artifact task, set `ui_change: none` unless an interface itself changes, and apply domain-specific composition/motion/validation (domains.md).
 
 `ui_change` only if a human will see a surface; otherwise `none`:
 
 | Value | When |
 |---|---|
-| create | `documents/ui/` missing and a surface exists |
+| create | A surface exists and no usable design language exists; missing docs alone on an existing product does not force create (ui.md) |
 | relanguage | redesign / new direction / "looks like a tutorial" / new brand |
 | retoken | color, type, space, radius, palette, "calmer blue", "sharper corners" |
 | recompose | layout structure, nav pattern, "sidebar to tabs", rearrange, recompose |
@@ -101,12 +103,12 @@ After the first job's check: remove or mark that job done, set `request_class` t
 
 ## 5. Capabilities
 
-Detect from the **machine and repo**, not wishes.
+Detect from the **machine and repo**, not wishes. The bundled detector is only a starting inventory of common commands, not an exhaustive capability registry or a readiness test. Probe the actual domain tools needed (for example an authoring application, renderer, simulator, compiler or device connection), versions and a minimal usable operation. Include callable host tools/MCP and report missing capabilities honestly. Do not install or choose a different domain just because the detector lacks a tool.
 
 Run, then paste the line into `capabilities:`:
 
 ```bash
-bin/erixpo capabilities
+.erixpo/bin/erixpo capabilities
 # or
 bash scripts/detect-capabilities.sh
 ```
@@ -114,12 +116,12 @@ bash scripts/detect-capabilities.sh
 For `request_class` / `ui_change` / the LOOK collision, run first (do not invent a first-match):
 
 ```bash
-bin/erixpo classify look at the checkout
+.erixpo/bin/erixpo classify look at the checkout
 # or
 python3 scripts/classify-signals.py "sidebar to tabs"
 ```
 
-Paste `request_class`, `ui_change`, and `jobs:` from that output, then fill repo/ceremony/isolation from evidence.
+Treat the output as advisory hints. Correct them using explicit user intent and repository evidence, then fill repo/ceremony/isolation. Record the evidence for any correction; keyword matches cannot override an explicit platform or task.
 
 If they want iOS and capabilities has no `xcodebuild`, say so here and do not pick Playwright as the iOS test story.
 
@@ -144,9 +146,10 @@ Skip a **full** classify write only for:
 
 - empty `/erixpo` that is clearly "continue auto on an approved plan"
 - a one-line typo fix where PROFILE already exists
-- **update erixpo** — do not overwrite a product classify.md. Load `erixpo-update` only.
+- **update erixpo** — do not write classify.md at all; load `erixpo-update` only.
+- One-shot light work without persistent init — the request is the plan.
 
-Still write at least `ts`, `request_class`, and `jobs:` (one entry). Do not skip the file entirely on a non-trivial job.
+For other abbreviated classifications, write at least `ts`, `request_class`, and `jobs:` (one entry). Do not skip the file entirely on a non-trivial job.
 
 ## After writing
 

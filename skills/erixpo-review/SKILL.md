@@ -4,7 +4,7 @@ description: Two-stage review of an erixpo project or slice. Use when the user s
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.2"
+  version: "0.7.0"
 ---
 
 # erixpo review
@@ -24,14 +24,14 @@ Search sessions first (`/erixpo search` or `erixpo-search`) so you do not re-rai
 Run, do not skip:
 
 ```bash
-bin/erixpo review --stage 1
+.erixpo/bin/erixpo review --stage 1
 # or
-bash scripts/review-stage1.sh
+bash .erixpo/scripts/review-stage1.sh
 ```
 
 The script inspects the slice against the merge base, not only a dirty tree. Read `.erixpo/REVIEW-stage1.md` (BASE, pairing skip reason).
 
-If the script is not on disk yet, do the same checks by hand: run the real `check:` command, reject dummy gates, reject product-without-tests since BASE, reject secrets, reject `TODO: implement` / lorem / tautology asserts, reject wiki pages that claim missing features.
+If the script is missing, reinstall the runtime before producing evidence needed for close. An informational manual review may do these checks, but cannot authorize lifecycle landing: run the real `check:` command, reject dummy gates, reject product-without-tests since BASE, reject secrets, reject `TODO: implement` / lorem / tautology asserts, reject wiki pages that claim missing features.
 
 Write the Stage 1 section of `.erixpo/REVIEW.md` from the template. If stage 1 fails, stop. Do not start stage 2 on a lied gate.
 
@@ -52,10 +52,10 @@ Look for:
 
 ## Output
 
-Write `.erixpo/REVIEW.md` and `documents/review-latest.md` using the template (stage-1 pointer, visual/UI notes).
+Write `.erixpo/REVIEW.md` using the template. Top-level `Result: ship|fix-blockers|keep-iterating`, `Review-ID: <current stage-1 review_id>`, and `Reviewer:` bind the verdict to this artifact. Keep reports in local state during review; a tracked summary changes the artifact and needs a fresh review.
 
 Verdict is one of: `ship` | `fix-blockers` | `keep-iterating`.
 
 Do not edit product code in this skill. Offer `/erixpo fix` for blockers after they say go.
 
-On `ship` and a worktree: offer `bin/erixpo close --id <id>` (merge + prune). `bin/erixpo merge --id <id>` is still valid. Do not merge until they say merge.
+On `ship` and a worktree: offer `.erixpo/bin/erixpo close --id <id>` (merge + prune). `.erixpo/bin/erixpo merge --id <id>` is still valid. Do not merge until they say merge.

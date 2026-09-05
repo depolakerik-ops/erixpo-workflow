@@ -4,7 +4,7 @@ description: Start a new product with erixpo. Interview the user (surface is man
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.2"
+  version: "0.7.0"
 ---
 
 # erixpo-new
@@ -17,15 +17,15 @@ Read [intent.md](../erixpo/references/intent.md) and [ceremony.md](../erixpo/ref
 
 Follow [intent.md](../erixpo/references/intent.md). Infer job, surface, `like X`, must-have from the sentence and this folder. **Do not default to web.** Do not open with a form.
 
-If surface is still unknown **and** files do not decide it, ask **one** question. If they already named a surface or a reference, skip the interview.
+If surface is still unknown **and** files do not decide it, ask **one** question. If they already named a surface, skip that question. A reference alone may not establish a platform. Ask further focused questions only when an unresolved constraint changes a consequential decision; do not treat the initial one-question rule as a ban on necessary clarification.
 
-Visible surface: load `erixpo-ui` only if there is one. Write `documents/ui/` before product chrome. HTML mockups only when surface is web (or last-resort wire). Native uses `documents/ui/mapping.md`.
+Follow the adaptation contract in domains.md for any project, including robotics, graphics, animation and unfamiliar tools. Application interface: load `erixpo-ui` only when the work includes one; standalone visual artifacts use domain-specific composition and preview/export checks instead of app UI ceremony. Write `documents/ui/` before product chrome. HTML mockups only when surface is web (or last-resort wire). Native uses `documents/ui/mapping.md`.
 
-If the folder has **no project** (empty or nearly empty): the plan's **slice 0 is scaffold** ([scaffold.md](../erixpo/references/scaffold.md)). Acceptance: official project opens/builds and `check:` runs. Before UI chrome and before feature slices.
+If the folder has **no project** (empty or nearly empty): the plan's **slice 0 is scaffold** ([scaffold.md](../erixpo/references/scaffold.md)). Acceptance: the smallest valid project/artifact opens, builds, renders or runs in its actual toolchain and its domain-appropriate `check:` runs. Before UI chrome and before feature slices.
 
 ## Phase B — Research
 
-Follow [research.md](../erixpo/references/research.md) (**full** for new). Live-search this year: official init, platform guide, **comparables** (2–3 similar products for this surface, plus any `like X`), test runner. Write `.erixpo/research.md` (Intent, Comparables, Tools, Outside the box, Recommendation).
+Follow [research.md](../erixpo/references/research.md) (**full** for new). Open current official sources for the actual versions: official init, platform guide, **comparables** (2–3 similar products for this surface, plus any `like X`), test runner. Complete the full-pass coverage in that protocol: domain-specific craft/engineering, UI layout/accessibility when an interface is present, compliance applicability, and skills.sh/MCP capability discovery. Write the evidence and decisions in `.erixpo/research.md`, including concrete project-local installation proposals when useful; obtain authorization before adding third-party capabilities.
 
 Do not use memorized defaults. Novelty is optional. The reframe is not.
 
@@ -50,6 +50,6 @@ Write `.erixpo/plan.md` from the rich template (same content as pack `templates/
 - Test plan pointer (`.erixpo/test-plan.md`)
 - Suggested extras the user did **not** ask for as a separate optional list
 
-Show the plan. If you discovered extras, ask once. Then wait for **go** / approved.
+Show the plan. Keep optional extras separate. Follow intent.md: wait for **go** only when execution is not already authorized; prior "go", "you pick" or unattended authorization carries forward. Unapproved extras do not block approved work.
 
 Update `.erixpo/state.md` (not `state.yaml`) to `phase: planned`. On approval: `phase: approved`, then immediately load `erixpo-auto`.

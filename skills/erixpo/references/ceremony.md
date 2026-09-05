@@ -6,6 +6,10 @@ One home for the mapping. Skills point here. Do not copy twenty empty pages. A P
 
 When ceremony **upgrades**, copy the newly required files from `.erixpo/pack-templates/`. Do not downgrade silently.
 
+## Domain adaptation
+
+For projects outside the example rows, apply domains.md: choose ceremony by complexity, coordination and verification needs. Standalone graphics/3D/animation normally use standard source/asset, research, plan and validation/export records; a one-shot artifact can remain light. Full research does not automatically mean full app documentation. Robotics/embedded projects add hardware interfaces, simulation and validation records as needed. Create application UI specs only when an interface exists. The rows below are defaults, not a domain allowlist.
+
 ## How to pick (first match)
 
 1. One-shot notes, rename, file-into-folder, summarize, "just this paragraph" → **light**.
@@ -33,6 +37,8 @@ When ceremony **upgrades**, copy the newly required files from `.erixpo/pack-tem
 | mixed | use the request's surface | use the request | that row |
 
 ## Artifacts
+
+For a one-shot light artifact, use the current request as the plan and deliver the artifact with its evidence; do not require init, a constitution, USER interview, or persistent files. Create persistent context when the user asks to initialize the folder, work recurs, or a handoff requires it. The always list below applies to explicit initialization and recurring work.
 
 Init copies **only** these from pack-templates. Everything else stays in `.erixpo/pack-templates/` until ceremony upgrades. Rewrite `documents/INDEX.md` so it links only files that exist.
 
@@ -70,7 +76,7 @@ CLI, library, backend-only, single-script product.
 - `.erixpo/research.md` (stack + test), `plan.md`, `test-plan.md`, `CONSTITUTION.md`
 - Harness + tests
 - `ARCHITECTURE.md` **only if** there are already >1 modules
-- Stage-2 recommended on ship; not a wiki dump
+- Stage-2 required before merging an isolated branch or claiming a reviewed software ship (review.md); no wiki dump. Light artifact delivery uses its domain-appropriate check and self-review
 
 ### light
 

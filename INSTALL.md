@@ -1,62 +1,51 @@
 # Install erixpo workflow
 
-Works with any agent that reads [Agent Skills](https://agentskills.io/specification) (`SKILL.md`). Pack version is the `VERSION` file on `main`.
+Requirements: Bash, Git, and Python 3.9+ on macOS or Linux (including a suitable WSL environment). Agent Skills compatibility and verified unattended CLI support are separate; see [adapter support](adapters/README.md).
 
-## Fast path — paste this to the agent you are in
+## Project install
 
-```
-You are installing erixpo into THIS project only.
-
-1. Detect which product you are (Cursor, Claude Code, Codex, Gemini CLI,
-   OpenCode, Copilot, Windsurf, Cline, Crush, Aider, Devin, other).
-2. Clone https://github.com/erixpo/erixpo-workflow into /tmp if needed.
-3. From THIS project root run:
-     bash /tmp/erixpo-workflow/install.sh --host auto
-   Do NOT pass --host all. Do not create skill folders for agents that
-   are not running.
-4. Read .agents/skills/erixpo/SKILL.md and start with /erixpo.
-
-If the user later opens a different agent, ask once whether to expand:
-     bash /tmp/erixpo-workflow/install.sh --expand --host <that-agent>
-```
-
-## Manual
+From the project that should receive erixpo:
 
 ```bash
-git clone https://github.com/erixpo/erixpo-workflow /tmp/erixpo-workflow
-cd /path/to/your-project
-bash /tmp/erixpo-workflow/install.sh --host auto
+git clone https://github.com/depolakerik-ops/erixpo-workflow /tmp/erixpo-workflow
+bash /tmp/erixpo-workflow/install.sh --target "$PWD" --host auto
+.erixpo/bin/erixpo --help
 ```
 
-`--host auto` installs `.agents/skills/` plus the vendor folder for the detected host only.
+The canonical entry point is `.erixpo/bin/erixpo`. If free, `bin/` points into the engine; if `bin/` already exists, an owned `bin/erixpo` shim is installed when available. Unrelated files and symlinks are preserved. Do not install the pack into its own source checkout.
 
-## Footprint — one real folder
+The installer copies skills into `.agents/skills/` and the detected host's directory. Engine files, templates, ownership records, and provenance live under `.erixpo/`. Reinstalling retains previously selected hosts. Use `--host <name>` to select explicitly; `--host all` is opt-in.
 
-Engine files live only in `.erixpo/` (`bin/`, `adapters/`, `scripts/`, `pack-templates/`, `VERSION`, `hosts.txt`, manifest). `bin/` and `scripts/` at the project root are compat symlinks into `.erixpo/` so `bin/erixpo …` and `scripts/…` keep working; no top-level `adapters/` is created. Re-running install removes legacy top-level copies (pack files only, never your content) and heals the links.
+```bash
+bash /tmp/erixpo-workflow/install.sh --target "$PWD" --dry-run
+bash /tmp/erixpo-workflow/install.sh --target "$PWD" --expand --host claude
+```
 
-`.erixpo/` is generated machine state (ceremony pages, plan, sessions, registry) plus the installed engine copy above — never commit it from a project. `install.sh --uninstall` removes pack files via the manifest; `--purge` drops `.erixpo/` itself.
+Dry run describes changes without creating or deleting files. Installation stages file contents, checks ownership before mutation, and rolls back ordinary write failures. Individual replacements are atomic; an abrupt machine shutdown is not a whole-install transaction. Rerun installation after interruption and inspect any ownership conflict.
+
+`install-manifest.json` records version, source commit, content digest, hosts, and file hashes. Modified installed files are preserved and conflicting updates stop before writing. Keep local customization in project knowledge or local skills. Legacy files are adopted only when a legacy manifest claims them and their bytes match the bundled hashes of known 0.6.2 pack revisions (or the current pack). Unknown or modified old files need inspection rather than deletion by name. The regression suite upgrades real archived revisions twice and checks their installed CLI.
 
 ## Global install
 
-`install.sh --global` installs the same skill set for every project on the machine, into `$HOME/.<host>/skills/` (plus `.agents/skills/`) for each resolved host. Verify with `ls ~/.agents/skills/erixpo` (or the vendor folder). **Current behavior:** `--global` also performs the project installation in the current directory (or `--target`), including `.erixpo/` and compatibility links. Run it from the intended project; it is not a global-only install.
-
 ```bash
-bash install.sh --detect
-bash install.sh --host cursor
-bash install.sh --expand --host claude
-bash install.sh --host all
+bash /tmp/erixpo-workflow/install.sh --global --host auto
+~/.erixpo/bin/erixpo --root /path/to/project status
 ```
 
-## Update through the agent
+Global installation targets the home directory only: home skill folders plus `~/.erixpo/` engine and manifest. It does not install into the current project. `--global --uninstall` removes the same owned global files. Project state remains in the selected project. A host must support global skill discovery to load those skills automatically.
 
-Say `update erixpo` or `there is a new erixpo update.` The agent loads `erixpo-update`: clone latest pack, `install.sh --host auto --target` this project. It must not edit product code or rewrite `classify.md`.
+## Updates and provenance
+
+Say `/erixpo update` or reinstall from a reviewed pack release. Check `.erixpo/VERSION` and `.erixpo/install-manifest.json`; the commit/content digest distinguishes builds that share a version. Prefer immutable release tags for reproducible installations. This repository prepares release metadata; it does not publish a release automatically.
+
+## Removal
 
 ```bash
-git clone https://github.com/erixpo/erixpo-workflow /tmp/erixpo-workflow
-bash /tmp/erixpo-workflow/install.sh --host auto --target "$PWD"
-cat .erixpo/VERSION
+bash /tmp/erixpo-workflow/install.sh --target "$PWD" --uninstall
+bash /tmp/erixpo-workflow/install.sh --target "$PWD" --uninstall --purge
+bash /tmp/erixpo-workflow/install.sh --target "$PWD" --uninstall --purge --purge-worktrees --purge-docs
 ```
 
-## Uninstall through the agent
+Pack-only removal preserves project knowledge. `--purge` additionally removes recognized workflow memory; unrelated extras and worktree bookkeeping remain unless worktree purge is requested. `--purge-worktrees` uses the lifecycle's cleanliness, ownership, and running-worker checks. It refuses unsafe cleanup rather than discarding files. `--purge-docs` removes only files recorded by init; new entries use `SHA256<TAB>relative-path`, so edited documents are preserved. Legacy plain file entries remain supported. It never recursively deletes an arbitrary documents directory.
 
-Say `I don't want erixpo anymore.` The agent asks pack-only vs memory vs everything, then runs uninstall.sh.
+Review `--dry-run` output to inspect any removal plan. Refused or preserved files are reported.

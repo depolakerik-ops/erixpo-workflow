@@ -4,7 +4,7 @@ description: Initialize erixpo in a new or existing repository. Use when the use
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.2"
+  version: "0.7.0"
 ---
 
 # erixpo init
@@ -42,7 +42,7 @@ Read [domains.md](../erixpo/references/domains.md), [ceremony.md](../erixpo/refe
 
 8. After init, if the user already stated a goal in the same message, return to the erixpo router with that goal. Do not wait for them to type `/erixpo` again.
 
-9. Write `.erixpo/init-manifest.txt` listing every file **you created** (not files that already existed). Uninstall `--purge-docs` may only delete names on that list plus `.erixpo/`. Never list the user's pre-existing README or source.
+9. Write `.erixpo/init-manifest.txt` listing every file **you created** (not files that already existed), one `SHA256<TAB>relative-path` entry per file. Refresh a recorded hash only when erixpo intentionally updates that owned artifact. Purge preserves files whose current hash differs. Uninstall `--purge-docs` may only delete names on that list plus `.erixpo/`. Never list the user's pre-existing README or source.
 
 ## AGENTS.md must contain
 

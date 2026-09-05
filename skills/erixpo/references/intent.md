@@ -15,21 +15,22 @@ From the **sentence + this folder** (PROFILE, USER, CONSTITUTION, inventory, cla
 | `like` / references | URLs, app names, “like Linear”, “like Apple Settings”, attached files |
 | Must-have vs later | What they named vs what a tutorial would add |
 | Hard nos | USER.md, MEMORY.md, “don’t”, “no accounts”, “offline” |
-| Research intensity | [research.md](research.md) / `bin/erixpo research-scope` |
+| Research intensity | [research.md](research.md) / `.erixpo/bin/erixpo research-scope` |
 
 Write those guesses into `.erixpo/classify.md` evidence and, on a full pass, `.erixpo/research.md` `## Intent`.
 
 If the guess is good enough to research or to do the slice, **do not ask**. Say one line: “Building X on Y for Z. Stop me if that’s wrong.”
 
-## Ask at most one question
+## Ask one focused question at a time
 
-Ask only if **one** of these is still missing and it changes the architecture:
+Ask only when an unresolved fact changes a consequential decision, for example:
 
 - Surface still unknown (web vs iOS vs script vs notes) **and** files do not decide it
+- Audience, distribution, market or data sensitivity is unknown and changes applicable requirements
 - They named two contradictory jobs and classify could not split `jobs:`
 - A choice is expensive to undo (new database, new platform, new design language) **and** USER is `ask-every-slice`
 
-Never a form. Never a command menu. Never “which slash command”.
+The first question is not a lifetime limit; ask a follow-up only when research exposes another consequential unknown. Continue independent work while waiting. Never a form. Never a command menu. Never “which slash command”.
 
 ## Extract references
 
@@ -57,8 +58,12 @@ The job might not be an app. Infer *that*:
 
 - “file these PDFs” → work, light, no stack
 - “a script that renames invoices” → automation, tiny harness
-- “SwiftUI app like Things” → new, surface ios, comparables include Things, not a website
-- “make checkout calmer” → ui retoken, **narrow** research (color/type for this surface this year), not a new stack
-- Any **build** (app, script, automation, screen) → research **this field**. Field never licenses skipping.
+- “SwiftUI app like Things” → new, infer iOS or macOS from repository/user facts; ask if ambiguous, comparables include Things
+- “make checkout calmer” → ui retoken, research only unresolved color/type decisions for this surface, not a new stack
+- Any **build** uses the evidence policy in [research.md](research.md). Reuse verified evidence or research the unresolved decision in this field.
 
 Wrong surface is the failure mode. Prefer one clarifying question over a web scaffold on a native job.
+
+## Dependencies and irreversible choices
+
+For approved work, ask-every-slice pauses on new dependencies and expensive choices. Plan-then-go/unattended may choose necessary dependencies within the approved scope, record why, and continue unless USER or the current request forbids them. Unrequested features/surfaces and third-party skill/MCP installation need authorization. Existing user authorization always applies; do not ask again because another track loaded.

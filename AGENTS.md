@@ -11,7 +11,7 @@ Portable skill pack + installer + outer-loop CLI. Adaptive to the folder it is i
 bash check.sh
 ```
 
-That runs bash syntax, skill frontmatter, adapter contract, template presence, VERSION lockstep (plugin + marketplace + every `skills/*/SKILL.md`), v0.6 protocol files, `close`/`sweep`/`isolate` presence, classify fixtures, UI token templates, and `tests/smoke.sh`.
+That runs shell syntax, skill links/frontmatter, metadata version lockstep, mirrored template contracts, classification/research fixtures, deterministic installer/runtime/review/worktree/adapter regressions, installed-product smoke, and evaluation-fixture validation. Live provider evaluations are opt-in; the check never invokes a paid model.
 
 ## Layout
 - `skills/` — what gets installed into other repos (one folder per track skill, each with `SKILL.md`)

@@ -71,7 +71,9 @@ cp "$ROOT/bin/erixpo" "$UPG/bin/erixpo"
 cp "$ROOT/scripts/worktree.sh" "$UPG/scripts/worktree.sh"
 echo "user content" > "$UPG/scripts/mine.txt"
 bash "$ROOT/install.sh" --target "$UPG" --host generic >/dev/null
-[[ -L "$UPG/bin" ]] || bad "bin not converted to symlink on upgrade"
+[[ -d "$UPG/bin" && ! -L "$UPG/bin" ]] || bad "upgrade replaced existing bin directory"
+[[ -x "$UPG/bin/erixpo" ]] || bad "upgrade missing executable bin/erixpo shim"
+"$UPG/bin/erixpo" --root "$UPG" capabilities >/dev/null || bad "upgraded shim does not execute"
 [[ -f "$UPG/scripts/mine.txt" ]] || bad "upgrade deleted user file in scripts/"
 grep -q "user content" "$UPG/scripts/mine.txt" || bad "upgrade clobbered user file"
 
@@ -80,6 +82,7 @@ GHOME="$(mktemp -d)"; CLEANUP+=("$GHOME")
 GTARG="$(mktemp -d)"; CLEANUP+=("$GTARG")
 HOME="$GHOME" bash "$ROOT/install.sh" --target "$GTARG" --host generic --global >/dev/null
 [[ -d "$GHOME/.agents/skills/erixpo" ]] || bad "missing HOME/.agents/skills after --global"
+[[ ! -e "$GTARG/.erixpo" ]] || bad "global install touched local target"
 
 say "== review-stage1 rejects dummy check =="
 FIX="$(mktemp -d)"; CLEANUP+=("$FIX")
@@ -148,12 +151,15 @@ say "== worktree isolate / close removes tree and branch =="
 WT="$(mktemp -d)"; CLEANUP+=("$WT")
 init_git "$WT"
 echo x > "$WT/README.md"
-git -C "$WT" add README.md
+printf ".erixpo/\n" > "$WT/.gitignore"
+mkdir -p "$WT/.erixpo"
+printf "check: test -f README.md\n" > "$WT/.erixpo/stack.md"
+git -C "$WT" add README.md .gitignore
 git -C "$WT" commit -qm init
-iso_out="$(cd "$WT" && bash "$ROOT/scripts/worktree.sh" isolate --slug smoke)"
-iso_id="$(printf '%s\n' "$iso_out" | awk -F': ' '/^id:/{print $2; exit}')"
-iso_path="$(printf '%s\n' "$iso_out" | awk -F': ' '/^path:/{print $2; exit}')"
-iso_branch="$(printf '%s\n' "$iso_out" | awk -F': ' '/^branch:/{print $2; exit}')"
+iso_out="$(bash "$ROOT/bin/erixpo" --root "$WT" isolate --slug smoke --porcelain)"
+iso_id="$(printf '%s\n' "$iso_out" | sed -n 's/^id=//p')"
+iso_path="$(printf '%s\n' "$iso_out" | sed -n 's/^path=//p')"
+iso_branch="$(printf '%s\n' "$iso_out" | sed -n 's/^branch=//p')"
 if [[ -z "$iso_id" || ! -d "$iso_path" ]]; then
   bad "isolate did not create a worktree"
 else
@@ -161,7 +167,16 @@ else
   git -C "$iso_path" add README.md
   git -C "$iso_path" commit -qm 'wt change'
   wt_sha="$(git -C "$iso_path" rev-parse HEAD)"
-  if ! (cd "$WT" && bash "$ROOT/scripts/worktree.sh" close --id "$iso_id") >/dev/null; then
+  bash "$ROOT/bin/erixpo" --root "$iso_path" review --stage 1 >/dev/null || bad "fresh stage1 review failed"
+  python3 - "$iso_path" <<'PYREVIEW'
+import json
+from pathlib import Path
+import sys
+root = Path(sys.argv[1])
+evidence = json.loads((root / '.erixpo/REVIEW-stage1.json').read_text())
+(root / '.erixpo/REVIEW.md').write_text('Result: ship\nReview-ID: ' + evidence['review_id'] + '\nReviewer: smoke fixture\n')
+PYREVIEW
+  if ! bash "$ROOT/bin/erixpo" --root "$WT" close --id "$iso_id" >/dev/null; then
     bad "close failed"
   else
     [[ -d "$iso_path" ]] && bad "worktree dir still present after close"
@@ -176,7 +191,7 @@ else
 fi
 
 say "== sweep reports (dry) =="
-if ! (cd "$WT" && bash "$ROOT/scripts/worktree.sh" sweep) >/dev/null; then
+if ! bash "$ROOT/bin/erixpo" --root "$WT" sweep >/dev/null; then
   bad "sweep dry failed"
 else
   say "ok sweep dry"
@@ -190,17 +205,17 @@ printf '%s\n' "$out" | grep -q 'request_class: ui' || bad "calmer blue != ui"
 out="$(python3 "$ROOT/scripts/classify-signals.py" "sidebar to tabs")"
 printf '%s\n' "$out" | grep -q 'recompose' || bad "sidebar to tabs != recompose"
 python3 "$ROOT/scripts/classify-signals.py" --selftest >/dev/null || bad "classify --selftest"
-scope="$(python3 "$ROOT/scripts/research-scope.py" --class fix)"
+scope="$(bash "$ROOT/bin/erixpo" research-scope --class fix)"
 [[ "$scope" == skip ]] || bad "research-scope fix != skip"
-scope="$(python3 "$ROOT/scripts/research-scope.py" --class new)"
+scope="$(bash "$ROOT/bin/erixpo" research-scope --class new)"
 [[ "$scope" == full ]] || bad "research-scope new != full"
-scope="$(python3 "$ROOT/scripts/research-scope.py" --class ui --ui relanguage)"
+scope="$(bash "$ROOT/bin/erixpo" research-scope --class ui --ui relanguage)"
 [[ "$scope" == full ]] || bad "research-scope relanguage != full"
-scope="$(python3 "$ROOT/scripts/research-scope.py" --class feature)"
+scope="$(bash "$ROOT/bin/erixpo" research-scope --class feature)"
 [[ "$scope" == narrow ]] || bad "research-scope feature != narrow (builds must research)"
-scope="$(python3 "$ROOT/scripts/research-scope.py" --class work)"
+scope="$(bash "$ROOT/bin/erixpo" research-scope --class work)"
 [[ "$scope" == narrow ]] || bad "research-scope work != narrow"
-scope="$(python3 "$ROOT/scripts/research-scope.py" --class auto)"
+scope="$(bash "$ROOT/bin/erixpo" research-scope --class auto)"
 [[ "$scope" == narrow ]] || bad "research-scope auto != narrow"
 python3 "$ROOT/scripts/research-scope.py" --selftest >/dev/null || bad "research-scope --selftest"
 like_out="$(python3 "$ROOT/scripts/classify-signals.py" "SwiftUI app like Things")"
@@ -226,9 +241,9 @@ else
   say "ok freelance hex rejected"
 fi
 
-say "== bin/erixpo close is wired =="
-grep -q 'close' "$ROOT/bin/erixpo" || bad "bin/erixpo missing close"
-grep -q 'classify' "$ROOT/bin/erixpo" || bad "bin/erixpo missing classify"
+say "== installed CLI front door executes =="
+"$TMP/.erixpo/bin/erixpo" --root "$TMP" capabilities >/dev/null || bad "installed CLI status failed"
+"$TMP/.erixpo/bin/erixpo" classify 'update the README' | grep -q 'request_class: docs' || bad "installed classify dispatch failed"
 
 say "== uninstall pack-only keeps AGENTS.md =="
 echo 'keep-agents' > "$TMP/AGENTS.md"

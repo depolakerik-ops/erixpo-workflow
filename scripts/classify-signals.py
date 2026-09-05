@@ -11,6 +11,7 @@ import sys
 
 ALIASES = (
     "init",
+    "new",
     "auto",
     "feature",
     "fix",
@@ -25,23 +26,23 @@ ALIASES = (
 )
 
 UI_WORDS = (
-    r"theme",
+    r"themes?",
     r"spacing",
-    r"font",
-    r"typeface",
-    r"color",
-    r"colour",
-    r"palette",
-    r"animation",
+    r"fonts?",
+    r"typefaces?",
+    r"colors?",
+    r"colours?",
+    r"palettes?",
+    r"animations?",
     r"radius",
-    r"mockup",
+    r"mockups?",
     r"design language",
     r"make it consistent",
     r"recompose",
     r"redesign",
-    r"breakpoint",
-    r"layout",
-    r"sidebar",
+    r"breakpoints?",
+    r"layouts?",
+    r"sidebars?",
     r"motion",
 )
 
@@ -67,11 +68,16 @@ SEARCH = re.compile(
     r"\b(what did we do|find the session|search history|prior run|prior session)\b",
     re.I,
 )
+# Creation intent takes precedence over visual attributes of the new product.
+# Existing-product edits remain features/fixes/UI work.
+PRODUCT = r"(?:app|application|product|site|website|script|tool|cli|dashboard|landing page|game|client|api|service|robot|controller|brain|firmware|animation|graphics|illustration|poster|3d model)"
 NEW = re.compile(
-    r"\b(i want to build|i wanna build|new (app|product|site|script)|greenfield)\b",
+    r"\b(?:greenfield|new\s+(?:(?!existing\b)\w+[ -]+){0,6}" + PRODUCT + r")\b"
+    r"|\b(?:build|create|develop|make|design|i want|i need)\s+"
+    r"(?:(?!existing\b)\w+[ -]+){0,8}" + PRODUCT + r"\b",
     re.I,
 )
-CONTINUE = re.compile(r"\b(go|continue|keep going|resume|keep building|auto)\b", re.I)
+CONTINUE = re.compile(r"\b(go ahead|continue|keep going|resume|keep building|auto)\b|^\s*go[.!]?\s*$", re.I)
 FEATURE = re.compile(r"\b(add|implement|extra screen|extra endpoint)\b", re.I)
 DOCS = re.compile(r"\b(wiki|readme|progress\.html|docs only)\b", re.I)
 WORK = re.compile(
@@ -80,14 +86,31 @@ WORK = re.compile(
 )
 AND_SPLIT = re.compile(r"\s+(?:and then|then|and)\s+", re.I)
 
-UI_RE = re.compile("|".join(UI_WORDS), re.I)
+UI_RE = re.compile(r"\b(?:" + "|".join(UI_WORDS) + r")\b", re.I)
+
+ART = re.compile(r"\b(blender|3d|animations?|graphics|illustration|poster|render|sculpture)\b", re.I)
+ROBOT = re.compile(r"\b(robot(?:ics)?|embedded|microcontroller|firmware|arduino|esp32)\b", re.I)
+APP_UI = re.compile(r"\b(ui|interface|app|application|website|web|landing|html|css|dashboard|screen|button|navigation|control panel|login|checkout|menu)\b", re.I)
+
+
+def non_ui_domain(text: str) -> str:
+    if APP_UI.search(text):
+        return ""
+    if ROBOT.search(text):
+        return "embedded"
+    if ART.search(text):
+        return "art"
+    return ""
+
 
 SURFACE_MAP = (
-    (re.compile(r"\b(swiftui|iphone|ios|xcode)\b", re.I), "ios"),
-    (re.compile(r"\b(kotlin|android|jetpack|compose)\b", re.I), "android"),
     (re.compile(r"\b(macos|appkit|os x)\b", re.I), "macos"),
+    (re.compile(r"\b(iphone|ios)\b", re.I), "ios"),
+    (re.compile(r"\b(android)\b", re.I), "android"),
     (re.compile(r"\b(windows|winui|wpf|winforms)\b", re.I), "windows"),
-    (re.compile(r"\b(website|web app|landing|react|next\.?js|html|css|breakpoint)\b", re.I), "web"),
+    (re.compile(r"\b(linux)\b", re.I), "linux"),
+    (re.compile(r"\b(website|web|landing|react(?! native)|next\.?js|html|css|breakpoint)\b", re.I), "web"),
+    (re.compile(r"\b(flutter|react native)\b", re.I), "mixed"),
     (re.compile(r"\b(tui|terminal ui)\b", re.I), "tui"),
     (re.compile(r"\b(slide|deck|pdf|print)\b", re.I), "slides"),
     (re.compile(r"\b(cli|python script|shell script)\b", re.I), "none"),
@@ -99,13 +122,26 @@ def _norm(s: str) -> str:
 
 
 def surface_hint(text: str) -> str:
+    domain = non_ui_domain(text)
+    if domain:
+        return "none" if domain == "embedded" else "other"
+    explicit = (
+        r"\b(?:macos|os x)\b", r"\b(?:iphone|ios)\b", r"\bandroid\b",
+        r"\bwindows\b", r"\blinux\b", r"\b(?:web|website)\b",
+    )
+    if sum(bool(re.search(pattern, text, re.I)) for pattern in explicit) > 1:
+        return "mixed"
     for rx, val in SURFACE_MAP:
         if rx.search(text):
             return val
+    if ROBOT.search(text) and APP_UI.search(text):
+        return "other"
     return ""
 
 
 def ui_change(text: str) -> str:
+    if non_ui_domain(text):
+        return "none"
     t = text.lower()
     if re.search(r"\b(redesign|new brand|new look|new direction|tutorial look)\b", t):
         return "relanguage"
@@ -113,14 +149,14 @@ def ui_change(text: str) -> str:
         return "recompose"
     if re.search(r"\b(breakpoint|responsive|small screens?|mobile and desktop|compact|size class)\b", t):
         return "reflow"
-    if re.search(r"\b(bounce|animation|motion|duration|easing|parallax)\b", t):
+    if re.search(r"\b(bounce|animations?|motion|duration|easing|parallax)\b", t):
         return "remotion"
     if re.search(r"\b(consistent|consistency|looks off|drift)\b", t):
         return "consistency"
     if re.search(r"\b(extra (screen|page)|new screen|add (a )?(page|screen))\b", t):
         return "new-screen"
     if re.search(
-        r"\b(calmer|palette|hex|colour|color|font|typeface|spacing|radius|roundness|corners|blue|accent)\b",
+        r"\b(calmer|palette|hex|colours?|colors?|fonts?|typefaces?|spacing|radius|roundness|corners|blue|accent)\b",
         t,
     ):
         return "retoken"
@@ -133,7 +169,10 @@ def request_class(text: str) -> str:
     t = _norm(text)
     low = t.lower()
 
-    m = re.match(r"^(?:/erixpo\s+)?(" + "|".join(ALIASES) + r")\b", low)
+    # Only an explicit slash alias (or a bare track name) overrides sentence intent.
+    m = re.match(r"^/erixpo\s+(" + "|".join(ALIASES) + r")\b", low)
+    if not m:
+        m = re.fullmatch(r"(" + "|".join(ALIASES) + r")", low)
     if m:
         return m.group(1)
 
@@ -147,7 +186,7 @@ def request_class(text: str) -> str:
         return "search"
 
     look = bool(LOOK_AT.search(low))
-    ui = bool(UI_RE.search(low))
+    ui = bool(UI_RE.search(low)) and not non_ui_domain(low)
     defect = bool(DEFECT.search(low))
     uc = ui_change(low)
 
@@ -160,12 +199,20 @@ def request_class(text: str) -> str:
     if BARE_LOOK.match(low):
         return "ask"
 
+    if FEATURE.search(low) and re.search(r"\b(error handl(?:er|ing)|crash report(?:er|ing)|bug report(?:er|ing)|feature|support|endpoint|integration|authentication|pagination|search|export|filter|sync|offline|billing|screen|page)\b", low):
+        return "feature"
+    # "Fix my new app" is still repair; explicit creation can mention errors
+    # as a domain (for example, a crash-reporting app).
+    if NEW.search(low) and not re.search(r"\b(fix|repair|debug|resolve)\b", low):
+        return "new"
     if uc != "none":
         return "ui"
     if defect:
         return "fix"
     if ui:
         return "ui"
+    if non_ui_domain(low):
+        return "work"
     if NEW.search(low):
         return "new"
     if CONTINUE.search(low) and not FEATURE.search(low):
@@ -177,8 +224,9 @@ def request_class(text: str) -> str:
     if WORK.search(low):
         return "work"
     surf = surface_hint(t)
-    if surf in {"ios", "android", "macos", "windows", "web"} and re.search(
-        r"\b(app|application|site|game|client)\b", low
+    if (surf in {"ios", "android", "macos", "windows", "linux", "mixed", "web"}
+        or re.search(r"\b(swiftui|xcode|kotlin|compose)\b", low)) and re.search(
+        r"\b(app|application|site|website|game|client)\b", low
     ):
         return "new"
     return "unknown"
@@ -192,6 +240,13 @@ def split_jobs(text: str) -> list[str]:
     if len(parts) < 2:
         return [t]
     classes = [request_class(p) for p in parts]
+    # Product attributes joined by "and" are not separate jobs.
+    if classes[0] == "new" and all(
+        not re.search(r"^(?:please\s+)?(?:add|implement|fix|repair|debug|review|inspect|audit|redesign|create|build|update|write|draft)\b", part, re.I)
+        and not DEFECT.search(part)
+        for part in parts[1:]
+    ):
+        return [t]
     if len(set(c for c in classes if c not in ("unknown", "ask"))) >= 2:
         return parts
     return [t]
@@ -251,6 +306,42 @@ def format_md(result: dict) -> str:
 
 
 FIXTURES = [
+    ("/erixpo new", "new", "none"),
+    ("Build a robot controller with motion planning", "new", "none"),
+    ("Create a brain for my robot", "new", "none"),
+    ("Develop firmware for an ESP32", "new", "none"),
+    ("Create a Blender 3D animation with blue graphics", "new", "none"),
+    ("I want to make a 3D animation", "new", "none"),
+    ("Adjust the motion of the robot", "work", "none"),
+    ("Improve the colors of this Blender animation", "work", "none"),
+    ("Inspect this Blender animation", "review", "none"),
+    ("Create a Flutter app", "new", "none"),
+    ("Build a React Native app", "new", "none"),
+    ("Build a Linux desktop app", "new", "none"),
+    ("Build an app using an unfamiliar framework", "new", "none"),
+    ("Build a responsive HTML website for my bakery", "new", "reflow"),
+    ("I want a new website with a sidebar", "new", "recompose"),
+    ("Create a landing page with animations", "new", "remotion"),
+    ("I need a macOS SwiftUI app with a calm blue theme", "new", "retoken"),
+    ("Develop an Android app with responsive layout", "new", "reflow"),
+    ("Build a Windows desktop application", "new", "none"),
+    ("Create a Go CLI for processing CSV files", "new", "none"),
+    ("Implement CSV parsing in our Go CLI", "feature", "none"),
+    ("Go", "auto", "none"),
+    ("go ahead", "auto", "none"),
+    ("continue the approved plan", "auto", "none"),
+    ("Add promotion codes to checkout", "feature", "none"),
+    ("Fix the promotion code calculation bug", "fix", "none"),
+    ("Add search to the existing app sidebar", "feature", "recompose"),
+    ("Implement offline sync and billing support in the existing app", "feature", "none"),
+    ("Add pagination to the API", "feature", "none"),
+    ("Add a new screen to the app", "feature", "new-screen"),
+    ("Make the existing website responsive", "ui", "reflow"),
+    ("Fix a crash in my new app", "fix", "none"),
+    ("Fix the failing CSV export", "fix", "none"),
+    ("HTML website", "new", "none"),
+    ("update the README", "docs", "none"),
+    ("add an error handler", "feature", "none"),
     ("look at the checkout", "review", "none"),
     ("look over login", "review", "none"),
     ("take a look at settings", "review", "none"),
@@ -290,6 +381,37 @@ def selftest() -> int:
             if sentence.startswith("redesign checkout and") and len(got["jobs"]) < 2:
                 print(f"FAIL multi-intent {sentence!r}: {got['jobs']}", file=sys.stderr)
                 bad += 1
+    for sentence, expected in (
+        ("I need a macOS SwiftUI app", "macos"),
+        ("Build an iOS app", "ios"),
+        ("Develop an Android app", "android"),
+        ("Build a Windows desktop application", "windows"),
+        ("Create a Go CLI", "none"),
+        ("SwiftUI app like Things", ""),
+        ("Create an app using Xcode", ""),
+        ("Build a Kotlin Compose app", ""),
+        ("Build an iOS and Android app", "mixed"),
+        ("Build a macOS and Linux app", "mixed"),
+        ("Build a web and Android app", "mixed"),
+        ("Build a robot controller with motion planning", "none"),
+        ("Create a Blender 3D animation", "other"),
+        ("Create a Flutter app", "mixed"),
+        ("Build a React Native app", "mixed"),
+        ("Build an Android app with Flutter", "android"),
+        ("Build a Linux app with React Native", "linux"),
+        ("Build a macOS app with Flutter", "macos"),
+        ("Build an app using an unfamiliar framework", ""),
+        ("Build a web dashboard for a robot controller", "web"),
+        ("Build a control interface for a robot controller", "other"),
+        ("Build a responsive HTML website", "web"),
+    ):
+        if classify(sentence)["surface"] != expected:
+            print(f"FAIL surface {sentence!r}: want {expected}", file=sys.stderr)
+            bad += 1
+    combined = classify("Build a responsive website with a sidebar and blue colors")
+    if combined["request_class"] != "new" or len(combined["jobs"]) != 1:
+        print(f"FAIL product attributes split into jobs: {combined}", file=sys.stderr)
+        bad += 1
     if bad:
         print(f"{bad} fixture(s) failed", file=sys.stderr)
         return 1

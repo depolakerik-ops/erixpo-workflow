@@ -1,0 +1,1 @@
+{"id":"code-feature","prompt":"Implement slugify(text) in app.py. Lowercase ASCII text, replace runs of non-alphanumeric characters with one hyphen, and strip leading/trailing hyphens. Preserve existing greeting behavior. Add meaningful tests. Do not install dependencies."}

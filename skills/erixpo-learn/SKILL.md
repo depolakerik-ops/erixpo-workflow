@@ -4,7 +4,7 @@ description: Self-improvement for this repo. Use when the user says remember thi
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.2"
+  version: "0.7.0"
 ---
 
 # erixpo learn
@@ -25,7 +25,7 @@ Read [memory rules](../erixpo/references/memory.md) first.
 .erixpo/skills/<name>/     project-grown SKILL.md (quarantined until approved)
 ```
 
-The pack skills under `skills/erixpo*` are **immutable**. You may only mutate `.erixpo/`.
+The installed pack skills are **immutable** in a target project. Memory and draft procedures belong in `.erixpo/`; deliberate promotion of a verified shared rule may also update the project's AGENTS.md or documents, as described below. Never rewrite the installed methodology to fit one session.
 
 ## Modes
 
@@ -43,7 +43,7 @@ The pack skills under `skills/erixpo*` are **immutable**. You may only mutate `.
 Write **one** JSONL line to `.erixpo/learnings.jsonl`:
 
 ```json
-{"ts":"2026-09-02T16:00:00Z","track":"fix","type":"pitfall","key":"short-kebab-key","insight":"one sentence","confidence":8,"source":"user-stated","files":["path"],"status":"active"}
+{"ts":"2026-09-02T16:00:00Z","track":"fix","type":"pitfall","key":"short-kebab-key","insight":"one sentence","confidence":9,"source":"user-stated","files":["path"],"status":"active"}
 ```
 
 Fields:
@@ -59,9 +59,9 @@ Log the edit in `.erixpo/refine-log.md`: trigger, file, before→after one-liner
 ## Search
 
 1. Read MEMORY.md, USER.md, PROFILE.md.
-2. Grep `learnings.jsonl` for the query and for the files being touched.
+2. Use `.erixpo/bin/erixpo search --kind learnings <query>` for effective active lessons. Resolve the latest appended record for each key before applying its status; raw grep can resurrect a superseded or retracted lesson. Check file/version applicability before using a hit.
 3. Return the hits as:
-   `Prior learning applied: <key> — <insight> (confidence N, source)`
+   `Prior learning: <key> — <insight> (confidence N, source)`
 4. Do not dump the whole file into chat.
 
 ## Refine (after a finished job)
@@ -70,7 +70,7 @@ Do this at the end of auto / feature / fix / work / review when something non-tr
 
 1. Append one `sessions.jsonl` line: date, track, goal, check result, lesson keys.
 2. If a new pitfall or pattern was **verified** (check ran, or user confirmed), append one learning.
-3. Same mistake twice → type `pitfall`, confidence +2, and add **one line** to `AGENTS.md` under Invariants if it is a hard rule.
+3. Same verified mistake twice → append an updated record for the same key, type `pitfall`, confidence +2 capped at 10. Do not turn a repeated hypothesis into a hard rule. If shared and durable, deliberately promote one evidence-backed line to AGENTS.md and log its provenance/rollback.
 4. User correction ("no, we don't do it that way") → type `preference` or `pitfall`, source `user-stated`. If they corrected **taste or autonomy**, patch `.erixpo/USER.md` (smallest edit) in the same pass — that is the adaptation engine.
 5. Smallest edit. Never rewrite MEMORY.md from scratch.
 
@@ -81,15 +81,15 @@ If nothing new was learned, write that in refine-log and stop. Empty refine is a
 Only when a procedure would take more than three steps next time **and** it is specific to this repo.
 
 1. Draft `.erixpo/skills/<kebab-name>/SKILL.md` with frontmatter `name` + `description` (when to use it).
-2. Status starts **quarantined**. Tell the user. Do not load it as a default until they say go, or it has been used successfully three times (then flip status to active in refine-log).
+2. Record status **quarantined** in `.erixpo/skills/<name>/status.json`, alongside source lesson keys and an empty `trials` list. Tell the user. Default activation requires explicit approval. Three successful, explicitly selected trials may justify a promotion proposal, never silent activation. Record the outcome/check evidence of each trial; retries of the same run count once. Approval sets `status: active` and is recorded in status.json and refine-log. Skills with missing status metadata remain quarantined.
 3. Never copy a third-party GitHub skill into `.erixpo/skills/` without asking.
 
 `/erixpo learn this folder` (Hermes-style): read the named directory of docs/code, distill a quarantined project skill, cite sources in the skill body.
 
 ## Prune
 
-- Retract a learning the user says is wrong (`status: retracted`, keep the line for history).
-- Mark stale if every `files[]` path is gone.
+- Retract a learning the user says is wrong by appending a full updated record with the same `key` and `status: retracted`; never edit the historical line. Update/remove any derived MEMORY/USER summary and deactivate a derived procedure until revalidated.
+- Append a stale revision when supporting evidence no longer applies; file renames alone do not invalidate a lesson—check the replacement. Keep the same key for all revisions.
 - Decay: inferred learnings unused for a long time drop confidence. Below 3 → stale.
 - MEMORY.md / USER.md: delete lines that would not change behavior if removed.
 

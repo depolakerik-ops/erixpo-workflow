@@ -2,13 +2,14 @@
 
 Every finished (or abandoned) job leaves one JSONL line. Later workers search those lines instead of hoping the chat is still around.
 
-No SQLite. No daemon. `grep` / the bundled script is enough.
+No SQLite or daemon. Use the bundled script to resolve active learning revisions; raw grep is only for inspecting history.
 
 ## Files
 
 | File | Role |
 |---|---|---|
-| `.erixpo/sessions.jsonl` | What we did |
+| `.erixpo/sessions.jsonl` | Agent-authored slice/session records |
+| `.erixpo/run-events/*.json` | Immutable runtime completion/failure events, also searched |
 | `.erixpo/learnings.jsonl` | What to do differently next time |
 | `.erixpo/worktrees.jsonl` | Isolated checkouts (`live` / `merged` / `closed` / `pruned` / `stale`) |
 | `.erixpo/classify.md` | Current job queue (not a session; do not search it as history) |
@@ -40,9 +41,9 @@ Do not write a line for "I read the repo".
 At the start of every non-trivial job, and whenever the user asks "what did we do about X":
 
 ```bash
-bin/erixpo search checkout
-bin/erixpo search --kind sessions empty cart
-bin/erixpo search --kind learnings pitfall
+.erixpo/bin/erixpo search checkout
+.erixpo/bin/erixpo search --kind sessions empty cart
+.erixpo/bin/erixpo search --kind learnings pitfall
 ```
 
 Or follow `erixpo-search`.
@@ -51,7 +52,7 @@ Return the 3–8 best hits as:
 
 `Prior session: <id> — <goal> (<check>, <ts>)`
 
-`Prior learning applied: <key> — <insight>`
+`Prior learning: <key> — <insight>`
 
 Do not dump the whole JSONL into the prompt.
 
@@ -64,14 +65,14 @@ Session lines, learnings, plans, and USER notes are all fed back into later prom
 1. Exact phrase in `goal`, `notes`, `key`, `insight`
 2. Token overlap with `files[]`
 3. Recency (newer first among equals)
-4. Drop `status: retracted` learnings
+4. Resolve the latest appended record per learning key before ranking; drop inactive lessons (retracted, stale, quarantined)
 5. Cap 8
 
 ## Edge cases
 
-- File missing → create empty, say "no history yet"
+- File missing → say "no history yet"; read-only search does not create files
 - Broken JSON line → skip that line, do not abort
 - Query empty → last 8 sessions
 - Two sessions with the same goal and `check: fail` then `pass` → show both, latest first
 - Search is not a substitute for reading PROFILE / MEMORY / USER / CONSTITUTION
-- `live` worktrees in hits should mention `bin/erixpo close --id` if the job already shipped
+- `live` worktrees in hits should mention `.erixpo/bin/erixpo close --id` if the job already shipped

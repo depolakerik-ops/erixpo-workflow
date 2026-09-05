@@ -4,7 +4,7 @@ description: Create or change the project design language. Use when the work has
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.2"
+  version: "0.7.0"
 ---
 
 # erixpo ui
@@ -12,6 +12,8 @@ metadata:
 The design language lives in `documents/ui/`. That folder is the pivot. Implementation copies it.
 
 Read [ui.md](../erixpo/references/ui.md) first (change-type protocol). Read [slop.md](../erixpo/references/slop.md) for this surface. Skip this skill if there is no human-facing surface. Do not assume web.
+
+For a small change to existing UI, apply the existing-product exception in [ui.md](../erixpo/references/ui.md): reuse and minimally document the current language instead of forcing create or new directions.
 
 ## Detect
 
@@ -32,17 +34,17 @@ Branch below. **"Redesign" ≠ `retoken`.** If they said redesign and you only c
 
 `ui_change=create`
 
-1. Infer look from USER + `like X` ([intent.md](../erixpo/references/intent.md)). Ask at most one question (reference or density) if still empty. Propose 2–3 directions + default for **this surface**. One must not be the tutorial look ([slop.md](../erixpo/references/slop.md)). Wait unless they said you pick / unattended.
-2. Live-search **this year**: platform guide + **comparables** (2–3 similar apps on this surface, plus user-stated references). Intensity `full` ([research.md](../erixpo/references/research.md)). Write `.erixpo/research.md` Intent, Comparables, `## UI`.
+1. Infer look from USER + `like X` ([intent.md](../erixpo/references/intent.md)). Ask at most one question (reference or density) if still empty. Propose 2–3 directions + default for **this surface**. One must not be the tutorial look ([slop.md](../erixpo/references/slop.md)). Follow intent.md; do not repeat an approval already covered by the current scope or autonomy.
+2. Open current official sources: platform guide + **comparables** (2–3 similar apps on this surface, plus user-stated references). Intensity `full` ([research.md](../erixpo/references/research.md)). Write `.erixpo/research.md` Intent, Comparables, `## UI`.
 3. Copy templates from the pack `templates/documents/ui/` into the project's `documents/ui/` **and fill them in this same step**. Blank token tables must not land as the design language.
 4. Fill real numbers. No "TBD purple". Include the breakpoint / size-class scale in `tokens.md`.
 5. Write `layout.md` (nav, skeleton, compact vs regular) and `mapping.md` (`theme_file` path for this repo + token map).
 6. Previews appropriate to surface:
    - web / docs site: HTML mockup using the same CSS variables as tokens, **at least two widths** (compact + regular)
-   - ios / android / macos / windows: `mapping.md` is the contract; optional native preview/screenshot. HTML wire only if they asked or the host cannot preview native — label it "wire, not production."
-7. Set `.erixpo/ui-status.md` to `draft`. Show the language + preview. On "go" / "yes" / "approved", set `approved`.
+   - ios / android / macos / windows: `mapping.md` is the contract; native preview/screenshot and relevant interaction checks when tooling is available; if unavailable, record the limitation and do not claim visual verification. HTML wire only if they asked or the host cannot preview native — label it "wire, not production."
+7. Set `.erixpo/ui-status.md` to `draft`. Show the language + preview. Set `approved` when current user authorization covers the direction, otherwise wait for that decision.
 8. Link `documents/INDEX.md` → `ui/LANGUAGE.md`.
-9. Add `documents/ui/` paths you created to `.erixpo/init-manifest.txt` if this is still init.
+9. During init, record each created file as `SHA256<TAB>relative-path` in `.erixpo/init-manifest.txt`; never record entire directories or pre-existing files.
 
 Do not start product chrome until `draft` exists. `approved` is preferred; "just go" allows draft + first slice together.
 

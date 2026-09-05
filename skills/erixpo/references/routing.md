@@ -2,11 +2,11 @@
 
 Use this after classify, when `/erixpo` input is messy. Do **not** first-match a synonym.
 
-Protocol and schema: [classify.md](classify.md). Write `.erixpo/classify.md` before loading a track.
+Protocol and schema: [classify.md](classify.md). Write `.erixpo/classify.md` before loading a track except for the explicit one-shot and maintenance exceptions in classify.md.
 
 ## Order
 
-1. Run classify ([classify.md](classify.md)). If `AGENTS.md` and `.erixpo/` are absent → **init** first, keep the original sentence as the next `jobs:` entry.
+1. Run classify ([classify.md](classify.md)). One-shot light work can run directly without persistent files. For project/recurring work, **init** first when no populated `.erixpo/PROFILE.md` describes the project, retaining the original request. Installed engine files do not count as initialization. Pack-maintenance requests load their track directly.
 2. If `jobs:` has multiple entries, announce the queue in one line, start the first. Example: `Queue: ui (checkout redesign) → fix (login) → auto. Starting ui.` Do not drop the rest.
 3. Route by **`request_class`** from classify, not by the first synonym in the sentence.
 4. Explicit alias in the message (`init`, `auto`, `feature`, `fix`, `review`, `docs`, `work`, `learn`, `search`, `ui`, `uninstall`, `update`) still forces that `request_class` **after** classify of repo / surface / ceremony.

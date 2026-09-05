@@ -44,7 +44,7 @@ documents/          wiki (ceremony in PROFILE — do not dump ui/ on non-surface
 - Do not add dependencies or MCP servers the user did not approve.
 - Update `documents/` when behaviour changes, as ceremony requires.
 - "Done" means the check command exits 0 (or the light-writing PROFILE check is satisfied).
-- Unattended loops isolate in a worktree. Do not merge onto the user's branch until they say so. After ship, `bin/erixpo close --id` removes the tree.
+- Unattended loops isolate in a worktree. Do not merge onto the user's branch until they say so. After ship, `.erixpo/bin/erixpo close --id` removes the tree.
 - Stage-2 review is a different session from the implementer.
 
 ## erixpo

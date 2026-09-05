@@ -28,20 +28,20 @@ Write constitution during **init** (if code already exists: describe it, do not 
 
 Slice 0, **required**, before UI chrome and before feature slices.
 
-Acceptance: the official project opens/builds and `check:` runs.
+Acceptance: the smallest valid project or artifact opens/builds/renders/runs in its actual toolchain, and the domain-appropriate `check:` runs. For scenes, graphics or non-code projects, scaffold means a reproducible source/asset structure and validation/export workflow, not an application framework.
 
-1. Classify surface from [domains.md](domains.md) / interview. Do not assume web.
-2. Research official **current-year** init for THAT surface. Write it in `.erixpo/research.md`.
+1. Establish deliverable, domain, runtime/physical target, formats and available tools using the adaptation contract in domains.md. Classify surface from [domains.md](domains.md) / interview. Do not assume web.
+2. Research official init for the actual platform/version for THAT surface. Write it in `.erixpo/research.md`.
 3. Run the boring official tool. Examples, **not** a locked menu:
    - SwiftPM / iOS / macOS: `swift package init` or the Xcode project the user already has; never Vite.
    - Android / Kotlin: Gradle / Compose official init; never Playwright as primary.
    - Windows: `dotnet new` WinUI / WPF / WinForms as researched; not a React wrapper unless they asked.
-   - Web: **only if** surface is web. Then research this year; include breakpoint grammar in `documents/ui/layout.md`.
+   - Web: **only if** surface is web. Then research the actual dependency versions; include breakpoint grammar in `documents/ui/layout.md`.
    - Python script (product): `pyproject.toml` + pytest (or unittest) + a fixture; not Next.js.
    - Automation: script + sample fixture + check that exits 0 on the fixture.
    - Assistant / notes: folder layout + INDEX, no app stack.
 4. Write a **real** `check:` into `.erixpo/stack.md` that RUNS tests or the class-appropriate proof. `echo ok` / `exit 0` / `true` are fails. Light writing only may use `n/a — human accepts artifact`.
-5. If no test harness exists, **create it in slice 0**. Do not ask whether to have tests. Ask only if two harnesses are both reasonable.
+5. If no test harness exists, **create it in slice 0**. Do not ask whether to have tests. Choose a suitable harness within existing authorization; ask only when a consequential unresolved constraint changes that choice (intent.md). For non-code artifacts use the domain-appropriate validation workflow instead of inventing a unit-test suite.
 6. Fill `CONSTITUTION.md` from what you actually created.
 7. `AGENTS.md` commands: verified, or marked unverified.
 

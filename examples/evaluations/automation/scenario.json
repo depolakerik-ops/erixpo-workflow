@@ -1,0 +1,1 @@
+{"id":"automation","prompt":"Create summarize.py, a Python standard-library CLI that takes one CSV filename and prints a JSON object containing row_count and total_amount. Sum the amount column as decimal currency and emit total_amount as a string with two decimal places. Add tests. Do not install dependencies."}

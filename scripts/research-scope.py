@@ -10,7 +10,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-# Building (any field) always live-searches. Only non-build work skips.
+# Research responds to uncertainty. memory_hit means verified, version-matched evidence.
 BUILD_FULL = {"new", "init"}
 BUILD_NARROW = {"feature", "work", "auto"}
 NONBUILD = {"fix", "learn", "search", "docs", "uninstall", "review", "update"}
@@ -26,34 +26,34 @@ def scope(
     unknown_api: bool = False,
     user_named_ref: bool = False,
     memory_hit: bool = False,
+    large_change: bool = False,
 ) -> str:
     rc = (request_class or "").strip().lower()
     ui = (ui_change or "none").strip().lower()
 
-    if rc in BUILD_FULL:
+    if rc in BUILD_FULL or ui in UI_FULL or large_change:
         return "full"
-    if ui in UI_FULL:
-        return "full"
-    if rc == "ui" and ui in UI_NARROW:
-        return "narrow"
-    if rc in BUILD_NARROW:
-        return "narrow"
-    if rc in NONBUILD:
-        return "skip"
-    if rc == "unknown":
-        return "narrow"
+    # Explicit reference or unknown dependencies/API needs evidence even during a fix.
     if new_infra or unknown_api or user_named_ref:
         return "narrow"
-    # memory_hit never skips a build; only non-build can skip
-    if memory_hit and rc in NONBUILD:
+    if memory_hit:
+        return "skip"
+    if rc in NONBUILD:
         return "skip"
     return "narrow"
 
 
+
 FIXTURES = [
     ({"request_class": "new"}, "full"),
+    ({"request_class": "feature", "large_change": True}, "full"),
+    ({"request_class": "feature", "large_change": True, "memory_hit": True}, "full"),
     ({"request_class": "init"}, "full"),
     ({"request_class": "fix"}, "skip"),
+    ({"request_class": "fix", "unknown_api": True}, "narrow"),
+    ({"request_class": "review", "user_named_ref": True}, "narrow"),
+    ({"request_class": "feature", "memory_hit": True}, "skip"),
+    ({"request_class": "feature", "memory_hit": True, "new_infra": True}, "narrow"),
     ({"request_class": "auto"}, "narrow"),
     ({"request_class": "feature"}, "narrow"),
     ({"request_class": "feature", "new_infra": True}, "narrow"),
@@ -79,6 +79,7 @@ def selftest() -> int:
             unknown_api=kwargs.get("unknown_api", False),
             user_named_ref=kwargs.get("user_named_ref", False),
             memory_hit=kwargs.get("memory_hit", False),
+            large_change=kwargs.get("large_change", False),
         )
         if got != exp:
             print(f"FAIL {kwargs}: got {got} want {exp}", file=sys.stderr)
@@ -98,6 +99,7 @@ def main(argv: list[str]) -> int:
     p.add_argument("--unknown-api", action="store_true")
     p.add_argument("--user-ref", action="store_true")
     p.add_argument("--memory-hit", action="store_true")
+    p.add_argument("--large-change", action="store_true")
     p.add_argument("--selftest", action="store_true")
     args = p.parse_args(argv[1:])
     if args.selftest:
@@ -112,6 +114,7 @@ def main(argv: list[str]) -> int:
         unknown_api=args.unknown_api,
         user_named_ref=args.user_ref,
         memory_hit=args.memory_hit,
+        large_change=args.large_change,
     ))
     return 0
 

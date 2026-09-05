@@ -1,0 +1,330 @@
+{
+  "commits": [
+    "3bd5c627a6b668f668b7b96972f9a08a3e5fbe73",
+    "984cd904c98be9ccd7ce6c4e354dd1ad4396f2e4",
+    "630100784e85cd27b2425ecc1b9f47b962af0dd0",
+    "615961eefa7b74f9f91f305168eee13a7de67bcf"
+  ],
+  "files": {
+    "VERSION": [
+      "a466ef209f5c3aee5ff0c702e2e9d5cced4783d2a655e8ab66330f21a5557b3f"
+    ],
+    "adapters/claude.sh": [
+      "8aa7afede57e71531d112f34e25a473b05b126be78959a24284b8e10bed8aae9",
+      "8f9b209789bdf30552f8d85b2bdf91c46580a5e85e3fa40f408327b6c50ea204"
+    ],
+    "adapters/codex.sh": [
+      "d49623f32f2a8489d28ad9225bc6988cff7f05909622c7b04b12ba5f03d9ba01",
+      "8c52b25d6a08891d8812ced80bff8016932755f06a7f927561fb7746d8fb9c0d"
+    ],
+    "adapters/cursor.sh": [
+      "17d5118315dd8a285ec7f3fccf36a790a5c1270f758c945c2d57f6fdb0987cd7"
+    ],
+    "adapters/gemini.sh": [
+      "42d05d7ed063d3b7450b8fc0b46174cceace982c7667c8c4de52c70c07d408ce"
+    ],
+    "adapters/generic.sh": [
+      "8893f5be32cccbaedec5b8348c223d437e23b84f35be529dc58a578f610d47a8"
+    ],
+    "adapters/hermes.sh": [
+      "8d230d4d259ba280ddd65fb2c6c94fdcfd4782a18c385aec5e892339438761e8"
+    ],
+    "adapters/opencode.sh": [
+      "2f6bdd2c5312efef6e1fb1a9ea36ce37600ee55205a28cba22045e3a2c36d30d",
+      "0ae40782e8aada8ffca50e49a46d3606eb5fd52fd3e1ba64f5a9d7649f5c5921"
+    ],
+    "bin/erixpo": [
+      "afe525571c597b6b0e6786292c864540b16eab7c9008f4776c210ff07bf293f6",
+      "43db2d7895beed35ab57cff3eec1074bc004e1ce2be0f56d972f214a37bfdf9d"
+    ],
+    "commands/erixpo.md": [
+      "2b1db5a6d286fc34adf77ee15a0bddb944afb1439eca31f51e7d8023dcc2a0f3"
+    ],
+    "scripts/classify-signals.py": [
+      "a4eb7852d3baf3b017fb90a2e645979aa13fc769660259831ca86c95a9df1cb3",
+      "093b5a6ce5aaf3f9dd8ad2735012f1a73c4bd94e65077a8eb7fb67684a0b056b"
+    ],
+    "scripts/detect-capabilities.sh": [
+      "6c3ccca6cca10fbab3b51cfba70c5610da6d7fc50cad8c7e9c9cc4da556c1456"
+    ],
+    "scripts/detect-host.sh": [
+      "5e0559110cd557acde04a693519d877864a26efc50ee81f610282273b8d9f58d"
+    ],
+    "scripts/research-scope.py": [
+      "ec8d8eec063bd166f532caa36b3b35b39d2d38fd67e5723f9e1a5ae84a83816f"
+    ],
+    "scripts/review-stage1.sh": [
+      "e6b39bc4274e8935ee81754a152a972be66810d3b5b4206156b77074d5fa086e"
+    ],
+    "scripts/session-search.sh": [
+      "5625241de625f95462da3a169f31a97b6e2f9ddf6770cc4ee077221172009d04"
+    ],
+    "scripts/worktree.sh": [
+      "13a2c8a70958e65eae3ec337be7eea68e4ab76f44019956a0f8b224997a4a55f",
+      "c5b49292f1f2690bd72237ac35247d2b28a33195b6f8286e891fe39c2775194e"
+    ],
+    "skills/erixpo-auto/SKILL.md": [
+      "53f8266050f3e9332d4092d040478bdb89aefba7fa746299fb4872dfce9cc0da",
+      "847bb0dd435cd2e7e88f37f50afdd910257be89669ac00d0c024503fbe3dbdb6",
+      "1cd9744c20d6f2ba8092539314fd85e413dcb305f7552dbf30fe57d84d9b6aa2"
+    ],
+    "skills/erixpo-docs/SKILL.md": [
+      "ba5a73738b6645d83310c1f27ca57b30472ccd11c267da4f793194b7149614b4",
+      "e70733084fb2be5f8c368b1336c8b293fe7ca3269fd7580ec44cab0a31a8e896"
+    ],
+    "skills/erixpo-feature/SKILL.md": [
+      "fb0a655ab854a74afd8e8b9b7a3c4f9bf4c0d0eef23b24bbeaeab5aaf386b574",
+      "96f7077d19c6d08666a04b9593b1f6e1cfb8bac86ea170ac1a6ec43dd7b71774"
+    ],
+    "skills/erixpo-fix/SKILL.md": [
+      "3d23e52f6267aafbea844314d9edab399206f8033cbce90bad9da319a82806c7",
+      "dc0fb8af6642d6cbcfbf07fe3a09bcb1d2195ece993b8378b98be43326f7c87b"
+    ],
+    "skills/erixpo-init/SKILL.md": [
+      "bb2fc43781b56cd915acaa3412f910419e604cf7693aead9d1f5ce166103d5f5",
+      "46e45f5f0d24b6194954492453a75739babcf2e5556c573d8cf62569e9e4e95f"
+    ],
+    "skills/erixpo-learn/SKILL.md": [
+      "36a507fb03f75a7a5e0ea622d3251a639466ada922c4dfe864be39a820677dc4",
+      "01e11a0d78585aca2ac52f5bee27c9f0a6c074256fdbbd8261a87296b661a2ad",
+      "67c42f57f8c015adf3df7080c4056bc3bbeeb84c77f3c6b448291b9c1937cef8"
+    ],
+    "skills/erixpo-new/SKILL.md": [
+      "1bc575b951a617acd821755c773b6f7117686181f6ea373b387a77180cebd629",
+      "94a34ccad1a162cf2f80743917976fee4352a4606f23fc23149b7b2efb9a7e14",
+      "dc397e60407076f64c74450ce10b6ae33c29f7cc24c3d5f64ea5085410de1524"
+    ],
+    "skills/erixpo-review/SKILL.md": [
+      "c1ec23eefc9fad4b95fb966bb97fe0f6b2764957704ae204fa54407ea03459d2",
+      "c5db96df7a5b17f4b3334bd032939b7593f950d9755d7a147608ce0a57785eac"
+    ],
+    "skills/erixpo-search/SKILL.md": [
+      "34c56f186ef71d930761b54585eaae32f3a11d08d0ee0a632c70cdd4e4598afe",
+      "4e14b1a1ab1c2f0bd0c820b9bfc82f2c80b6e3ab7cd8ff8ae8826cb5914bfb7a",
+      "b2ec0ceb1c21dcb156ce3167470f491dfbb7078b5289b76909d7932fa3341274"
+    ],
+    "skills/erixpo-ui/SKILL.md": [
+      "e3694a93fabaf92963f62e021f38d165428edf382de3cdeb8f26e28d2e2ffd10",
+      "e9b38fd31f61025f5be0024c953be22fc24989f8a1b3a1d7b901ca5c44ef1c93"
+    ],
+    "skills/erixpo-uninstall/SKILL.md": [
+      "fa8014137061f76527ac3d63af3a52fffbcfef5944d40772dd292c4216d25cac",
+      "b0efd3ce27a4228d8a6da9c6212052e059da84c3dd8233e2afdff3ec88faab73",
+      "3ec46b2b50f11eb8d2d14e436c959fa028439b8b947a202a76ba041a61f6d678"
+    ],
+    "skills/erixpo-update/SKILL.md": [
+      "24999fa5abd22164ab344e13b64d52907667342d2479d693c0385c0ff7e3524d",
+      "c430d330624a6d7c8ff90347fb10c7646c1b6250d92f631af153a55098066b73",
+      "adb8ef72f17b6f35230ed5086918e0074e05fb27eccb8dc3986fefbdec70bcf6"
+    ],
+    "skills/erixpo-work/SKILL.md": [
+      "cdd9b962e24376521183aca7a110b0cfbfada61ccaad02fea6d5a20b599f1d29",
+      "6f8811269acef4da8912b5c9c9dca7b7eec85c6950f152113e84020c806a224a"
+    ],
+    "skills/erixpo/SKILL.md": [
+      "43c8e68af6daeb7d4990d5937b45072b0d1f46a506cf55365b7bd860c14d9d9d",
+      "abd3d72ce08027ed3a1da337282528f8f3877d42da4bc7b68752b2f2ee8202df",
+      "3f1b8b5406de187e5ee2e1765d45beec0cc1defaa8f919d9df2c65c2f30404ba"
+    ],
+    "skills/erixpo/references/ceremony.md": [
+      "9e6282520c1486219b714f2be0f18d156ae713a07c0b0af8ff3c3dd75e869b71"
+    ],
+    "skills/erixpo/references/classify.md": [
+      "a402afb4c16f857a871e8fd316b84950a692a57399a76a7276256cf2fd897336"
+    ],
+    "skills/erixpo/references/craft.md": [
+      "57a94f8385b8291b09d388097747f402a012d636d487317ed096585d97a4b338"
+    ],
+    "skills/erixpo/references/domains.md": [
+      "4d2483bf1e5192ced1e6cb1ce09890ef285c478d608d0d7ecf052b8945069b5a"
+    ],
+    "skills/erixpo/references/failures.md": [
+      "0711c8564434a45feaa8ba62e7818ebaf6d6ef7b7628c7e9cfc1fd041cc8b231"
+    ],
+    "skills/erixpo/references/intent.md": [
+      "1333dbd948beb19750d4aa87e891964b1b4f4f11f4ce00fd12be0cdaf28fe9bb"
+    ],
+    "skills/erixpo/references/judgment.md": [
+      "542414b8ec577d3b2ece7022919b3690a89541b439156420b8721d6cd7910c59"
+    ],
+    "skills/erixpo/references/memory.md": [
+      "95f92632e2a5dfa99de57781860a3311b7a0fe285ce683d40fe0dcf6831afbc9"
+    ],
+    "skills/erixpo/references/quality.md": [
+      "2e095ac41874c911282c8c569dc63a4a2cd63ef995b1b48bae09768dd8350791"
+    ],
+    "skills/erixpo/references/research.md": [
+      "ebd3d95ab89f2ddb7e18e07b01cfb57f7638e218c591fbc6d68a85a3493c173e"
+    ],
+    "skills/erixpo/references/review.md": [
+      "77d6e5b228c2dc469290aec85036a6948e5eaf608429341375659a9ab932987c"
+    ],
+    "skills/erixpo/references/routing.md": [
+      "41f397764fc686844e2a223890992e8206ff6ec9e5fe2130786560de50411f60"
+    ],
+    "skills/erixpo/references/scaffold.md": [
+      "18675a6670c389fea0bf0d7ef49a2d611e5af0340ca9bbdd3ca65bb3de120d4f"
+    ],
+    "skills/erixpo/references/sessions.md": [
+      "f27b39c55874e1f36ace170aba0390712c0885390bcaeb7064d5418062407edd",
+      "87b117ea893d3b3749e9d1ef63632e2755ca163319da71e0bb6f2c656e5725b9"
+    ],
+    "skills/erixpo/references/slop.md": [
+      "a211563daf58d1b88becceb5f38747068b5ae78e65bb7b244b988bdcda09078a"
+    ],
+    "skills/erixpo/references/subagents.md": [
+      "f7b2ed4ece588109c6044e73c5033c6a47e67b8b6d0a048347a03a77da37da2a"
+    ],
+    "skills/erixpo/references/testing.md": [
+      "62c076d2fd54b3bede332ce2946c9877d54b0f5378aca824776bbc1a697e9128"
+    ],
+    "skills/erixpo/references/ui.md": [
+      "fc31b76102518271615e9fdc22bd3a4c09053d05bde6dd87439062799b4c1c0f"
+    ],
+    "skills/erixpo/references/wiki.md": [
+      "ff8d526f3dac84b94ec337ecfbddea56acf95e1f2dd3dc40ef43c9fb5203bffe"
+    ],
+    "skills/erixpo/references/worktrees.md": [
+      "1ac5840b845470e498886fb6834c53c4507068dc0240d416f6bf04d2d87f96ed"
+    ],
+    "templates/.erixpo/CONSTITUTION.md": [
+      "181d7acebd13d64c89e38ea138e28354c8376db816340281d8b08b97adffbf4b"
+    ],
+    "templates/.erixpo/MEMORY.md": [
+      "7c948547f4b4362c46a28e45fb713504b85a041277f9761c8b4fca1a8aa657c8"
+    ],
+    "templates/.erixpo/PROFILE.md": [
+      "22b1baaddacf191d642e2f6be44fa2ad39b09bff703b9412ca3189fd38499f13"
+    ],
+    "templates/.erixpo/PROGRESS.md": [
+      "c6e686064449f72b022d72b98bc8ea583af549cd965e714a43dc4d7ff3e2e72d"
+    ],
+    "templates/.erixpo/REVIEW.md": [
+      "73614afc4834356f365809c1a9383644391d5700372ab5c7c14cc1bf3358d14e"
+    ],
+    "templates/.erixpo/USER.md": [
+      "77ecacc313eb9f244772fcc93915bcce76098e9f83958532520dbe01391d16be"
+    ],
+    "templates/.erixpo/budget.md": [
+      "955d9ebf0cbd718e4b6cf3797b050df4a9f4042dd93e68c66ad5f1c7df2d7542"
+    ],
+    "templates/.erixpo/classify.md": [
+      "e0734b095e02adfbb972d78de0ce8f93c26abd479d456cee2af3ddfb2ab1d3b9"
+    ],
+    "templates/.erixpo/learnings.jsonl": [
+      "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    ],
+    "templates/.erixpo/lessons.md": [
+      "f14d116e3baadcc0f32567e9584c2408423982e49f4872a2e577ef4101943a30"
+    ],
+    "templates/.erixpo/plan.md": [
+      "d02d3800d3e5f141725121f91f96813605efebd363f07f8427ce09e79f97efc8"
+    ],
+    "templates/.erixpo/refine-log.md": [
+      "cb71b030986cfb72090784bdd1dbc44d19dadc0a73a279ea6c13e696730b4c9c"
+    ],
+    "templates/.erixpo/research.md": [
+      "f6e6d5fc308d82e54c835340c45f9c498d3db8962495a69664d2d8e8e46cbb9f"
+    ],
+    "templates/.erixpo/sessions.jsonl": [
+      "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    ],
+    "templates/.erixpo/skills/.gitkeep": [
+      "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    ],
+    "templates/.erixpo/stack.md": [
+      "2097bb23b25331f282b62ebf6df4e83595d9c140f21dbeb3847533e76120b2a0"
+    ],
+    "templates/.erixpo/state.yaml": [
+      "ef1e2d8b54bcafcc9e627c2f8cb6fc4b2b78ffd0ec3529ee7c160f3dd39a54b3"
+    ],
+    "templates/.erixpo/test-plan.md": [
+      "46f5f36997d11012d8194b7e0468cb43d0510028ab92ab0f31e0002874fa59eb"
+    ],
+    "templates/.erixpo/ui-status.md": [
+      "44e6476ab7f2b643bc56c6dd3e388aa47b14415748b1d2c94a6431ec2f65ccc4"
+    ],
+    "templates/AGENTS.md": [
+      "34f08e0f02f5c66be9d5d00cbdb9ee1bb25cdd44b8cd9f3795125ecb096c50be"
+    ],
+    "templates/CLAUDE.md": [
+      "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+    ],
+    "templates/PROMPT.md": [
+      "b899958be85fc3caf0222814faac65ac7e1967b919497e0b31f224e7a2805567"
+    ],
+    "templates/documents/ARCHITECTURE.md": [
+      "e17a7e7347af1878a1f4a5724971085d17a958b3b2a781090c4563d15699c58c"
+    ],
+    "templates/documents/DECISIONS.md": [
+      "d841ed82d63013ab27aabc00854d9cefa6c54c7d381af47ccf5518143a218c5c"
+    ],
+    "templates/documents/INDEX.md": [
+      "b80129918e243e2e24c4a2cc9b2caf3029bd6691e5448cc5c4f0b2ca168d4aac"
+    ],
+    "templates/documents/PRODUCT.md": [
+      "017c3453f1c0395e1662ccbdb32a4a9da3fc8ddaa29189523e815a0b4ee13f7a"
+    ],
+    "templates/documents/PROGRESS.md": [
+      "f5be48bb92408919db7b2673b837466c8018ed6867af020a8ae45a6d551fa86c"
+    ],
+    "templates/documents/STACK.md": [
+      "fd5cdbede5ba6b98a13feba42b47c9bd27b5bacb7f028d2371eb52eec8fe66e8"
+    ],
+    "templates/documents/inventory.md": [
+      "546944dbe0325c012d285f533cbcab053376c51be66e935816c78a0d853558b7"
+    ],
+    "templates/documents/modules.md": [
+      "4e09222de362dc2ea50d818cd31edb64cd8cd48adc67e7010d4a7444c8bcf576"
+    ],
+    "templates/documents/modules/.gitkeep": [
+      "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    ],
+    "templates/documents/progress.html": [
+      "01b78bac3bc696455193e6b4c851e66ca5af5548f81488f37b9a0edf37ba120f"
+    ],
+    "templates/documents/ui/CHANGELOG.md": [
+      "65b6a9d01d5d06bebf5a0839dff7eec4e2c7c2c4508574caf6bda2c616fb4ba3"
+    ],
+    "templates/documents/ui/LANGUAGE.md": [
+      "5dc0e8d01c0fcfff8f459c925338705892b94d8359d51c2c2a0647b6cb46ba06"
+    ],
+    "templates/documents/ui/components.md": [
+      "9c4fc304bb7853b6618201a64fa1c274e8bc4a122f7e2d14d2601168d4cff0ee"
+    ],
+    "templates/documents/ui/layout.md": [
+      "59032bc69632745badefe6e8603361fe046f875aef66ac6765f48dc1b30399c6"
+    ],
+    "templates/documents/ui/mapping.md": [
+      "fcd1cd494e094c7dd94417ab51f7162478192a371467e62cb82826691e3c70b2"
+    ],
+    "templates/documents/ui/mockups/INDEX.md": [
+      "f9af72d8318a7f7a255fa5b10777348d462cc1bb8d624d48daeaad5588d0821f"
+    ],
+    "templates/documents/ui/mockups/screen.html": [
+      "c30fb68f89e09eb576089cfa4f2a0c000007bfb0682bb259f8ac38edf1d8dbbf"
+    ],
+    "templates/documents/ui/motion.md": [
+      "5457896ddaa7a356f21cac8be0f4c5d04a49cf24d9d2e2548edbac826e6f476a"
+    ],
+    "templates/documents/ui/screens.md": [
+      "b1d8e6e30d7700d325de67c989247ef6904e3179a14821aec55dcf5fb0eb89be"
+    ],
+    "templates/documents/ui/tokens.md": [
+      "8ef6b61f47658dfc50d1a79d5a6b225574abed22ceb9c81d70632e59192a4db5"
+    ],
+    "templates/erixpo/plan.md": [
+      "d02d3800d3e5f141725121f91f96813605efebd363f07f8427ce09e79f97efc8"
+    ],
+    "templates/erixpo/progress.md": [
+      "f5c7be48dab8c193b4a2d77edd58c8176e1ffed81ea67bbe37d0495f73b4b0f4"
+    ],
+    "templates/erixpo/stack.md": [
+      "2ee92f234e6b31d7b6c39477ce7a1a35337c382c259b3e6a81cced5dbff57667"
+    ],
+    "templates/erixpo/state.md": [
+      "6f9fbe637b72a057cbbcb4d411c36148d85bb25c4dae78010108b29076462ebb"
+    ]
+  },
+  "format": 1
+}

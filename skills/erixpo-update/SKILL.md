@@ -4,7 +4,7 @@ description: Refresh the erixpo pack in this project from GitHub. Use when the u
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.2"
+  version: "0.7.0"
 ---
 
 # erixpo update
@@ -19,7 +19,7 @@ Refresh **the workflow pack**, not the product.
 
 ## Do
 
-1. Compare `.erixpo/VERSION` (installed) to GitHub `VERSION` on `main`:
+1. Compare `.erixpo/VERSION` and `.erixpo/install-manifest.json` provenance (source commit/content hash) to the selected release. A matching version alone does not prove identical contents. Prefer a reviewed immutable release tag; when following main, resolve its commit. Version endpoint:
    `https://raw.githubusercontent.com/depolakerik-ops/erixpo-workflow/main/VERSION`
 2. Clone latest pack (or `git pull` if `/tmp/erixpo-workflow` exists):
 
@@ -37,7 +37,8 @@ bash /tmp/erixpo-workflow/install.sh --host auto --target "$PWD"
 If `.erixpo/hosts.txt` lists extra agents, `--host auto` already expands from that file.
 
 4. Prove it:
-   - `cat .erixpo/VERSION` matches pack `VERSION`
+   - `cat .erixpo/VERSION` matches pack `VERSION`; manifest commit/content provenance matches the installed source
+   - `.erixpo/bin/erixpo --help` executes after reinstall
    - `scripts/research-scope.py` (and other pack scripts) exist
    - product files still exist, and the product check still passes ([testing](../erixpo/references/testing.md); ceremony untouched per [ceremony](../erixpo/references/ceremony.md))
 

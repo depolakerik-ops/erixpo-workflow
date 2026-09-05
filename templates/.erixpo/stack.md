@@ -14,7 +14,7 @@ unknown
 - Test:
 
 ## Check command
-The one-line `check:` field at the top of this file is what `bin/erixpo` runs.
+The one-line `check:` field at the top of this file is what `.erixpo/bin/erixpo` runs.
 It must **run tests** (or the class-appropriate proof), not `echo ok` / `exit 0`.
 Replace it with the real project command, for example:
 

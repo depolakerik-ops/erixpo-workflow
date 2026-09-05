@@ -1,5 +1,7 @@
 # UI — detect, specify, then build
 
+For standalone artwork, graphics, animation or 3D scenes, follow the domain adaptation contract in [domains.md](domains.md). This application-interface protocol applies only if the artifact includes a UI; do not invent navigation, buttons or breakpoint tables for a film.
+
 If the work has **no surface** (CLI-only, rename, research note, backend-only slice with no screen), skip this file and do not invent a design system.
 
 If a human will **see or touch** something — site, app, dashboard, settings, email, slide, print, game HUD, terminal TUI — you do **not** invent pixels ad hoc.
@@ -30,6 +32,8 @@ Treat as UI work when any of these is true:
 - You are about to add or change a file a person looks at
 
 Then load `erixpo-ui` if the language does not exist yet, or if they asked to change the language.
+
+**Existing-product exception:** missing `documents/ui/` does not mean the product lacks a design language. For a small fix or feature, inspect existing components/theme/layout, minimally backfill the touched pattern and reuse it. Do not force a redesign, direction selection or full design-system ceremony for a logout button or typo. Still verify the changed UI in its actual surface. Full create applies when no usable language exists or the work introduces one.
 
 ## Classify — set `ui_change`
 
@@ -71,7 +75,7 @@ Ask only what changes the look:
 - Surface if not obvious (web, iOS, Android, macOS, Windows, TUI, slides, print)
 - Existing kit in the repo? Use it. Do not invent a second one.
 
-Propose **2–3 directions** + one default. At least one direction must not be the tutorial look **for this surface** ([slop.md](slop.md)). Wait unless they already said "you pick" or "just go".
+Propose **2–3 directions** + one default. At least one direction must not be the tutorial look **for this surface** ([slop.md](slop.md)). Apply intent.md: wait only if direction selection is not already covered by user authorization; approved scope and unattended permission carry forward.
 
 Directions depend on surface, not only web aesthetics: HIG / Fluent / Material / editorial / tool / native chrome. Examples, not a locked menu: quiet editorial, dense operator console, native platform chrome, brutalist static, data tables, playful consumer.
 
@@ -116,7 +120,7 @@ These are defaults. Platform guides and `USER.md` override them.
 ### Color
 
 - Background, surface, text, muted, border, accent, danger, warning, success — named.
-- Contrast: body text vs background must be readable (aim WCAG AA on platforms that care).
+- Contrast: body text vs background must be readable (use applicable WCAG criteria on web and platform accessibility guidance on native surfaces).
 - Do not decorate every box with a different accent. One accent unless the brand is the product.
 - Dark mode is a token set, not a later surprise, if the surface is an app people use at night.
 
@@ -203,7 +207,7 @@ Compare each visible screen to `tokens.md` + `layout.md`. List drift. Fix the co
 
 ## Research
 
-Search live docs for **this** surface and year. Do not default to "Tailwind + shadcn + purple gradient".
+Follow [research.md](research.md) for research intensity and verified evidence reuse. For a full pass, open current official docs for **this** surface and dependency versions. Do not default to "Tailwind + shadcn + purple gradient".
 
 Write `.erixpo/research.md` `## UI`:
 
@@ -231,3 +235,18 @@ HTML mockups are **not** the universal contract.
 - Ban unless they asked: the tutorial default for **this** surface ([slop.md](slop.md)).
 
 Taste in `.erixpo/USER.md` wins.
+
+## Dynamic UI expertise and verification
+
+For the requested change, inspect the existing interface, platform conventions, tokens and user preferences before choosing guidance. Use installed relevant expertise first; research missing knowledge through research.md. For example, [Jakub Krehel's skills](https://github.com/jakubkrehel/skills) separate layout, typography, colors, accessibility, writing and motion/polish. Inspect the current skill and its applicability before proposing installation. It is an optional reference, not a required dependency. Web-specific CSS or animation recipes must not become universal native-platform rules.
+
+Select review depth from the changed flow and shared components. Check:
+
+- Hierarchy and grouping: consistent alignment, spacing that distinguishes related items, reachable primary actions, and layouts that survive real content and resizing.
+- Typography and copy: readable hierarchy, useful labels, wrapping/localization and access to important truncated content.
+- Color and interaction: semantic roles, measured contrast in actual states/themes, clear affordances, focus, keyboard/assistive access and non-overlapping targets.
+- Motion: purpose, responsiveness, interruption and rapid repeated input, reduced-motion behavior, and feedback that remains understandable without animation. Use the project's platform and motion system.
+
+Inspect rendered before/after states and representative interactions when feasible, including error/loading/empty and compact/regular states affected by the change. Recheck shared consumers after a token/component change. Record scope, evidence and unverified states; source inspection alone cannot establish visual quality. Prefer fixes at the responsible token or component and preserve deliberate product choices when they meet the task and accessibility needs.
+
+User feedback becomes a scoped preference in USER.md only when actually stated. Successful verification may become a reusable pattern through erixpo-learn; a single aesthetic guess is not a universal design rule.

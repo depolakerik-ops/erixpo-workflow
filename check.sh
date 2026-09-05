@@ -1,113 +1,53 @@
 #!/usr/bin/env bash
-# Repo-level check for erixpo-workflow itself.
+# Deterministic pack validation and installed-product lifecycle regressions.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
-
-fail=0
-
-echo "== bash -n =="
-bash -n install.sh || fail=1
-bash -n bin/erixpo || fail=1
-bash -n check.sh || fail=1
-for f in adapters/*.sh scripts/*.sh; do
-  [[ -f "$f" ]] || continue
-  bash -n "$f" || fail=1
+echo "== shell syntax and skill links =="
+for f in install.sh uninstall.sh bin/erixpo check.sh adapters/*.sh scripts/*.sh tests/*.sh; do
+  bash -n "$f"
 done
-bash -n tests/validate-skills.sh || fail=1
-bash -n tests/smoke.sh || fail=1
+bash tests/validate-skills.sh
 
-echo "== skill frontmatter =="
-bash tests/validate-skills.sh || fail=1
-
-echo "== adapter contract (ROOT first, PROMPT_FILE second) =="
-python3 - <<'PY' || fail=1
+echo "== version, templates, and protocol contracts =="
+python3 - <<'PY'
+import json, re
 from pathlib import Path
-root = Path("adapters")
-bad = []
-for p in sorted(root.glob("*.sh")):
-    text = p.read_text()
-    if 'ROOT="${1:-$(pwd)}"' not in text and "ROOT=\"${1:-$(pwd)}\"" not in text:
-        if 'ROOT="${1:-$(pwd)}"' not in text.replace("'", '"'):
-            if 'ROOT="${1:' not in text:
-                bad.append(f"{p.name}: ROOT is not $1")
-    if "PROMPT_FILE=" in text and 'PROMPT_FILE="${2:' not in text and "PROMPT_FILE=\"${2:" not in text:
-        if 'PROMPT_FILE="${2' not in text:
-            bad.append(f"{p.name}: PROMPT_FILE is not $2")
-if bad:
-    print("\n".join(bad))
-    raise SystemExit(1)
-print("ok adapters")
+version = Path('VERSION').read_text().strip()
+assert re.fullmatch(r'\d+\.\d+\.\d+', version)
+assert json.loads(Path('.claude-plugin/plugin.json').read_text())['version'] == version
+assert all(p['version'] == version for p in json.loads(Path('.claude-plugin/marketplace.json').read_text())['plugins'])
+for p in Path('skills').glob('*/SKILL.md'):
+    assert f'version: "{version}"' in p.read_text(), p
+    assert len(p.read_text().splitlines()) < 500, p
+for name in ('plan.md', 'state.md', 'stack.md'):
+    assert (Path('templates/.erixpo') / name).read_text() == (Path('templates/erixpo') / name).read_text(), f'template drift: {name}'
+assert not Path('templates/.erixpo/state.yaml').exists()
+for path in ('templates/.erixpo/USER.md', 'templates/.erixpo/CONSTITUTION.md', 'templates/.erixpo/classify.md', 'templates/.erixpo/test-plan.md', 'templates/PROMPT.md', 'scripts/install-pack.py', 'scripts/worktree-state.py', 'scripts/review-evidence.py', 'scripts/erixpo-runtime.py'):
+    assert Path(path).is_file(), path
+for key in ('check:', 'install:'):
+    assert key in Path('templates/.erixpo/stack.md').read_text()
+# Validate links in canonical protocol references, not just SKILL.md entrypoints.
+for path in Path('skills/erixpo/references').glob('*.md'):
+    for target in re.findall(r'\]\(([^)]+)\)', path.read_text()):
+        if '://' in target or target.startswith(('#', 'mailto:')):
+            continue
+        target = target.split('#')[0]
+        assert not target or (path.parent / target).exists(), (path, target)
+print('metadata and templates passed')
 PY
 
-echo "== templates have check: and install: =="
-grep -q '^check:' templates/.erixpo/stack.md || { echo "stack.md missing check:"; fail=1; }
-grep -q '^install:' templates/.erixpo/stack.md || { echo "stack.md missing install:"; fail=1; }
-[[ -f templates/documents/ui/tokens.md ]] || { echo "missing UI token template"; fail=1; }
-[[ -f templates/documents/ui/layout.md ]] || { echo "missing UI layout template"; fail=1; }
-[[ -f templates/documents/ui/mapping.md ]] || { echo "missing UI mapping template"; fail=1; }
-[[ -f skills/erixpo-ui/SKILL.md ]] || { echo "missing erixpo-ui skill"; fail=1; }
+echo "== classification and research fixtures =="
+python3 scripts/classify-signals.py --selftest
+python3 scripts/research-scope.py --selftest
+[[ "$(bash bin/erixpo research-scope --class new)" == full ]]
 
-echo "== VERSION lockstep =="
-[[ -f VERSION ]] || { echo "missing VERSION"; fail=1; }
-VER="$(tr -d ' \t\n' < VERSION 2>/dev/null || true)"
-[[ -n "$VER" ]] || { echo "VERSION empty"; fail=1; }
-grep -q "\"version\": \"$VER\"" .claude-plugin/plugin.json || { echo "plugin.json version != VERSION ($VER)"; fail=1; }
-grep -q "\"version\": \"$VER\"" .claude-plugin/marketplace.json || { echo "marketplace.json version != VERSION ($VER)"; fail=1; }
-[[ -f skills/erixpo-update/SKILL.md ]] || { echo "missing erixpo-update skill"; fail=1; }
-for f in skills/*/SKILL.md; do grep -q "version: \"$VER\"" "$f" || { echo "$f version != VERSION ($VER)"; fail=1; }; done
+echo "== deterministic lifecycle and adapter tests =="
+python3 -m unittest discover -s tests -p 'test_*.py' -v
 
-echo "== v0.6 protocol files =="
-for f in \
-  skills/erixpo/references/classify.md \
-  skills/erixpo/references/intent.md \
-  skills/erixpo/references/craft.md \
-  skills/erixpo/references/scaffold.md \
-  skills/erixpo/references/ceremony.md \
-  skills/erixpo/references/slop.md \
-  skills/erixpo/references/ui.md \
-  skills/erixpo/references/testing.md \
-  skills/erixpo/references/worktrees.md \
-  templates/PROMPT.md \
-  templates/.erixpo/USER.md \
-  templates/.erixpo/CONSTITUTION.md \
-  templates/.erixpo/classify.md \
-  templates/.erixpo/plan.md \
-  templates/erixpo/plan.md
-do
-  [[ -f "$f" ]] || { echo "missing $f"; fail=1; }
-done
-grep -q 'bin/erixpo close' bin/erixpo || { echo "bin/erixpo missing close"; fail=1; }
-grep -q 'sweep' bin/erixpo || { echo "bin/erixpo missing sweep"; fail=1; }
-grep -q 'isolate' bin/erixpo || { echo "bin/erixpo missing isolate"; fail=1; }
-grep -q 'erixpo-ui' install.sh || { echo "install.sh SKILL_NAMES missing erixpo-ui"; fail=1; }
-grep -q 'install_cli "$DEST/bin"' install.sh && { echo "install.sh still writes top-level DEST/bin (use .erixpo-only + compat link)"; fail=1; }
-grep -q 'install_compat_link' install.sh || { echo "install.sh missing compat-link step"; fail=1; }
-[[ -z "$(git ls-files '.erixpo' 2>/dev/null)" ]] || { echo ".erixpo files committed (generated state must stay out of git)"; fail=1; }
-# plan templates must both mention scaffold / tests / UI change-type
-grep -q 'scaffold' templates/.erixpo/plan.md || { echo "rich plan missing scaffold"; fail=1; }
-grep -q 'scaffold' templates/erixpo/plan.md || { echo "templates/erixpo/plan.md drifted (missing scaffold)"; fail=1; }
-grep -q 'relanguage | retoken | recompose | reflow' templates/.erixpo/plan.md || { echo "plan missing ui_change enum"; fail=1; }
-grep -q 'relanguage | retoken | recompose | reflow' templates/erixpo/plan.md || { echo "templates/erixpo/plan.md missing ui_change enum"; fail=1; }
-grep -q 'create | relanguage | retoken' skills/erixpo/references/classify.md || { echo "classify.md missing create ui_change"; fail=1; }
-grep -q 'look at' skills/erixpo/references/classify.md || { echo "classify.md missing look-at → review"; fail=1; }
+echo "== installed-product smoke =="
+bash tests/smoke.sh
 
-echo "== classify fixtures =="
-python3 scripts/classify-signals.py --selftest || fail=1
-python3 scripts/research-scope.py --selftest || fail=1
-grep -q '## Comparables' templates/.erixpo/research.md || { echo "research template missing Comparables"; fail=1; }
-grep -q 'opened:' templates/.erixpo/research.md || { echo "research template missing opened:"; fail=1; }
-grep -q 'factory worker' templates/PROMPT.md && { echo "PROMPT.md still factory-worker"; fail=1; }
-grep -q 'specialist' templates/PROMPT.md || { echo "PROMPT.md missing specialist"; fail=1; }
-[[ -f scripts/detect-capabilities.sh ]] || { echo "missing detect-capabilities.sh"; fail=1; }
-bash scripts/detect-capabilities.sh >/dev/null || fail=1
-grep -q 'classify-signals.py' install.sh || { echo "install.sh missing classify-signals.py"; fail=1; }
-
-echo "== smoke =="
-bash tests/smoke.sh || fail=1
-
-if [[ "$fail" -ne 0 ]]; then
-  echo "CHECK FAILED"
-  exit 1
-fi
+echo "== behavioral evaluation fixture validation (no provider calls) =="
+python3 scripts/evaluate-workflow.py --dry-run
 echo "CHECK PASSED"

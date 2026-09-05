@@ -1,4 +1,0 @@
-# Canonical state is .erixpo/state.md (pack: templates/erixpo/state.md).
-# Do not write new jobs here. Not a second state machine.
-canonical: .erixpo/state.md
-deprecated: true

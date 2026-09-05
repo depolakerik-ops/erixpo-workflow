@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.7.0
+
+- Resolve active learning revisions before recall, preserve project procedures/refinement logs across worktrees, and strengthen dynamic expertise, testing and UI verification protocols.
+
+- Verify cross-domain request journeys; add domain-specific setup/proof guidance, full research for large architectural features, compliance applicability, and project-local skills.sh/MCP proposals.
+
+- Ownership-aware reinstall/uninstall, real dry run, global symmetry, provenance and rollback on write failures.
+- Explicit slice completion, fresh check receipts, root-aware CLI, wall-time budgets, cancellation and searchable run events.
+- Safe worktree cleanup with review identity, original branch binding, memory reconciliation, installed skill preservation and atomic registry recovery.
+- Scoped review includes untracked project files and excludes installed pack content.
+- Routing fixes, evidence-driven research, canonical state.md, lighter one-shot work and consistent autonomy guidance.
+- Linux/macOS CI, runtime/adapter/lifecycle regressions, and opt-in paired behavioral evaluation fixtures. Live provider performance remains unmeasured.
+
 ## 0.6.2
 
 - Craft bar: specialist prompt (not factory worker), no methodology narration.

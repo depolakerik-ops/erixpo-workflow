@@ -10,7 +10,7 @@ Spawn another agent only when:
 
 Always use a separate session for stage-2 `/erixpo review`.
 
-Each extra agent gets its own worktree. The parent merges (or the human runs `bin/erixpo close --id` after stage-2). Children do not merge each other. Cap concurrent trees at 3 unless `.erixpo/budget.md` says otherwise. Close trees when the slice ships so they do not pile up.
+Each extra agent gets its own worktree. The parent merges (or the human runs `.erixpo/bin/erixpo close --id` after stage-2). Children do not merge each other. Cap concurrent trees at 3 unless `.erixpo/budget.md` says otherwise. Close trees when the slice ships so they do not pile up.
 
 Do not fan out five agents "for speed" on a single module. You will fight the merge.
 

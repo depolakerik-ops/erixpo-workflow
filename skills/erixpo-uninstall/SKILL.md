@@ -4,7 +4,7 @@ description: Remove the erixpo workflow from this project after asking what to k
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.2"
+  version: "0.7.0"
 ---
 
 # erixpo uninstall
@@ -17,7 +17,7 @@ One sentence: you will remove the workflow, not their app.
 
 ## 2. Ask once — three choices
 
-1. **Pack only** — skills, `/erixpo` command, `bin/erixpo`, adapters, scripts. Keep `documents/`, `AGENTS.md`, and `.erixpo` memory.
+1. **Pack only** — skills, `/erixpo` command, `.erixpo/bin/erixpo`, adapters, scripts. Keep `documents/`, `AGENTS.md`, and `.erixpo` memory.
 2. **Pack + memory** — also delete `.erixpo/`. Keep the wiki and source.
 3. **Everything erixpo added** — pack + `.erixpo/` + isolated worktrees. Then one extra yes/no: also delete `documents/` and `AGENTS.md`/`CLAUDE.md`? Default **no**. Never delete application source, `.env`, or git history.
 
@@ -32,7 +32,7 @@ bash /tmp/erixpo-workflow/install.sh --uninstall --purge --purge-worktrees --tar
 bash /tmp/erixpo-workflow/install.sh --uninstall --purge --purge-worktrees --purge-docs --target "$PWD"
 ```
 
-`--purge-worktrees` is the bulk path when leaving erixpo. While still using the pack, leftover trees are `bin/erixpo sweep` (report), `bin/erixpo sweep --apply` (stale + dead merged branches), or `bin/erixpo close --id`.
+`--purge-worktrees` is the bulk path when leaving erixpo. While still using the pack, leftover trees are `.erixpo/bin/erixpo sweep` (report), `.erixpo/bin/erixpo sweep --apply` (stale + dead merged branches), or `.erixpo/bin/erixpo close --id`.
 
 ## 4. Hard rules
 

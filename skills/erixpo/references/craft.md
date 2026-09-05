@@ -32,7 +32,7 @@ Steal structure for **this field**. A SwiftUI app does not get a SaaS landing pa
 
 ## UI
 
-The tutorial default for **this surface** is a fail ([slop.md](slop.md)). HTML mockups are web-only. Native uses the platform, not a 720px card.
+Evaluate task completion, hierarchy, density, accessibility, platform conventions, and states before aesthetics. The patterns in [slop.md](slop.md) are review prompts, not automatic failures for familiar components. HTML mockups are web-only. Native uses the platform, not a 720px card.
 
 ## Code
 

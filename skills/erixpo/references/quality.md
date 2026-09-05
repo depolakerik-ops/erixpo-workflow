@@ -8,7 +8,7 @@ A slice is not done when the happy path renders. If it feels cheap, it is not do
 
 - Empty wiki / blank token tables / `{{PRODUCT}}` leftovers
 - Comparables that are names only — no `opened: url — learned …`
-- Tutorial UI for this surface ([slop.md](slop.md)); HTML mockup as iOS/Android
+- UI that obstructs the task, omits required states, or violates platform/accessibility needs; use [slop.md](slop.md) as examples, not a style blacklist. HTML mockups do not prove native behavior.
 - Narrating the workflow in chat or README
 - Dummy check, tests that cannot fail, extras they did not ask for
 
@@ -25,7 +25,7 @@ A slice is not done when the happy path renders. If it feels cheap, it is not do
 
 After the tests go green, **before the next slice**:
 
-1. Read your own diff. Would a picky stranger keep it, or does it feel cheap ([craft.md](craft.md))?
+1. Read your own diff. Check correctness, clear naming, existing conventions, duplication, cohesive responsibilities, error paths and resource cleanup. Remove unnecessary abstractions and dead code introduced by the change. Use the project formatter/linter when configured; avoid unrelated cleanup. Would a picky stranger keep it ([craft.md](craft.md))?
 2. Did you implement something that was on the optional extras list? Revert it unless they approved it.
 3. Does the wiki claim a feature the diff does not contain?
 4. Dummy `check:` (`true`, `exit 0`, `:`, `echo ok`) is a fail.

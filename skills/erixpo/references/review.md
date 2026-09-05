@@ -1,82 +1,33 @@
 # Two-stage review
 
-The implementer does not mark their own work done.
+Implementation and independent review have separate responsibilities. [testing.md](testing.md) defines development verification.
 
-Testing protocol lives in [testing.md](testing.md). This file describes the gate.
+## Stage 1
 
-## Stage 1 — mechanical
+Commit completed source, then run `.erixpo/bin/erixpo review --stage 1` in the tree being reviewed. The helper writes human notes to `.erixpo/REVIEW-stage1.md` and machine evidence to `.erixpo/REVIEW-stage1.json`.
 
-Run `scripts/review-stage1.sh` (or `bin/erixpo review --stage 1`). The script writes `.erixpo/REVIEW-stage1.md` and does not edit product code.
+The gate executes the configured check and inspects project files, including untracked files. It excludes hash-owned pack paths, local engine state, generated/vendor directories, and does not follow symlinks. It flags secret-looking content/names, obvious placeholder source and tautology assertions, product changes without a test path, and theme drift when configured. These are heuristics; passing does not establish full correctness or security.
 
-It **fails** if any of these hold:
+Evidence contains `schema`, `result`, `base`, `head`, `tree_digest`, `check`, `review_id`, and `reviewed_at`. Base comes from an explicit `ERIXPO_REVIEW_BASE`, isolation metadata, or a Git merge-base fallback. Files changing during the check invalidate the review. Changing the base, HEAD, project bytes/modes, or check command afterward makes it stale.
 
-- `check:` missing from `.erixpo/stack.md` and `AGENTS.md`
-- `check:` is dummy: exact `true` / `exit 0` / `:` / `echo ok` (also `echo "ok"` / `echo OK`)
-- non-dummy `check:` was not run during this review, or it exited non-zero (`bash -lc` of the line)
-- secret-looking **tracked names**: `.env`, `id_rsa`, `id_ed25519`, `.pem`, `.p12` (not `example`)
-- secret-looking **content**: `BEGIN PRIVATE KEY`, `AKIA`+16, `sk-` long, `ghp_` long (tracked files plus `.erixpo/sessions.jsonl` and `learnings.jsonl`)
-- `TODO: implement` or `lorem ipsum` still in the tree (excludes `node_modules`, `.git`, `.erixpo`; first 20 hits)
-- dummy tautology asserts anywhere in that same tree (first 10 hits). Families the script greps — **not** general `assertEquals(expected, actual)`:
-  - JS `expect` of literal true (covers toBe/toEqual true)
-  - Python `assert` of literal True/true, `assertTrue` of literal true/True
-  - `assert (` literal true/True `)`
-  - Swift `XCTAssertTrue` / `XCTAssert` of literal true/True
-  - C# `Assert.True` / `Assert.IsTrue` of literal true/True
-  - Rust `assert!` of literal true/True
-  - `True (` literal true/True `)` with a non-alnum prefix (covers `t.True`)
-  - Kotlin `shouldBe` of literal true/True
-- **product files in the slice range with no test/spec file in the same range**, unless pairing is skipped
-- **hard-coded hex** in slice product files that is not in `documents/ui/mapping.md` `theme_file` / `Path:` (skipped if no mapping path, docs-only, or `ERIXPO_SKIP_HEX=1`)
+Document exceptions: `ERIXPO_DOCS_ONLY`, `ERIXPO_SKIP_TEST_PAIRING`, and `ERIXPO_SKIP_HEX` are scoped escape hatches, not proof that omitted checks ran. Non-software still needs artifact-appropriate verification. Human-acceptance-only writing stays interactive.
 
-### Slice range
+## Stage 2
 
-Union of paths:
+Use a fresh session that did not implement the change. Confirm stage 1 passed, inspect the diff and evidence, and test meaningful edges: empty, invalid, denied, offline, timeout, first-run, large inputs. Review tests for real assertions, assess UI against task/platform/accessibility requirements, and check docs and merge risks.
 
-1. `git diff --name-only HEAD` (working tree vs HEAD)
-2. `git diff --name-only --cached`
-3. If a review BASE was resolved: `git diff --name-only "${BASE}..HEAD"`
+Write these **top-level fields** in `.erixpo/REVIEW.md`:
 
-A **clean working tree still fails** when commits since BASE changed product files without a test/spec file in that union.
+```
+Result: ship
+Review-ID: <review_id from the current REVIEW-stage1.json>
+Reviewer: <independent session or reviewer identifier>
+```
 
-BASE, first hit:
+Use `fix-blockers` or `keep-iterating` instead of `ship` if needed. Record evidence and limitations below those fields. Do not copy a prior Review-ID onto a new review without performing the review. The identity binding detects stale artifacts; it is not a cryptographic authentication of who reviewed them.
 
-1. `$ERIXPO_REVIEW_BASE` if it is a commit
-2. `git merge-base HEAD origin/HEAD` if that ref exists
-3. `git merge-base HEAD origin/main`
-4. `git merge-base HEAD origin/master`
-5. `git merge-base HEAD main` (skipped when that merge-base **is** HEAD — you are on local main)
-6. `git merge-base HEAD master` (same skip)
-7. else `HEAD~1` if it exists
-8. else no committed range — pairing uses dirty/staged only; the script notes that
+If review requires edits, implement and commit them, rerun stage 1, then review the new artifact. Keep detailed review output under `.erixpo/`; writing a tracked summary after stage 1 changes the artifact and requires another check.
 
-The script notes the BASE used.
+## Landing
 
-Test/spec path heuristics: `*test*`, `*spec*`, `*Test*`, `*Spec*`, `*Tests*`, `*UITests*`, `tests/*`, `__tests__/*`, `*/androidTest/*`, `*_test.*`, `*.test.*`, `*.spec.*`, `*_spec.*`. Skipped as neither product nor test: `documents/*`, `*.md`, `.erixpo/*`, `AGENTS.md`, `CLAUDE.md`, `README.md`.
-
-### Pairing skipped (noted in `REVIEW-stage1.md`)
-
-- not a git repo
-- `PROFILE` class `writing` | `research` | `ops` | `assistant`
-- `ERIXPO_DOCS_ONLY=1`
-- `ERIXPO_SKIP_TEST_PAIRING=1` (explicit escape; always noted when set)
-
-Docs/non-software still skips test-file pairing. Dummy `check:` still fails.
-
-## Stage 2 — adversarial
-
-**Different session.** Use the `erixpo-reviewer` agent or a fresh chat that did not implement the slice. Confirm stage 1 passed first.
-
-Attack:
-
-- Edges (empty, invalid, denied, offline, timeout, first-run, huge input, small screen)
-- Gamed tests (cannot fail, mocks the unit out of existence, harness missing, typecheck posing as tests)
-- Authz holes, injection, unsafe defaults
-- UI slop against `documents/ui/LANGUAGE.md` + [slop.md](slop.md) + `documents/ui/layout.md` (and mapping/tokens)
-- Wiki drift; ceremony mismatch ([wiki.md](wiki.md), [ceremony.md](ceremony.md) if present)
-- Merge risk against other live worktrees
-
-Verdict: `ship` | `fix-blockers` | `keep-iterating`.
-
-Do not merge until stage-2 says `ship` **and** the user says merge. On an isolated worktree, prefer `bin/erixpo close --id <id>` (merge + prune) after ship; `bin/erixpo merge --id <id>` is still valid.
-
-Write `.erixpo/REVIEW.md` from the template (stage-1 pointer, visual/UI notes). Copy `documents/review-latest.md`. Do not edit product code.
+A changed isolated branch can merge/close only with matching stage-1 pass and stage-2 ship evidence. The user must separately authorize close/merge. Close checks the original destination branch and source cleanliness, preserves memory, then removes the worktree. An unchanged empty isolated tree can close without review. No worker auto-merges or closes its own tree.

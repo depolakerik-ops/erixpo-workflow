@@ -4,14 +4,14 @@ description: Fix a bug. Reproduce, fix, add a regression test that fails without
 license: MIT
 metadata:
   author: Erixpo
-  version: "0.6.2"
+  version: "0.7.0"
 ---
 
 # erixpo fix
 
 Follow [testing.md](../erixpo/references/testing.md) and [quality.md](../erixpo/references/quality.md).
 
-1. Reproduce or quote the failing check. Cannot reproduce → stop guessing after one attempt.
+1. Reproduce or quote the failing check. If the first attempt does not reproduce it, inspect logs, inputs and environment differences and make bounded evidence-driven attempts. Ask for missing reproduction evidence only when needed; do not patch a guessed cause or claim an unobserved failure was verified.
 2. Smallest cause.
 3. Fix it.
 4. Regression test that fails without the fix, in this slice. If there is no harness: **create it** ([testing.md](../erixpo/references/testing.md)). Do not stop at `untested:` unless the case is device/human-only.

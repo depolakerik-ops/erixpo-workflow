@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "adapters": {
+    "claude": {
+      "executable": "claude",
+      "headless_invocation": true,
+      "structured_output": false,
+      "cost_reporting": false,
+      "live_verified_versions": [],
+      "contract_test": "tests/test_adapters.py"
+    },
+    "codex": {
+      "executable": "codex",
+      "headless_invocation": true,
+      "structured_output": false,
+      "cost_reporting": false,
+      "live_verified_versions": [],
+      "contract_test": "tests/test_adapters.py"
+    },
+    "cursor": {
+      "executable": "agent",
+      "headless_invocation": true,
+      "structured_output": false,
+      "cost_reporting": false,
+      "live_verified_versions": [],
+      "contract_test": "tests/test_adapters.py"
+    },
+    "gemini": {
+      "executable": "gemini",
+      "headless_invocation": true,
+      "structured_output": false,
+      "cost_reporting": false,
+      "live_verified_versions": [],
+      "contract_test": "tests/test_adapters.py"
+    },
+    "opencode": {
+      "executable": "opencode",
+      "headless_invocation": true,
+      "structured_output": false,
+      "cost_reporting": false,
+      "live_verified_versions": [],
+      "contract_test": "tests/test_adapters.py"
+    },
+    "hermes": {
+      "executable": "hermes",
+      "headless_invocation": true,
+      "structured_output": false,
+      "cost_reporting": false,
+      "live_verified_versions": [],
+      "contract_test": "tests/test_adapters.py"
+    },
+    "generic": {
+      "executable": null,
+      "headless_invocation": true,
+      "structured_output": false,
+      "cost_reporting": false,
+      "live_verified_versions": [],
+      "contract_test": "tests/test_adapters.py"
+    }
+  }
+}
