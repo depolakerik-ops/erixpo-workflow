@@ -1,0 +1,21 @@
+{
+  "name": "erixpo-workflow",
+  "interface": {
+    "displayName": "Erixpo Workflow"
+  },
+  "plugins": [
+    {
+      "name": "erixpo-workflow",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/erixpo/erixpo-workflow.git",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

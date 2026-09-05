@@ -57,6 +57,9 @@ grep -q "\"version\": \"$VER\"" .claude-plugin/marketplace.json || { echo "marke
 [[ -f skills/erixpo-update/SKILL.md ]] || { echo "missing erixpo-update skill"; fail=1; }
 for f in skills/*/SKILL.md; do grep -q "version: \"$VER\"" "$f" || { echo "$f version != VERSION ($VER)"; fail=1; }; done
 
+echo "== Codex plugin packaging =="
+python3 tests/validate-codex-plugin.py || fail=1
+
 echo "== v0.6 protocol files =="
 for f in \
   skills/erixpo/references/classify.md \
