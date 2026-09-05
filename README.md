@@ -64,6 +64,22 @@ The fix track calls for reproducing the problem, adding a regression test, apply
 The installer writes shared skills to `.agents/skills/` and adds the detected host's skill folder. If detection picks the wrong host, pass an explicit value such as `--host codex` or `--host claude`. Slash-command discovery depends on the host; if `/erixpo` is unavailable, ask the agent to read `.agents/skills/erixpo/SKILL.md` and follow it.
 
 <details>
+<summary><strong>Codex plugin installation</strong></summary>
+
+Install the public GitHub marketplace and plugin with a Codex CLI that supports `codex plugin`:
+
+```bash
+codex plugin marketplace add erixpo/erixpo-workflow
+codex plugin add erixpo-workflow@erixpo-workflow
+```
+
+Start a new Codex session, select **Erixpo Workflow**, and ask it to initialize your project. The plugin bundles the same 14 skills and a branded icon. For the project-local runner, also use the installer above with `--host codex`.
+
+See the [Codex installation guide](docs/codex-plugin.md) for updates, requirements, and development checks.
+
+</details>
+
+<details>
 <summary><strong>Claude Code plugin installation</strong></summary>
 
 In Claude Code:

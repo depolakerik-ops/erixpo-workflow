@@ -45,6 +45,9 @@ python3 scripts/research-scope.py --selftest
 echo "== deterministic lifecycle and adapter tests =="
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 
+echo "== Codex plugin packaging =="
+python3 tests/validate-codex-plugin.py
+
 echo "== installed-product smoke =="
 bash tests/smoke.sh
 

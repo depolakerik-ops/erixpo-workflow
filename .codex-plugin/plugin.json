@@ -1,0 +1,41 @@
+{
+  "name": "erixpo-workflow",
+  "version": "0.7.0",
+  "description": "Adaptive workflows, project memory, and verification for your AI agent.",
+  "author": {
+    "name": "Erixpo",
+    "url": "https://github.com/erixpo"
+  },
+  "homepage": "https://github.com/erixpo/erixpo-workflow",
+  "repository": "https://github.com/erixpo/erixpo-workflow",
+  "license": "MIT",
+  "keywords": [
+    "erixpo",
+    "workflow",
+    "skills",
+    "review",
+    "project-memory"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Erixpo Workflow",
+    "shortDescription": "One command. A workflow that adapts.",
+    "longDescription": "Route requests into build, fix, review, UI, research, writing, and operations workflows. Keep plans and memory in the project, and verify work with project checks. Includes 14 portable skills; use the project installer for the unattended runner.",
+    "developerName": "Erixpo",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/erixpo/erixpo-workflow",
+    "defaultPrompt": [
+      "Use erixpo to initialize this project.",
+      "Use erixpo to review my changes.",
+      "Use erixpo to continue the project plan."
+    ],
+    "brandColor": "#C8F36A",
+    "composerIcon": "./assets/erixpo-icon.svg",
+    "logo": "./assets/erixpo-icon.svg",
+    "logoDark": "./assets/erixpo-icon.svg"
+  }
+}

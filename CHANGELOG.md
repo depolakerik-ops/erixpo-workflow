@@ -2,6 +2,8 @@
 
 ## 0.7.0
 
+- Add native Codex plugin packaging and a public marketplace entry, reusing the 14 portable skills with version and asset validation.
+
 - Resolve active learning revisions before recall, preserve project procedures/refinement logs across worktrees, and strengthen dynamic expertise, testing and UI verification protocols.
 
 - Verify cross-domain request journeys; add domain-specific setup/proof guidance, full research for large architectural features, compliance applicability, and project-local skills.sh/MCP proposals.
