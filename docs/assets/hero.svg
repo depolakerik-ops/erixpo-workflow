@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="460" viewBox="0 0 1280 460" role="img" aria-labelledby="title desc">
+  <title id="title">erixpo workflow</title>
+  <desc id="desc">One command. A workflow that adapts. A charcoal and lime typographic banner with branching paths converging into a single route.</desc>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#20262c" stroke-width="1"/></pattern>
+    <linearGradient id="fade"><stop stop-color="#101418"/><stop offset="1" stop-color="#101418" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="1280" height="460" rx="20" fill="#101418"/>
+  <rect x="720" width="560" height="460" fill="url(#grid)"/>
+  <rect x="700" width="180" height="460" fill="url(#fade)"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M865 105H925L985 165H1198M825 350H890L980 260H1198" stroke="#34413a" stroke-width="2"/>
+    <path d="M842 212H954L1004 212L1080 136H1198" stroke="#c8f36a" stroke-width="3"/>
+    <path d="M1004 212L1080 288H1198" stroke="#c8f36a" stroke-width="3"/>
+    <path d="M1045 375H1130L1198 307" stroke="#34413a" stroke-width="2"/>
+  </g>
+  <g fill="#101418" stroke="#c8f36a" stroke-width="3"><circle cx="842" cy="212" r="9"/><circle cx="1004" cy="212" r="9"/><circle cx="1198" cy="136" r="9"/><circle cx="1198" cy="288" r="9"/></g>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <rect x="64" y="54" width="34" height="34" rx="8" fill="#c8f36a"/>
+    <path d="M73 77L80 65H88L81 77Z" fill="#101418"/>
+    <text x="112" y="79" fill="#f4f6f1" font-size="25" font-weight="700" letter-spacing="-.6">erixpo <tspan fill="#a8b0b5" font-weight="400">workflow</tspan></text>
+    <text x="64" y="174" fill="#f4f6f1" font-size="58" font-weight="700" letter-spacing="-2">One command.</text>
+    <text x="64" y="244" fill="#c8f36a" font-size="58" font-weight="700" letter-spacing="-2">A workflow that adapts.</text>
+    <text x="66" y="295" fill="#a8b0b5" font-size="22">Your agent. Your project. A repeatable way to work.</text>
+    <path d="M64 341H758" stroke="#30373c"/>
+    <text x="66" y="385" fill="#c8f36a" font-family="monospace" font-size="22">/erixpo</text>
+    <text x="192" y="385" fill="#a8b0b5" font-size="16" letter-spacing="2">ROUTING / MEMORY / VERIFICATION</text>
+  </g>
+</svg>

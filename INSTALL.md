@@ -9,7 +9,7 @@ You are installing erixpo into THIS project only.
 
 1. Detect which product you are (Cursor, Claude Code, Codex, Gemini CLI,
    OpenCode, Copilot, Windsurf, Cline, Crush, Aider, Devin, other).
-2. Clone https://github.com/depolakerik-ops/erixpo-workflow into /tmp if needed.
+2. Clone https://github.com/erixpo/erixpo-workflow into /tmp if needed.
 3. From THIS project root run:
      bash /tmp/erixpo-workflow/install.sh --host auto
    Do NOT pass --host all. Do not create skill folders for agents that
@@ -23,7 +23,7 @@ If the user later opens a different agent, ask once whether to expand:
 ## Manual
 
 ```bash
-git clone https://github.com/depolakerik-ops/erixpo-workflow /tmp/erixpo-workflow
+git clone https://github.com/erixpo/erixpo-workflow /tmp/erixpo-workflow
 cd /path/to/your-project
 bash /tmp/erixpo-workflow/install.sh --host auto
 ```
@@ -38,7 +38,7 @@ Engine files live only in `.erixpo/` (`bin/`, `adapters/`, `scripts/`, `pack-tem
 
 ## Global install
 
-`install.sh --global` installs the same skill set for every project on the machine, into `$HOME/.<host>/skills/` (plus `.agents/skills/`) for each resolved host. Verify with `ls ~/.agents/skills/erixpo` (or the vendor folder). Project installs still write `.erixpo/` + compat links into the target; `--global` never touches the current project.
+`install.sh --global` installs the same skill set for every project on the machine, into `$HOME/.<host>/skills/` (plus `.agents/skills/`) for each resolved host. Verify with `ls ~/.agents/skills/erixpo` (or the vendor folder). **Current behavior:** `--global` also performs the project installation in the current directory (or `--target`), including `.erixpo/` and compatibility links. Run it from the intended project; it is not a global-only install.
 
 ```bash
 bash install.sh --detect
@@ -52,7 +52,7 @@ bash install.sh --host all
 Say `update erixpo` or `there is a new erixpo update.` The agent loads `erixpo-update`: clone latest pack, `install.sh --host auto --target` this project. It must not edit product code or rewrite `classify.md`.
 
 ```bash
-git clone https://github.com/depolakerik-ops/erixpo-workflow /tmp/erixpo-workflow
+git clone https://github.com/erixpo/erixpo-workflow /tmp/erixpo-workflow
 bash /tmp/erixpo-workflow/install.sh --host auto --target "$PWD"
 cat .erixpo/VERSION
 ```

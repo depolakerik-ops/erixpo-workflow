@@ -1,79 +1,224 @@
-# erixpo workflow
+<p align="center">
+  <img src="docs/assets/hero.svg" width="100%" alt="erixpo workflow — One command. A workflow that adapts." />
+</p>
 
-Adaptive autonomous workflow. One command. Any agent. Any kind of work in a repo.
+<p align="center">
+  Structured workflows, persistent project memory, and verification gates for your AI agent.<br />
+  Describe the work. Let <code>/erixpo</code> find the right track.
+</p>
 
-You talk. The agent **classifies** the repo, the request, the surface, and the UI change-type, then runs the matching track. Software, site, SwiftUI, Android, Windows, macOS, responsive web, Python script, automation, research, writing, ops, assistant — the folder decides. It scaffolds *this* repo's boilerplate, writes tests, and stops on a real check. Progress and memory live on disk.
+<p align="center">
+  <a href="https://github.com/erixpo/erixpo-workflow/actions/workflows/validate.yml"><img src="https://github.com/erixpo/erixpo-workflow/actions/workflows/validate.yml/badge.svg" alt="Repository validation status" /></a>
+  <a href="VERSION"><img src="https://img.shields.io/badge/pack-0.6.2-c8f36a" alt="Pack version 0.6.2 — see VERSION" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-c8f36a" alt="MIT license" /></a>
+</p>
 
-Not a credit platform. Skills route and teach. A loop + a test gate keeps going when you leave. Finished worktrees **close**; they do not litter the machine.
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#agent-compatibility">Compatibility</a> ·
+  <a href="INSTALL.md">Installation guide</a> ·
+  <a href="ROADMAP.md">Roadmap</a>
+</p>
 
-## Install into a project
+## Give your agent a repeatable way to work
 
-From the project you want to work on:
+**erixpo workflow** is a portable skill pack, installer, and command-line runner. It reads the repository and your request, then routes the agent to the appropriate workflow: build, fix, review, UI, research, writing, or operations.
+
+Use it for an existing codebase, a new native app, a website, a script, or a folder of documents. The workflow adapts to the project; your agent supplies the model and tools.
+
+| Capability | What it means for your work |
+|---|---|
+| **Context-aware routing** | A broken login, a design change, and a review request follow different tracks. |
+| **Persistent memory** | Plans, preferences, lessons, and session history live in files the next session can read. |
+| **Verification gates** | The unattended runner executes your project's check command after each worker iteration. |
+| **Isolated work** | Unattended runs create a sibling Git worktree by default. Review and approved merging follow separately. |
+| **Surface-aware guidance** | Research and scaffolding follow the actual platform and tools available on the machine. |
+
+## Quick start
+
+You need **Git, Bash, Python 3**, and an agent capable of reading `SKILL.md` instructions. Unattended runs also need an installed, authenticated worker CLI and a Git repository. Your agent's usage costs still apply.
+
+Run this **from the project you want to work on**, using a fresh temporary checkout:
 
 ```bash
-git clone https://github.com/depolakerik-ops/erixpo-workflow /tmp/erixpo-workflow
-bash /tmp/erixpo-workflow/install.sh --host auto
+erixpo_pack="$(mktemp -d "${TMPDIR:-/tmp}/erixpo-workflow.XXXXXX")"
+git clone https://github.com/erixpo/erixpo-workflow.git "$erixpo_pack"
+bash "$erixpo_pack/install.sh" --host auto
 ```
 
-Host-aware: `.agents/skills/` plus the vendor folder for the agent that is actually running. CLI into `bin/` + `.erixpo/`.
+Then ask your agent:
 
-Then in the agent:
-
-```
+```text
 /erixpo
 ```
 
-### Global install (every project on this machine)
+The initialization track profiles the project and establishes its working instructions. Follow with a request:
+
+```text
+/erixpo login is broken
+```
+
+The fix track calls for reproducing the problem, adding a regression test, applying a focused fix, and running checks. This is an example request, not a recorded execution.
+
+The installer writes shared skills to `.agents/skills/` and adds the detected host's skill folder. If detection picks the wrong host, pass an explicit value such as `--host codex` or `--host claude`. Slash-command discovery depends on the host; if `/erixpo` is unavailable, ask the agent to read `.agents/skills/erixpo/SKILL.md` and follow it.
+
+<details>
+<summary><strong>Claude Code plugin installation</strong></summary>
+
+In Claude Code:
+
+```text
+/plugin marketplace add erixpo/erixpo-workflow
+/plugin install erixpo-workflow@erixpo-workflow
+```
+
+The marketplace name is defined in [marketplace.json](.claude-plugin/marketplace.json). For the project-local runner and engine files, use the installer above as well.
+
+</details>
+
+<details>
+<summary><strong>Global skills and additional hosts</strong></summary>
+
+Using the same temporary checkout from the quick start:
 
 ```bash
-bash /tmp/erixpo-workflow/install.sh --global
+bash "$erixpo_pack/install.sh" --global --host codex
 ```
 
-### Claude Code plugin
+**Current behavior:** `--global` installs into the current project and additionally copies skills into the resolved home skill directories. It is not a global-only installation. Run it from the intended project.
 
+Add another host to that project:
+
+```bash
+bash "$erixpo_pack/install.sh" --expand --host claude
 ```
-/plugin marketplace add depolakerik-ops/erixpo-workflow
-/plugin install erixpo-workflow@erixpo
+
+See the [installation guide](INSTALL.md) for paths, updates, and removal.
+
+</details>
+
+## How it works
+
+Skills guide the agent's decisions. The outer-loop CLI repeats a worker invocation and a project check. These are separate parts of the system: instructions guide behavior, while the runner mechanically checks the command's exit status.
+
+```mermaid
+flowchart TD
+    request["Your request + repository"] --> route["Classify and choose a track"]
+    route --> work["Plan and perform the work"]
+    work --> check{"Project check passes?"}
+    check -->|"No · within run limits"| work
+    check -->|Yes| review["Mechanical + fresh-session review"]
+    review --> decision{"Ready and merge approved?"}
+    decision -->|"Needs changes"| work
+    decision -->|Yes| close["Close: merge and remove worktree"]
+    decision -->|"Awaiting approval"| hold["Keep work isolated"]
 ```
 
-## Commands
+This diagram describes the intended development workflow. Non-code tasks use the relevant work track and verification criteria. The runner itself stops when `check:` passes; it does not perform the fresh-session review or obtain merge approval.
 
-Almost always just `/erixpo` plus a sentence.
+> **Passing checks is a checkpoint.** The workflow requires the relevant tests and a two-stage review before shipping. You decide when to merge. A worktree isolates Git changes; it is not a security sandbox.
 
-| You say | Router does |
+## One command, different tracks
+
+| What you ask | Where it goes |
 |---|---|
-| `/erixpo` in a raw repo | init (profile, USER, constitution, ceremony) |
-| `/erixpo I want a SwiftUI app` | new (research *that* surface, slice 0 = native scaffold) |
-| `/erixpo add share with friend` | feature |
-| `/erixpo login is broken` | fix (+ regression test) |
-| `/erixpo look at the checkout` | two-stage **review** (not UI) |
-| `/erixpo calmer blue` / `sidebar to tabs` | ui (retoken vs recompose — different paths) |
-| `/erixpo what did we do about checkout` | session search |
-| `/erixpo go` / `/erixpo continue` | auto |
-| `/erixpo remember we never commit .env.local` | learn |
-| `/erixpo draft a weekly status from documents/` | work |
-| `/erixpo I don't want erixpo anymore` | uninstall interview |
-| `/erixpo update` / `there is a new erixpo update` | **update** the pack only (not the product) |
+| `/erixpo I want a SwiftUI app` | New project: research the surface and scaffold it |
+| `/erixpo add share with friend` | Feature implementation |
+| `/erixpo login is broken` | Fix with a regression test |
+| `/erixpo look at the checkout` | Two-stage review |
+| `/erixpo make the blue calmer` | UI token changes |
+| `/erixpo replace the sidebar with tabs` | UI composition changes |
+| `/erixpo draft a weekly status from documents/` | General work |
+| `/erixpo what did we decide about checkout` | Session search |
+| `/erixpo remember we never commit .env.local` | Persistent learning |
+| `/erixpo continue` | Continue the autonomous workflow |
+| `/erixpo update` | Update the workflow pack |
+| `/erixpo I don't want erixpo anymore` | Guided uninstall |
 
-Leave-the-room loop:
+## Agent compatibility
+
+The installer contains the following host mappings and worker adapters. **An available adapter is not a guarantee of compatibility with every version of a vendor CLI.** The host must support reading the skills, and unattended workers must be installed and authenticated.
+
+| Agent | Installer skill destination¹ | Unattended worker |
+|---|---|---|
+| Claude Code | `.claude/skills/` | `--worker claude` |
+| Codex | `.codex/skills/` | `--worker codex` |
+| Cursor | `.cursor/skills/` | `--worker cursor` (uses `agent`) |
+| Gemini CLI | `.gemini/skills/` | `--worker gemini` |
+| OpenCode | `.opencode/skills/` | `--worker opencode` |
+| Hermes | `.agents/skills/` | `--worker hermes` |
+| GitHub Copilot | `.github/skills/` | No dedicated adapter |
+| Windsurf / Cline | `.windsurf/skills/` / `.cline/skills/` | No dedicated adapter |
+| Crush / Aider / other hosts | `.agents/skills/` | Generic adapter² |
+
+¹ Project installs also include `.agents/skills/`. These paths describe installer behavior, not independently verified native discovery in every host.
+
+² `--worker generic` uses `ERIXPO_WORKER_CMD` when configured, otherwise tries Claude and then Codex. See [adapters/](adapters/) and [install.sh](install.sh) for the exact implementation.
+
+## Run, review, and close
+
+After initialization, ensure `.erixpo/plan.md` exists and `.erixpo/stack.md` contains a runnable one-line `check:` command. The quality of that check determines what the runner can verify.
 
 ```bash
+# Start an isolated run, capped at 20 iterations.
 bin/erixpo run --worker claude --max 20
-bin/erixpo review --stage 1
-# then a new agent session: /erixpo review
-bin/erixpo close --id s-…    # merge + remove worktree + delete branch
-bin/erixpo sweep             # report leftover trees (sweep --apply to clean)
-bin/erixpo classify "look at checkout"   # mechanical request_class (review, not ui)
-bin/erixpo capabilities                  # xcodebuild / android-sdk / … actually on PATH
-bin/erixpo research-scope --class new    # skip | narrow | full live-search
 ```
 
-Unattended runs isolate into a sibling git worktree. No auto-merge to the branch you are sitting on. After stage-2 `ship` and you say close/merge, `close` removes the tree so it does not stay on disk. Done means `check:` in `.erixpo/stack.md` exits 0 **and** the slice tests ran.
+The runner prints the worktree path and ID. In that worktree, run the mechanical review:
 
-## Status
+```bash
+bin/erixpo review --stage 1
+```
 
-See `VERSION`. Pack version is that file, not a guess. Compare `.erixpo/VERSION` in a project to GitHub `VERSION` on `main` to know if an update is needed.
+Then open a **fresh agent session in the same worktree** and ask `/erixpo review` for stage two. Once the review says `ship` and you approve the merge, return to the original checkout:
 
-## License
+```bash
+# Replace s-… with the actual worktree ID.
+bin/erixpo close --id s-…
+```
 
-MIT
+`close` merges locally and removes the worktree and branch by default; it does not push. The runner also stops on its iteration cap or after three consecutive worker failures, unless the check passes first.
+
+<details>
+<summary><strong>Inspection and cleanup commands</strong></summary>
+
+```bash
+bin/erixpo status
+bin/erixpo worktrees
+bin/erixpo sweep          # report leftovers
+bin/erixpo sweep --apply  # clean eligible leftovers
+bin/erixpo classify "look at checkout"
+bin/erixpo capabilities
+```
+
+For research intensity hints, invoke the helper directly:
+
+```bash
+python3 .erixpo/scripts/research-scope.py --class new
+```
+
+See `bin/erixpo --help` and the [worktree protocol](skills/erixpo/references/worktrees.md) for advanced options.
+
+</details>
+
+## Memory stays with the project
+
+Working state lives under `.erixpo/`: the plan, stack/check command, user preferences, lessons, and session history. Project documentation is organized under `documents/` when initialized by the workflow.
+
+This gives later sessions files to consult. It does not depend on the model retaining the previous conversation. Treat `.erixpo/` as generated local state and keep it out of version control in consuming projects; see [installation footprint](INSTALL.md#footprint--one-real-folder).
+
+## Project status and documentation
+
+[VERSION](VERSION) is the source of truth for the pack version. Compare it with `.erixpo/VERSION` in an installed project, or ask `/erixpo update` to update the pack.
+
+Budget flags, GitHub issue-to-plan integration, Docker sandboxing, and wired visual review checks are **planned**, not current features. See the [roadmap](ROADMAP.md).
+
+| Resource | What you'll find |
+|---|---|
+| [Installation](INSTALL.md) | Host selection, footprint, updates, and removal |
+| [Changelog](CHANGELOG.md) | Release notes |
+| [Roadmap](ROADMAP.md) | Current direction and planned work |
+| [Contributing](CONTRIBUTING.md) | How to contribute and run `bash check.sh` |
+| [Security](SECURITY.md) | Reporting security issues |
+| [License](LICENSE) | MIT |
